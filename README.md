@@ -2,7 +2,8 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=header&reversal=true" />
 </div>
 
-<h1 align="center">Hi, I'm <code>SckyzO</code> 👋</h1>
+<h1 align="center">Hi, I'm Tom (Thomas Bourcey) 👋</h1>
+<h3 align="center">alias <code>SckyzO</code></h3>
 
 <p align="center">
   <a href="https://github.com/DenverCoder1/readme-typing-svg">
@@ -19,6 +20,7 @@
 
 ## 🧠 About Me
 
+- 👤 **Identity**: My name is **Thomas Bourcey**, but you probably know me as **SckyzO**.
 - 🐧 **Linux Addict**: I live in the terminal.
 - 🐳 **Containerization**: Docker is my playground.
 - 📊 **Observability**: Prometheus & Grafana are my eyes.
