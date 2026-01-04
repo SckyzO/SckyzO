@@ -2,25 +2,26 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=header&reversal=true" />
 </div>
 
-<h1 align="center">Hi, I'm Tom (Thomas Bourcey) 👋</h1>
-<h3 align="center">alias <code>SckyzO</code></h3>
+<div align="center">
+  <h1>Hi, I'm <code>Tom</code> 👋</h1>
+  <h3><code>SckyzO</code> • <code>Thomas Bourcey</code></h3>
+  
+  <p>
+    <a href="https://github.com/DenverCoder1/readme-typing-svg">
+      <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
+    </a>
+  </p>
 
-<p align="center">
-  <a href="https://github.com/DenverCoder1/readme-typing-svg">
-    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
-  </a>
-</p>
-
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
-  <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
-</p>
+  <p>
+    <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
+    <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
+  </p>
+</div>
 
 ---
 
 ## 🧠 About Me
 
-- 👤 **Identity**: My name is **Thomas Bourcey**, but you probably know me as **SckyzO**.
 - 🐧 **Linux Addict**: I live in the terminal.
 - 🐳 **Containerization**: Docker is my playground.
 - 📊 **Observability**: Prometheus & Grafana are my eyes.
