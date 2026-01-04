@@ -22,6 +22,7 @@
 
 ## 🧠 About Me
 
+- 👤 **Identity**: My name is **Thomas Bourcey**, but you probably know me as **SckyzO**.
 - 🐧 **Linux Addict**: I live in the terminal.
 - 🐳 **Containerization**: Docker is my playground.
 - 📊 **Observability**: Prometheus & Grafana are my eyes.
@@ -66,7 +67,7 @@
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&count_private=true&hide_border=false" height="180"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&include_all_commits=true&hide_border=false" height="180"/>
   <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false" height="180"/>
 </div>
 
