@@ -1,26 +1,90 @@
 <div align="center">
- 
-![Header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=300&section=header&text=SckyzO&fontSize=90&animation=fadeIn&fontAlignY=38&desc=SysAdmin%20&%20DevOps%20Enthusiast&descAlignY=51&descAlign=62)
- 
-### 🛠️ Tech Stack
- 
-[![My Skills](https://skillicons.dev/icons?i=linux,bash,vim,python,go,docker,ansible,prometheus,grafana,terraform,php,html,css,nginx,github&perline=8)](https://skillicons.dev)
- 
-<br/>
- 
-### 📊 GitHub Stats
- 
-<a href="https://github.com/anuraghazra/github-readme-stats">
-  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=SckyzO&show_icons=true&theme=tokyonight&include_all_commits=true&count_private=true"/>
-  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=SckyzO&layout=compact&theme=tokyonight"/>
-</a>
- 
-<br/>
- 
-### 📈 Activity Graph
- 
-<a href="https://github.com/ashutosh00710/github-readme-activity-graph">
-    <img src="https://github-readme-activity-graph.vercel.app/graph?username=SckyzO&theme=tokyo-night" />
-</a>
- 
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=header&reversal=true" />
+</div>
+
+<h1 align="center">Hi, I'm <code>SckyzO</code> 👋</h1>
+
+<p align="center">
+  <a href="https://github.com/DenverCoder1/readme-typing-svg">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
+  <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
+</p>
+
+---
+
+## 🧠 About Me
+
+- 🐧 **Linux Addict**: I live in the terminal.
+- 🐳 **Containerization**: Docker is my playground.
+- 📊 **Observability**: Prometheus & Grafana are my eyes.
+- ⚡ **Automation**: Ansible makes my life easier.
+- 🛠️ **Dev**: Coding tools in Python and Go to solve real problems.
+- 📍 **Location**: Toulouse, France.
+
+## 📬 Contact
+
+<p align="center">
+  <a href="mailto:sckyzo@gmail.com"><img src="https://img.shields.io/badge/Email-sckyzo@gmail.com-informational?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+</p>
+
+---
+
+## 🧪 Languages & Stack
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/badge/Bash-black?style=for-the-badge&logo=gnubash&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" />
+  <img src="https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" />
+  <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" />
+  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" />
+</p>
+
+## 🧰 Tools & Environment
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Vim-019733?style=for-the-badge&logo=vim&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tmux-1BB91F?style=for-the-badge&logo=tmux&logoColor=white" />
+  <img src="https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=zsh&logoColor=white" />
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
+  <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" />
+</p>
+
+---
+
+## 📊 GitHub Stats
+
+<div align="center">
+  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&count_private=true&hide_border=false" height="180"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false" height="180"/>
+</div>
+
+---
+
+## 🏆 Achievements
+
+<div align="center">
+  <img src="https://github-profile-trophy.vercel.app/?username=SckyzO&theme=darkhub&no-frame=true&column=7&margin-w=10" />
+</div>
+
+---
+
+## 📈 Activity
+
+<div align="center">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=SckyzO&theme=tokyo-night&hide_border=false" />
+</div>
+
+---
+
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" />
 </div>
