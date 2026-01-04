@@ -67,8 +67,8 @@
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&include_all_commits=true&hide_border=false" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false" height="180"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&hide_border=false&cache_bust=1" height="180"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false&cache_bust=1" height="180"/>
 </div>
 
 ---
@@ -76,7 +76,7 @@
 ## 🏆 Achievements
 
 <div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=SckyzO&theme=darkhub&no-frame=true&column=7&margin-w=10" />
+  <img src="https://github-profile-trophy.vercel.app/?username=SckyzO&theme=onedark&no-frame=true&column=7&margin-w=10&cache_bust=1" />
 </div>
 
 ---
