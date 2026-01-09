@@ -5,11 +5,12 @@ Ce document recense les fonctionnalités proposées, validées et en cours de d�
 ## ✅ Validées / Prioritaires
 
 ### 🕹️ Interactivité & UX
-- [ ] **Language Flip 3D (Killer Feature)**
-    - Bouton "Drapeau" pour changer de langue.
-    - Animation de retournement 3D (Flip Card) des sections en cascade (staggered).
-    - Gestion intelligente de la hauteur variable (FR souvent > EN).
-    - **SEO Friendly** : Utilisation de balises `hreflang` et maintien de deux URLs distinctes (`_fr` et `_en`) tout en offrant une transition fluide.
+- [x] **Language Flip 3D (Killer Feature)**
+    - [x] Bouton "Drapeau" pour changer de langue.
+    - [x] Animation de retournement 3D (Flip Card) des sections en cascade (staggered).
+    - [x] Gestion intelligente de la hauteur variable (Grid Method).
+    - [x] **SEO Friendly** : Utilisation de balises `hreflang`.
+    - [ ] *TODO: Retravailler le design et l'alignement du bouton Drapeau dans le header.*
 
 ### 🎨 Design & UI (Pixel Perfect)
 - [ ] **Micro-Interactions "Glassmorphism" 2.0**

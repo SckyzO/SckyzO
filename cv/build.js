@@ -35,18 +35,30 @@ const i18n = {
 
 // --- GÉNÉRATEUR HTML ---
 function generateHTML(lang) {
-  const t = i18n[lang];
+  const lang2 = lang === 'fr' ? 'en' : 'fr';
+  const t1 = i18n[lang];
+  const t2 = i18n[lang2];
   const c = data.contact;
   const updateDate = new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' });
-    const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
+  const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
   
+  // Helper pour générer le bloc Flip 3D
+  const flip = (c1, c2, delay='') => `
+    <div class="flip-container ${delay}">
+        <div class="flip-card">
+            <div class="flip-front">${c1}</div>
+            <div class="flip-back">${c2}</div>
+        </div>
+    </div>`;
+
   return `<!DOCTYPE html>
 <html lang="${lang}" class="dark" id="html-root" style="font-size: 14px;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${c.name} - ${c.title[lang]}</title>
-    <meta name="description" content="${data.summary[lang].substring(0, 150).replace(/<[^>]*>/g, '')}...">
+    <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
+    <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />    <meta name="description" content="${data.summary[lang].substring(0, 150).replace(/<[^>]*>/g, '')}...">
     <meta name="author" content="${c.name}">
     <meta name="keywords" content="CV, Resume, ${c.title[lang]}, DevOps, SRE, HPC, Linux">
     
@@ -109,16 +121,30 @@ function generateHTML(lang) {
         .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card:hover { transform: translateY(-4px); box-shadow: 0 0 40px 5px rgba(var(--accent-rgba), 0.15); border-color: rgba(var(--accent-rgba), 0.4) !important; }
 
-        /* --- 3D LANGUAGE FLIP --- */
+        /* --- 3D LANGUAGE FLIP (Grid Method) --- */
         .flip-container { perspective: 2000px; }
-        .flip-card { position: relative; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; width: 100%; height: 100%; }
-        .flip-card.is-flipped { transform: rotateY(180deg); }
-        .flip-front, .flip-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-        .flip-back { transform: rotateY(180deg); }
+        .flip-card { 
+            display: grid; grid-template-columns: 1fr; 
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform-style: preserve-3d; 
+        }
+        .flip-front, .flip-back { 
+            grid-area: 1 / 1; 
+            backface-visibility: hidden; -webkit-backface-visibility: hidden; 
+            width: 100%; 
+        }
+        .flip-front { transform: rotateY(0deg); z-index: 2; }
+        .flip-back { transform: rotateY(180deg); z-index: 1; }
         
-        /* Pour les éléments qui ne sont pas en position absolue par défaut (flux normal) */
-        .flip-front { position: relative; z-index: 2; }
-        .flip-back { position: absolute; z-index: 1; top: 0; left: 0; width: 100%; }
+        /* State: Flipped */
+        .flip-container.flipped .flip-card { transform: rotateY(-180deg); }
+        
+        /* Stagger Delays for "Wave" effect */
+        .delay-100 .flip-card { transition-delay: 0.1s; }
+        .delay-200 .flip-card { transition-delay: 0.2s; }
+        .delay-300 .flip-card { transition-delay: 0.3s; }
+        .delay-400 .flip-card { transition-delay: 0.4s; }
+        .delay-500 .flip-card { transition-delay: 0.5s; }
 
         .accent-text { color: var(--accent); }
         .accent-bg { background-color: var(--accent); }
@@ -241,11 +267,18 @@ function generateHTML(lang) {
 <body class="p-4 md:p-8 lg:p-12 theme-deep font-hub" id="body-root">
     
     <div id="onboarding-tip" class="no-print text-left">
+        ${flip(`
         <div class="flex items-center gap-3">
             <i data-lucide="sparkles" class="w-4 h-4"></i>
-            <span>${t.onboarding}</span>
+            <span>${t1.onboarding}</span>
             <i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i>
-        </div>
+        </div>`,
+        `<div class="flex items-center gap-3">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>${t2.onboarding}</span>
+            <i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i>
+        </div>`
+        )}
     </div>
 
     <button onclick="toggleSettings()" class="cog-btn no-print" id="main-cog"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></button>
@@ -290,6 +323,7 @@ function generateHTML(lang) {
     </div>
 
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left">
+        ${flip(`
         <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group reveal" style="animation-delay: 0s">
             <div class="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left"><i data-lucide="box" style="width: 300px; height: 300px;"></i></div>
             <div class="w-40 h-40 bg-slate-800/20 rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0">
@@ -300,50 +334,119 @@ function generateHTML(lang) {
                 <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none" style="font-family: var(--font-sans);">${c.name}</h1>
                 <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang]}</p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
+                    <button onclick="toggleLanguage()" class="card px-6 py-3 rounded-2xl font-black text-xs tracking-widest hover:scale-105 hover:accent-border flex items-center gap-3 transition-all" title="Switch Language (Flip)">
+                        <span class="text-lg">${lang === 'fr' ? '🇺🇸' : '🇫🇷'}</span> SWITCH
+                    </button>
                     <a href="${pdfFilename}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
                     <a href="https://github.com/${c.github}" target="_blank" class="p-3 card hover:accent-border"><i data-lucide="github" class="w-5 h-5"></i></a>
                     <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="p-3 card hover:accent-border"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
                 </div>
             </div>
             <div class="hidden lg:flex flex-col gap-4 text-right opacity-40 font-mono text-[10px] uppercase tracking-[0.2em]"><span>Status: system_ready</span><span>Uptime: 15y_experience</span><span>Sync: ${updateDate}</span></div>
-        </header>
+        </header>`, 
+        `
+        <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left"><i data-lucide="box" style="width: 300px; height: 300px;"></i></div>
+            <div class="w-40 h-40 bg-slate-800/20 rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0">
+                <i data-lucide="user" class="w-20 h-20 accent-text"></i>
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 accent-bg border-[6px] border-[#18181b] rounded-full animate-pulse shadow-[0_0_20px_var(--accent)]"></div>
+            </div>
+            <div class="text-center md:text-left flex-grow text-left">
+                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none" style="font-family: var(--font-sans);">${c.name}</h1>
+                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang2]}</p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
+                    <button onclick="toggleLanguage()" class="card px-6 py-3 rounded-2xl font-black text-xs tracking-widest hover:scale-105 hover:accent-border flex items-center gap-3 transition-all">
+                        <span class="text-lg">${lang === 'fr' ? '🇫🇷' : '🇺🇸'}</span> RETOUR
+                    </button>
+                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
+                </div>
+            </div>
+            <div class="hidden lg:flex flex-col gap-4 text-right opacity-40 font-mono text-[10px] uppercase tracking-[0.2em]"><span>Status: system_ready</span><span>Uptime: 15y_experience</span><span>Sync: ${updateDate}</span></div>
+        </header>`
+        )}
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start text-left">
             <div class="lg:col-span-4 flex flex-col gap-12 text-left">
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.contact}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
                     <div class="card p-8 text-left"><ul class="space-y-6 text-[0.95rem] font-mono opacity-80 text-left"><li class="flex items-center gap-4 truncate text-left"><a href="mailto:${c.email}" class="hover:accent-text transition-colors text-left">${c.email}</a></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.website}</span></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.location}</span></li></ul></div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
+                    <div class="card p-8 text-left"><ul class="space-y-6 text-[0.95rem] font-mono opacity-80 text-left"><li class="flex items-center gap-4 truncate text-left"><a href="mailto:${c.email}" class="hover:accent-text transition-colors text-left">${c.email}</a></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.website}</span></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.location}</span></li></ul></div>
+                </section>`, 'delay-100')}
+
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.languages}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                </section>`, 'delay-200')}
+
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.skills}</h2></div>
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
                     <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang2].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
+                </section>`, 'delay-300')}
+
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.education}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-white uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.education}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-white uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
+                </section>`, 'delay-400')}
+                
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.5s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.certifications}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
                     <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
+                    <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
+                </section>`, 'delay-500')}
             </div>
             <div class="lg:col-span-8 flex flex-col gap-12 text-left">
+                ${flip(`
                 <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.profile}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang]}</p></div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
+                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang2]}</p></div>
+                </section>`, 'delay-200')}
+
+                ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.proSkills}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-6 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                </section>`, 'delay-300')}
+
+                ${flip(`
                 <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t.experience}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
                     <div class="card p-12 space-y-20 text-left">${data.experiences.map((exp, idx) => `<div class="relative pl-14 border-l-2 border-slate-800/50 group text-left"><div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125"></div><div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-white mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${d}</span></li>`).join('')}</ul></div>`).join('')}</div>
-                </section>
+                </section>`,
+                `<section class="flex flex-col gap-4 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
+                    <div class="card p-12 space-y-20 text-left">${data.experiences.map((exp, idx) => `<div class="relative pl-14 border-l-2 border-slate-800/50 group text-left"><div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125"></div><div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-white mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang2].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${d}</span></li>`).join('')}</ul></div>`).join('')}</div>
+                </section>`, 'delay-400')}
             </div>
         </div>
     </div>
@@ -353,6 +456,9 @@ function generateHTML(lang) {
     <script>
         const colors = [ { name: 'Blue', value: '59, 130, 246', hex: '#3b82f6' }, { name: 'Emerald', value: '16, 185, 129', hex: '#10b981' }, { name: 'Violet', value: '139, 92, 246', hex: '#8b5cf6' }, { name: 'Amber', value: '245, 158, 11', hex: '#f5a623' }, { name: 'Rose', value: '244, 63, 94', hex: '#f43f5e' }, { name: 'Sky', value: '14, 165, 233', hex: '#0ea5e9' }, { name: 'Orange', value: '249, 115, 22', hex: '#f97316' }, { name: 'Teal', value: '20, 184, 166', hex: '#14b8a6' }, { name: 'Cyan', value: '6, 182, 212', hex: '#06b6d4' }, { name: 'Fuchsia', value: '217, 70, 239', hex: '#d946ef' } ];
         lucide.createIcons();
+        function toggleLanguage() {
+            document.querySelectorAll('.flip-container').forEach(el => el.classList.toggle('flipped'));
+        }
         function toggleSettings() { document.getElementById('settings-panel').classList.toggle('open'); document.getElementById('onboarding-tip').classList.remove('show'); document.getElementById('main-cog').classList.remove('aura-pulse'); }
         function toggleTTY() { 
             const checkbox = document.getElementById('tty-checkbox');
