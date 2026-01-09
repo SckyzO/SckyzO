@@ -13,8 +13,8 @@
     "twitter": "SckyzO"
   },
   "summary": {
-    "fr": "Ingénieur système avec plus de 15 ans d'expérience, spécialisé dans le Linux, le HPC, le SysOps/DevOps et l'automatisation. Expert en déploiement de systèmes critiques à grande échelle. Passionné par l'innovation technique, de l'infrastructure industrielle à l'automatisation IoT.",
-    "en": "System Engineer with 15+ years of experience, specializing in Linux, HPC, SysOps/DevOps, and automation. Expert in large-scale critical system deployments. Passionate about technical innovation, from industrial infrastructure to home automation IoT."
+    "fr": "Ingénieur système avec plus de <strong>15 ans d'expérience</strong>, spécialisé dans le <strong>Linux</strong>, le <strong>HPC</strong>, le <strong>SysOps/DevOps</strong> et l'<strong>automatisation</strong>. Expert en déploiement de systèmes critiques à grande échelle. Passionné par l'innovation technique, de l'infrastructure industrielle à l'<strong>automatisation IoT</strong>.",
+    "en": "System Engineer with over <strong>15 years of experience</strong>, specializing in <strong>Linux</strong>, <strong>HPC</strong>, <strong>SysOps/DevOps</strong>, and <strong>automation</strong>. Expert in large-scale critical system deployments. Passionate about technical innovation, from industrial infrastructure to <strong>home automation IoT</strong>."
   },
   "experiences": [
     {
@@ -23,16 +23,16 @@
       "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
       "details": {
         "fr": [
-          "Projets HPC internationaux : Administration, support et automatisation (Ansible, Slurm, Infiniband).",
-          "Expertise Stockage : IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries.",
-          "Observabilité : Tech Lead sur les solutions Prometheus & Grafana.",
-          "Infrastructure as Code et scripting avancé (Bash, Python)."
+          "Projets <strong>HPC internationaux</strong> : Administration, support et automatisation (<strong>Ansible</strong>, <strong>Slurm</strong>, <strong>Infiniband</strong>).",
+          "Expertise Stockage : <strong>IBM HPSS</strong>, NetApp, DDN, IBM ESS, Tape Libraries.",
+          "Observabilité : <strong>Tech Lead</strong> sur les solutions <strong>Prometheus & Grafana</strong>.",
+          "<strong>Infrastructure as Code</strong> et scripting avancé (Bash, Python)."
         ],
         "en": [
-          "International HPC projects: Administration, support, and automation (Ansible, Slurm, Infiniband).",
-          "Storage Expertise: IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries.",
-          "Observability: Tech Lead on Prometheus & Grafana solutions.",
-          "Infrastructure as Code and advanced scripting (Bash, Python)."
+          "International <strong>HPC projects</strong>: Administration, support, and automation (<strong>Ansible</strong>, <strong>Slurm</strong>, <strong>Infiniband</strong>).",
+          "Storage Expertise: <strong>IBM HPSS</strong>, NetApp, DDN, IBM ESS, Tape Libraries.",
+          "Observability: <strong>Tech Lead</strong> on <strong>Prometheus & Grafana</strong> solutions.",
+          "<strong>Infrastructure as Code</strong> and advanced scripting (Bash, Python)."
         ]
       }
     },
@@ -42,14 +42,14 @@
       "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
       "details": {
         "fr": [
-          "Cloud Privé : Déploiement et support de conteneurs (Docker, Kubernetes, Rancher).",
-          "Virtualisation & Monitoring : vRealize Suite, ESX, ELK, Prometheus.",
-          "Automatisation : Ansible AWX, Jenkins, Gitlab CI."
+          "<strong>Cloud Privé</strong> : Déploiement et support de conteneurs (<strong>Docker</strong>, <strong>Kubernetes</strong>, <strong>Rancher</strong>).",
+          "Virtualisation & Monitoring : <strong>vRealize Suite</strong>, ESX, <strong>ELK</strong>, Prometheus.",
+          "Automatisation : <strong>Ansible AWX</strong>, Jenkins, Gitlab CI."
         ],
         "en": [
-          "Private Cloud: Deployment and support of containers (Docker, Kubernetes, Rancher).",
-          "Virtualization & Monitoring: vRealize Suite, ESX, ELK, Prometheus.",
-          "Automation: Ansible AWX, Jenkins, Gitlab CI."
+          "<strong>Private Cloud</strong>: Deployment and support of containers (<strong>Docker</strong>, <strong>Kubernetes</strong>, <strong>Rancher</strong>).",
+          "Virtualization & Monitoring: <strong>vRealize Suite</strong>, ESX, <strong>ELK</strong>, Prometheus.",
+          "Automation: <strong>Ansible AWX</strong>, Jenkins, Gitlab CI."
         ]
       }
     },
@@ -59,14 +59,14 @@
       "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
       "details": {
         "fr": [
-          "HPC : Architecture clusters de calcul (Nastran, Abaqus), PBS Scheduler.",
-          "Stockage : NetApp MetroCluster, SnapMirror, Commvault.",
-          "Architecture IdM : Red Hat IdM (LDAP), Satellite."
+          "<strong>HPC</strong> : Architecture clusters de calcul (Nastran, Abaqus), <strong>PBS Scheduler</strong>.",
+          "Stockage : <strong>NetApp MetroCluster</strong>, SnapMirror, Commvault.",
+          "Architecture IdM : <strong>Red Hat IdM (LDAP)</strong>, Satellite."
         ],
         "en": [
-          "HPC: Computing cluster architecture (Nastran, Abaqus), PBS Scheduler.",
-          "Storage: NetApp MetroCluster, SnapMirror, Commvault.",
-          "IdM Architecture: Red Hat IdM (LDAP), Satellite."
+          "<strong>HPC</strong>: Computing cluster architecture (Nastran, Abaqus), <strong>PBS Scheduler</strong>.",
+          "Storage: <strong>NetApp MetroCluster</strong>, SnapMirror, Commvault.",
+          "IdM Architecture: <strong>Red Hat IdM (LDAP)</strong>, Satellite."
         ]
       }
     }
@@ -96,14 +96,14 @@
   },
   "skills": {
     "professional": [
-      { "category": "Linux", "tools": "RedHat, Rocky, Debian, Ubuntu" },
-      { "category": "HPC", "tools": "Slurm, Infiniband, Mellanox, ESS" },
-      { "category": "Storage", "tools": "NetApp, IBM HPSS, GPFS, Ceph" },
-      { "category": "DevOps", "tools": "Ansible, Terraform, CI/CD, GitOps" },
-      { "category": "Monitoring", "tools": "Prometheus, Grafana, ELK, Loki" },
-      { "category": "Cloud/Virt", "tools": "AWS, GCP, OpenShift, VMware" },
-      { "category": "Dev", "tools": "Bash, Python, APIs" },
-      { "category": "IoT/3D", "tools": "MQTT, ESP32, Fusion 360" }
+      { "category": "Linux", "tools": "RedHat, Rocky, Debian", "icon": "server", "level": 95 },
+      { "category": "HPC", "tools": "Slurm, Infiniband, ESS", "icon": "cpu", "level": 90 },
+      { "category": "Storage", "tools": "NetApp, HPSS, Ceph", "icon": "database", "level": 85 },
+      { "category": "DevOps", "tools": "Ansible, Terraform, CI/CD", "icon": "git-branch", "level": 88 },
+      { "category": "Observability", "tools": "Prometheus, Grafana, ELK", "icon": "activity", "level": 92 },
+      { "category": "Cloud/Virt", "tools": "AWS, GCP, VMware", "icon": "cloud", "level": 80 },
+      { "category": "Development", "tools": "Bash, Python, APIs", "icon": "code-2", "level": 85 },
+      { "category": "IoT/3D", "tools": "MQTT, ESP32, Fusion 360", "icon": "radio", "level": 75 }
     ],
     "personal": {
       "fr": ["Adaptable", "Minutieux", "Autonome", "Passionné", "Problem Solver", "Esprit d'équipe"],
