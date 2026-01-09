@@ -1,94 +1,65 @@
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=header&reversal=true" />
-</div>
+# 🚀 SckyzO CV Generator
 
-<div align="center">
-  <h1>Hi, I'm <code>Tom</code> 👋</h1>
-  <h3><code>SckyzO</code> • <code>Thomas Bourcey</code></h3>
-  
-  <p>
-    <a href="https://github.com/DenverCoder1/readme-typing-svg">
-      <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
-    </a>
-  </p>
+Bienvenue sur le dépôt du générateur de CV de **Thomas Bourcey (SckyzO)**. Ce projet remplace l'ancien site `tomzone.fr` par une approche "Data-Driven" moderne.
 
-  <p>
-    <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
-    <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
-  </p>
-</div>
+Il génère automatiquement un CV professionnel sous trois formats (**HTML, PDF, Markdown**) et en deux langues (**Français, Anglais**) à partir d'une source de données unique.
 
----
+## 🏗 Architecture
 
-## 🧠 About Me
+Le projet est conçu pour être statique, performant et automatisé.
 
-- 👤 **Identity**: My name is **Thomas Bourcey**, but you probably know me as **SckyzO**.
-- 🐧 **Linux Addict**: I live in the terminal.
-- 🐳 **Containerization**: Docker is my playground.
-- 📊 **Observability**: Prometheus & Grafana are my eyes.
-- ⚡ **Automation**: Ansible makes my life easier.
-- 🛠️ **Dev**: Coding tools in Python and Go to solve real problems.
-- 📍 **Location**: Toulouse, France.
+- **Données** : `cv/data.json` (Source unique de vérité).
+- **Moteur de Rendu** : Node.js + Template Strings (Pas de framework lourd type React/Vue).
+- **Style** : Tailwind CSS (Themeable : Light, Dark, Deep).
+- **PDF Generation** : [Playwright](https://playwright.dev/) (Chromium) pour un rendu pixel-perfect.
+- **Iconographie** : Lucide Icons.
+- **Automatisation** : Docker & GitHub Actions.
 
-## 📬 Contact
+## 📂 Structure du Projet
 
-<p align="center">
-  <a href="mailto:sckyzo@gmail.com"><img src="https://img.shields.io/badge/Email-sckyzo@gmail.com-informational?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
-</p>
+```bash
+/cv
+├── build.js          # Script principal (Génération HTML -> MD -> PDF)
+├── data.json         # Données du CV (Expériences, Skills, Contact...)
+├── Dockerfile        # Image de production (Nginx) et Build stage
+├── docker-compose.yml # Environnement de développement local
+└── .github/workflows # Pipeline CI/CD
+```
 
----
+## 🛠 Installation & Développement
 
-## 🧪 Languages & Stack
+L'environnement de développement est conteneurisé. Vous n'avez besoin que de **Docker**.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
-  <img src="https://img.shields.io/badge/Bash-black?style=for-the-badge&logo=gnubash&logoColor=white" />
-  <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" />
-  <img src="https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" />
-  <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" />
-  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" />
-</p>
+### 1. Lancer l'environnement
+Utilisez Docker Compose pour lancer le "watcher" (qui surveille les modifications) et le serveur de prévisualisation.
 
-## 🧰 Tools & Environment
+```bash
+cd cv
+docker compose up
+```
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Vim-019733?style=for-the-badge&logo=vim&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tmux-1BB91F?style=for-the-badge&logo=tmux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=zsh&logoColor=white" />
-  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" />
-</p>
+### 2. Accéder au CV
+Une fois lancé, le CV est accessible en local :
+- **Français** : http://localhost:8080/index_fr.html
+- **Anglais** : http://localhost:8080/index_en.html
+- **PDF** : http://localhost:8080/CV_Thomas_Bourcey_FR.pdf
 
----
+Le service `builder` régénère automatiquement les fichiers (HTML, PDF, MD) à chaque modification de `data.json` ou `build.js`.
 
-## 📊 GitHub Stats
+## 📦 Pipeline CI/CD (GitHub Actions)
 
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&hide_border=false&cache_bust=1" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false&cache_bust=1" height="180"/>
-</div>
+Le workflow `.github/workflows/generate-cv.yml` s'exécute à chaque push sur `main` :
 
----
+1.  **Build** : Installe les dépendances et exécute `build.js`.
+2.  **Artifacts** : Sauvegarde les fichiers générés (PDF, HTML, MD).
+3.  **Deploy** : (En cours) Déploie les fichiers statiques vers le serveur de production (`tomzone.fr`).
 
-## 🏆 Achievements
+## ✨ Fonctionnalités Uniques
 
-<div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=SckyzO&theme=onedark&no-frame=true&column=7&margin-w=10&cache_bust=1" />
-</div>
+- **Thèmes Dynamiques** : Le visiteur peut changer le thème (Couleurs, Polices) en temps réel.
+- **Onboarding** : Une "aura" guide les nouveaux visiteurs vers les paramètres.
+- **Impression Parfaite** : Le PDF est généré via un moteur Chromium headless, garantissant que le document imprimé est identique au design écran.
 
----
+## 📄 Licence
 
-## 📈 Activity
-
-<div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=SckyzO&theme=tokyo-night&hide_border=false" />
-</div>
-
----
-
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" />
-</div>
+Ce projet est personnel. Le code est ouvert, mais les données personnelles (dans `data.json`) m'appartiennent.

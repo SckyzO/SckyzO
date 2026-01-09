@@ -1,0 +1,23 @@
+services:
+  # Service de surveillance et de build automatique
+  builder:
+    image: mcr.microsoft.com/playwright:v1.57.0-jammy
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    # Installe les dépendances puis lance nodemon pour surveiller les changements
+    command: >
+      sh -c "npm install && npx nodemon -L --watch build.js --watch data.json --exec 'node build.js'"
+    environment:
+      - CI=true
+
+  # Service web pour visualiser le résultat
+  preview:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/usr/share/nginx/html
+    depends_on:
+      - builder
