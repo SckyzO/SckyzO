@@ -1,0 +1,113 @@
+{
+  "contact": {
+    "name": "Thomas Bourcey",
+    "title": {
+      "fr": "Ingénieur Système | Expert HPC, DevOps & Observabilité",
+      "en": "System Engineer | HPC, DevOps & Observability Expert"
+    },
+    "location": "31470 Fonsorbes, France",
+    "email": "contact@tomzone.fr",
+    "website": "www.tomzone.fr",
+    "github": "SckyzO",
+    "linkedin": "thomasbourcey",
+    "twitter": "SckyzO"
+  },
+  "summary": {
+    "fr": "Ingénieur système avec plus de 15 ans d'expérience, spécialisé dans le Linux, le HPC, le SysOps/DevOps et l'automatisation. Expert en déploiement de systèmes critiques à grande échelle. Passionné par l'innovation technique, de l'infrastructure industrielle à l'automatisation IoT.",
+    "en": "System Engineer with 15+ years of experience, specializing in Linux, HPC, SysOps/DevOps, and automation. Expert in large-scale critical system deployments. Passionate about technical innovation, from industrial infrastructure to home automation IoT."
+  },
+  "experiences": [
+    {
+      "company": "Eviden (ex-Bull)",
+      "period": "2020 – Present",
+      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "details": {
+        "fr": [
+          "Projets HPC internationaux : Administration, support et automatisation (Ansible, Slurm, Infiniband).",
+          "Expertise Stockage : IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries.",
+          "Observabilité : Tech Lead sur les solutions Prometheus & Grafana.",
+          "Infrastructure as Code et scripting avancé (Bash, Python)."
+        ],
+        "en": [
+          "International HPC projects: Administration, support, and automation (Ansible, Slurm, Infiniband).",
+          "Storage Expertise: IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries.",
+          "Observability: Tech Lead on Prometheus & Grafana solutions.",
+          "Infrastructure as Code and advanced scripting (Bash, Python)."
+        ]
+      }
+    },
+    {
+      "company": "Gfi Informatique (Thales Alenia Space)",
+      "period": "2018 – 2020",
+      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "details": {
+        "fr": [
+          "Cloud Privé : Déploiement et support de conteneurs (Docker, Kubernetes, Rancher).",
+          "Virtualisation & Monitoring : vRealize Suite, ESX, ELK, Prometheus.",
+          "Automatisation : Ansible AWX, Jenkins, Gitlab CI."
+        ],
+        "en": [
+          "Private Cloud: Deployment and support of containers (Docker, Kubernetes, Rancher).",
+          "Virtualization & Monitoring: vRealize Suite, ESX, ELK, Prometheus.",
+          "Automation: Ansible AWX, Jenkins, Gitlab CI."
+        ]
+      }
+    },
+    {
+      "company": "D-Fi Services (Safran Electrical & Power)",
+      "period": "2010 – 2018",
+      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "details": {
+        "fr": [
+          "HPC : Architecture clusters de calcul (Nastran, Abaqus), PBS Scheduler.",
+          "Stockage : NetApp MetroCluster, SnapMirror, Commvault.",
+          "Architecture IdM : Red Hat IdM (LDAP), Satellite."
+        ],
+        "en": [
+          "HPC: Computing cluster architecture (Nastran, Abaqus), PBS Scheduler.",
+          "Storage: NetApp MetroCluster, SnapMirror, Commvault.",
+          "IdM Architecture: Red Hat IdM (LDAP), Satellite."
+        ]
+      }
+    }
+  ],
+  "education": [
+    {
+      "degree": { "fr": "BTS Informatique de Gestion", "en": "Associate Degree in IT Management" },
+      "school": "Toulouse, FR",
+      "year": "2006"
+    }
+  ],
+  "certifications": [
+    "AWS Architect Associate",
+    "RHCSA RedHat 7",
+    "NDCA NetApp Advanced",
+    "VMware vSphere & ESX"
+  ],
+  "languages": {
+    "fr": [
+      { "name": "Français", "level": "Maternel" },
+      { "name": "Anglais", "level": "Technique" }
+    ],
+    "en": [
+      { "name": "French", "level": "Native" },
+      { "name": "English", "level": "Professional / Technical" }
+    ]
+  },
+  "skills": {
+    "professional": [
+      { "category": "Linux", "tools": "RedHat, Rocky, Debian, Ubuntu" },
+      { "category": "HPC", "tools": "Slurm, Infiniband, Mellanox, ESS" },
+      { "category": "Storage", "tools": "NetApp, IBM HPSS, GPFS, Ceph" },
+      { "category": "DevOps", "tools": "Ansible, Terraform, CI/CD, GitOps" },
+      { "category": "Monitoring", "tools": "Prometheus, Grafana, ELK, Loki" },
+      { "category": "Cloud/Virt", "tools": "AWS, GCP, OpenShift, VMware" },
+      { "category": "Dev", "tools": "Bash, Python, APIs" },
+      { "category": "IoT/3D", "tools": "MQTT, ESP32, Fusion 360" }
+    ],
+    "personal": {
+      "fr": ["Adaptable", "Minutieux", "Autonome", "Passionné", "Problem Solver", "Esprit d'équipe"],
+      "en": ["Adaptable", "Detail-Oriented", "Autonomous", "Passionate", "Problem Solver", "Team Player"]
+    }
+  }
+}

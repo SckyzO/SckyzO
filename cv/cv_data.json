@@ -1,0 +1,114 @@
+{
+  "name": "Thomas Bourcey",
+  "title": "System Engineer | HPC, DevOps & Observability Expert",
+  "location": "31470 Fonsorbes, Occitanie, France",
+  "email": "contact@tomzone.fr",
+  "website": "www.tomzone.fr",
+  "social": {
+    "github": "https://github.com/SckyzO",
+    "linkedin": "https://www.linkedin.com/in/thomasbourcey/",
+    "twitter": "https://x.com/SckyzO"
+  },
+  "summary": "Ingénieur système avec plus de 15 ans d'expérience, spécialisé dans le Linux, le HPC, le SysOps/DevOps et l'automatisation. Passionné par l'informatique, l'automatisation domestique, le monitoring et le développement web. Expert en déploiement de systèmes à grande échelle, curieux et toujours à la recherche de nouvelles technologies.",
+  "experience": [
+    {
+      "role": "System Engineer",
+      "company": "Eviden (ex-Bull)",
+      "period": "2020 – Présent",
+      "details": [
+        "Spécialisé en HPC, HPSS, stockage et monitoring.",
+        "Déploiement de systèmes à grande échelle à l'international.",
+        "HPC : Administration & Support, Automatisation (Ansible), Slurm, Infiniband, RHEL/Rocky/Ubuntu, GPU acceleration.",
+        "HPSS : Administration IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries.",
+        "Monitoring : Expert Prometheus & Grafana, Technical Lead.",
+        "Développement : Scripting Bash & Python avancé, IaC avec Ansible."
+      ]
+    },
+    {
+      "role": "System Engineer",
+      "company": "Gfi Informatique",
+      "period": "2018 – 2020",
+      "details": [
+        "Expertise Technique DevOps / On Premise pour Thales Alenia Space.",
+        "Mise en place et support de conteneurs : Docker, Podman, Kubernetes, Rancher.",
+        "Monitoring & Observability : ELK, Prometheus, Grafana, InfluxDB.",
+        "Virtualisation VMware : vRealize Suite, ESX, NSX, vSan.",
+        "Automatisation : Ansible / Ansible AWX, Gitlab, Jenkins.",
+        "Cloud hybride : AWS, GCP, OpenShift."
+      ]
+    },
+    {
+      "role": "System Engineer",
+      "company": "D-Fi Services",
+      "period": "2010 – 2018",
+      "details": [
+        "Assistance Technique pour Safran Electrical & Power (5 ans).",
+        "Expert et référent systèmes Linux, Unix et NetApp.",
+        "Architecte clusters de calcul (HPC) : Nastran, Abaqus, Samcef.",
+        "Administrateur PBS : Workload Manager et Job Scheduler.",
+        "Stockage & Backup : NetApp MetroCluster, SnapMirror, Commvault, Veeam.",
+        "Architecture : Red Hat IdM (LDAP), Satellite (Spacewalker)."
+      ]
+    },
+    {
+      "role": "System Administrator",
+      "company": "Axians & Scasicomp",
+      "period": "2004 – 2010",
+      "details": [
+        "Focus sur le stockage, la virtualisation et l'administration IT.",
+        "Mise en place de solutions PCA/PRA pour grands comptes (Airbus, CNES).",
+        "Stockage & Virtualisation : NetApp, VMware, migrations de données.",
+        "Administration : Red Hat, Debian, Solaris, Windows.",
+        "Backup : NetApp, EMC, Atempo Time Navigator."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "BTS Informatique de Gestion - Administrateur Réseaux",
+      "school": "Toulouse (31)",
+      "year": "2006"
+    }
+  ],
+  "certifications": [
+    "AWS Architect Associate (2020)",
+    "RHCSA - Linux RedHat 7 (2017)",
+    "NDCA NetApp Advanced (2011)",
+    "VMware vSphere 5.1 (2013)",
+    "VMware ESX 4.0 (2008)",
+    "Atempo Time Navigator 4.1 (2008)"
+  ],
+  "languages": [
+    { "name": "Français", "level": "Maternel" },
+    { "name": "Anglais", "level": "Intermédiaire / Technique" },
+    { "name": "Espagnol", "level": "Notions" }
+  ],
+  "skills": {
+    "professional": [
+      { "category": "Linux Administration", "tools": "RedHat, Rocky, Debian, Ubuntu" },
+      { "category": "HPC & Supercomputing", "tools": "Slurm, Infiniband, Mellanox, DDN, IBM ESS" },
+      { "category": "Storage Management", "tools": "NetApp, IBM HPSS, GPFS, Ceph, NFS" },
+      { "category": "Automation & DevOps", "tools": "Ansible, Terraform, CI/CD, GitOps" },
+      { "category": "Monitoring & Observability", "tools": "Prometheus, Grafana, ELK Stack, Loki" },
+      { "category": "Networking & Security", "tools": "VLANs, Firewalls, VPNs, Hardening" },
+      { "category": "Cloud & Virtualization", "tools": "AWS, GCP, OpenShift, VMware, KVM" },
+      { "category": "Scripting & Development", "tools": "Bash, Python, APIs" },
+      { "category": "Home Automation & IoT", "tools": "Smart home, MQTT, ESP32, Zigbee" },
+      { "category": "3D Printing & CAD", "tools": "Prototyping, Fusion 360" }
+    ],
+    "personal": [
+      "Adaptable & Flexible",
+      "Detail-Oriented",
+      "Autonomous & Proactive",
+      "Good Communicator",
+      "Geek & Passionate",
+      "Hands-On & Practical",
+      "Team Player",
+      "Curious & Always Learning",
+      "Creative Thinker",
+      "Reliable & Committed",
+      "Analytical Mindset",
+      "Problem Solver"
+    ]
+  }
+}
