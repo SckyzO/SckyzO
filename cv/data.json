@@ -84,6 +84,38 @@
     "NDCA NetApp Advanced",
     "VMware vSphere & ESX"
   ],
+  "projects": [
+    {
+      "name": "Monitoring Hub",
+      "description": {
+        "fr": "Portail unifié d'observabilité pour infrastructures hybrides. Agrégation de métriques Prometheus et dashboards Grafana.",
+        "en": "Unified observability portal for hybrid infrastructures. Aggregating Prometheus metrics and Grafana dashboards."
+      },
+      "github": "SckyzO/Monitoring-Hub",
+      "tools": ["Next.js", "Prometheus", "Tailwind"],
+      "icon": "layout-dashboard"
+    },
+    {
+      "name": "Home Ops / IoT",
+      "description": {
+        "fr": "Automatisation complète d'une maison intelligente via MQTT, ESP32 et intégration Kubernetes locale.",
+        "en": "Full smart home automation via MQTT, ESP32, and local Kubernetes integration."
+      },
+      "github": "SckyzO/home-ops",
+      "tools": ["MQTT", "ESP32", "Docker"],
+      "icon": "home"
+    },
+    {
+      "name": "CV Generator",
+      "description": {
+        "fr": "Moteur de CV 'Data-driven' générant du HTML, PDF et Markdown via une pipeline CI/CD automatisée.",
+        "en": "Data-driven CV engine generating HTML, PDF, and Markdown via an automated CI/CD pipeline."
+      },
+      "github": "SckyzO/SckyzO",
+      "tools": ["Node.js", "Playwright", "Docker"],
+      "icon": "file-code"
+    }
+  ],
   "languages": {
     "fr": [
       { "name": "Français", "level": "Maternel" },
