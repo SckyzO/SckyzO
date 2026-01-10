@@ -38,7 +38,6 @@ async function getGitHubActivity(username) {
 
 // --- COMPILATION CSS ---
 // (Désactivé pour stabilité Docker - Retour CDN)
-// console.log("Compilation du CSS Tailwind...");
 // ...
 
 // Configuration des libellés par langue
@@ -79,6 +78,17 @@ function highlightMetrics(text) {
   });
 }
 
+function getAge(dateString) {
+  const today = new Date();
+  const birthDate = new Date(dateString);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 function generateRadarChart(skills) {
   const size = 200;
   const center = size / 2;
@@ -111,7 +121,15 @@ function generateRadarChart(skills) {
     return `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" font-weight="900" fill="currentColor" opacity="0.4" class="uppercase tracking-tighter">${s.category}</text>`;
   }).join('');
 
-  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}</svg>`;
+  const pointsSVG = skills.map((s, i) => {
+    const val = s.level || levelsMapping[s.category] || 50;
+    const level = val / 100;
+    const x = center + Math.cos(i * angleStep - Math.PI / 2) * radius * level;
+    const y = center + Math.sin(i * angleStep - Math.PI / 2) * radius * level;
+    return `<circle cx="${x}" cy="${y}" r="4" fill="var(--accent)" class="radar-point transition-all duration-300 opacity-0" data-category="${s.category}" />`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}${pointsSVG}</svg>`;
 }
 
 // --- GÉNÉRATEUR HTML ---
@@ -152,9 +170,8 @@ function generateHTML(lang, activity = null) {
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap');
-        
         :root { --accent: #3b82f6; --accent-rgba: 59, 130, 246; --bg-page: #09090b; --bg-card: #18181b; --border-card: rgba(255, 255, 255, 0.05); --text-main: #f4f4f5; --text-muted: #a1a1aa; --track-color: #3f3f46; --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
-
+        
         /* Font Stacks */
         .font-hub { --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
         .font-geist { --font-sans: 'Geist', sans-serif; --font-mono: 'Geist Mono', monospace; }
@@ -195,11 +212,15 @@ function generateHTML(lang, activity = null) {
         .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
         .font-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 32px; }
         .panel-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 1.25rem; font-size: 8px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
-        #btn-light { background: #f4f4f5; } #btn-deep { background: #27272a; } #btn-dark { background: #000000; }
-        .panel-btn:hover { border-color: var(--accent); transform: scale(1.05); } .panel-btn.active { border-color: var(--accent); color: var(--accent); ring: 4px solid rgba(var(--accent-rgba), 0.2); }
+        #btn-light { background: #f4f4f5; }
+        #btn-deep { background: #27272a; }
+        #btn-dark { background: #000000; }
+        .panel-btn:hover { border-color: var(--accent); transform: scale(1.05); }
+        .panel-btn.active { border-color: var(--accent); color: var(--accent); ring: 4px solid rgba(var(--accent-rgba), 0.2); }
         .accent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; }
         .accent-dot { width: 36px; height: 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
-        .accent-dot:hover { transform: scale(1.1); } .accent-dot.active { border-color: white; box-shadow: 0 0 15px var(--accent); }
+        .accent-dot:hover { transform: scale(1.1); }
+        .accent-dot.active { border-color: white; box-shadow: 0 0 15px var(--accent); }
         @keyframes aura { 0% { box-shadow: 0 0 0 0px rgba(var(--accent-rgba), 0.4); } 100% { box-shadow: 0 0 0 30px rgba(var(--accent-rgba), 0); } }
         .aura-pulse { animation: aura 2s infinite !important; border-color: var(--accent) !important; }
         #onboarding-tip { position: fixed; top: 95px; right: 24px; z-index: 150; background: var(--accent); color: white; padding: 14px 24px; border-radius: 1.5rem; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; box-shadow: 0 10px 30px rgba(var(--accent-rgba), 0.4); pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -208,8 +229,6 @@ function generateHTML(lang, activity = null) {
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 32px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: var(--track-color); border-radius: 3px; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -7px; border: 3px solid var(--bg-card); box-shadow: 0 0 15px var(--accent); }
-        
-        /* Firefox Support */
         input[type=range]::-moz-range-track { width: 100%; height: 6px; background: var(--track-color); border-radius: 3px; }
         input[type=range]::-moz-range-thumb { height: 18px; width: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 15px var(--accent); }
         .cog-btn { position: fixed; top: 24px; right: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; color: #a1a1aa; cursor: pointer; z-index: 101; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -246,6 +265,7 @@ function generateHTML(lang, activity = null) {
         .exp-card.dimmed { opacity: 0.15; filter: grayscale(0.8) blur(1px); transform: scale(0.98); }
         .exp-card.highlight { opacity: 1 !important; filter: none !important; transform: scale(1.02); border-left-color: var(--accent) !important; }
         .exp-card.highlight .accent-text { text-shadow: 0 0 15px var(--accent); }
+        .radar-point.active { opacity: 1 !important; r: 6px; fill: white; filter: drop-shadow(0 0 8px var(--accent)); }
         @media print { body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; } .no-print { display: none !important; } .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.5rem !important; } strong, .accent-text { color: black !important; font-weight: 800 !important; } .accent-bg { background-color: #000 !important; } }
     </style>
 </head>
@@ -260,30 +280,32 @@ function generateHTML(lang, activity = null) {
     <div id="settings-panel" class="no-print">
         <div class="panel-handle md:hidden"></div>
         
-        <!-- LANGUAGE -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Language</label>
         <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
-            <button id="btn-lang-fr" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2">
+            <button id="btn-lang-fr" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇫🇷</span> FR
             </button>
-            <button id="btn-lang-en" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2">
+            <button id="btn-lang-en" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇬🇧</span> EN
             </button>
         </div>
 
-        <!-- APPEARANCE -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Appearance</label>
-        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8">
-            <button onclick="setTheme('light')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100" id="btn-light">Light</button>
-            <button onclick="setTheme('deep')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100" id="btn-deep">Deep</button>
-            <button onclick="setTheme('dark')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100" id="btn-dark">Dark</button>
+        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
+            <button onclick="setTheme('light')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-light">
+                <i data-lucide="sun" class="w-3 h-3"></i> Light
+            </button>
+            <button onclick="setTheme('deep')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-deep">
+                <i data-lucide="moon" class="w-3 h-3"></i> Deep
+            </button>
+            <button onclick="setTheme('dark')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-dark">
+                <i data-lucide="zap" class="w-3 h-3"></i> Dark
+            </button>
         </div>
 
-        <!-- ACCENT COLOR -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Accent Color</label>
         <div class="accent-grid mb-8" id="accent-picker"></div>
 
-        <!-- DATA SCALING -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Data Scaling</label>
         <div class="flex items-center gap-4 px-2 mb-8 text-white">
             <span style="font-size: 12px !important; color: inherit;" class="font-serif italic opacity-40">a</span>
@@ -291,9 +313,8 @@ function generateHTML(lang, activity = null) {
             <span style="font-size: 20px !important; color: inherit;" class="font-serif italic opacity-40">A</span>
         </div>
 
-        <!-- SYSTEM MODE -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">System Mode</label>
-        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8">
+        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
             <button onclick="updateTTY(false)" id="btn-std" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2">
                 <i data-lucide="monitor" class="w-3 h-3"></i> Standard
             </button>
@@ -302,7 +323,6 @@ function generateHTML(lang, activity = null) {
             </button>
         </div>
 
-        <!-- FONT STACK -->
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Font Stack</label>
         <div class="font-grid">
             <button onclick="setFontStack('hub')" class="panel-btn font-btn" id="f-hub">HUB</button>
@@ -329,8 +349,6 @@ function generateHTML(lang, activity = null) {
                 <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang]}</p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
                     <a href="${pdfFilename}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
-                    <a href="https://github.com/${c.github}" target="_blank" class="p-3 card hover:accent-border"><i data-lucide="github" class="w-5 h-5"></i></a>
-                    <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="p-3 card hover:accent-border"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
                 </div>
             </div>
             <div class="hidden lg:flex flex-col gap-4 text-right opacity-40 font-mono text-[10px] uppercase tracking-[0.2em]">
@@ -376,93 +394,187 @@ function generateHTML(lang, activity = null) {
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start text-left">
             <div class="lg:col-span-4 flex flex-col gap-12 text-left">
                 ${flip(`
+                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.05s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
+                    <div class="card p-8 flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.email}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                </div>
+                            </a>
+                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.phone}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                </div>
+                            </a>
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.website}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
+                                </div>
+                            </a>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${getAge(c.birthDate)} ans <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('fr-FR')})</span></span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">Toulouse, FR</span>
+                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                                        <span class="font-mono text-xs accent-text" id="local-time-fr">--:--</span>
+                                    </div>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/5 w-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                        </div>
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
+                    <div class="card p-8 flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.email}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                </div>
+                            </a>
+                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.phone}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                </div>
+                            </a>
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${c.website}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
+                                </div>
+                            </a>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">${getAge(c.birthDate)} years old <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('en-US')})</span></span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-white group-hover:accent-text transition-colors">Toulouse, FR</span>
+                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                                        <span class="font-mono text-xs accent-text" id="local-time-en">--:--</span>
+                                    </div>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-white/5 w-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                        </div>
+                    </div>
+                </section>`, 'delay-100')}
+
+                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.05s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
                         ${generateRadarChart(data.skills.professional)}
                     </div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
                         ${generateRadarChart(data.skills.professional)}
                     </div>
                 </section>`, 'delay-50')}
 
                 ${flip(`
-                <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
-                    <div class="card p-8 text-left"><ul class="space-y-6 text-[0.95rem] font-mono opacity-80 text-left"><li class="flex items-center gap-4 truncate text-left"><a href="mailto:${c.email}" class="hover:accent-text transition-colors text-left">${c.email}</a></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.website}</span></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.location}</span></li></ul></div>
-                </section>`,
-                `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
-                    <div class="card p-8 text-left"><ul class="space-y-6 text-[0.95rem] font-mono opacity-80 text-left"><li class="flex items-center gap-4 truncate text-left"><a href="mailto:${c.email}" class="hover:accent-text transition-colors text-left">${c.email}</a></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.website}</span></li><li class="flex items-center gap-4 text-slate-500 text-left"><span>${c.location}</span></li></ul></div>
-                </section>`, 'delay-100')}
-
-                ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
                     <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
                     <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang2].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.education}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-white uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.education}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-white uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
                 </section>`, 'delay-400')}
                 
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.5s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
                     <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
                     <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
                 </section>`, 'delay-500')}
             </div>
             <div class="lg:col-span-8 flex flex-col gap-12 text-left">
                 ${flip(`
                 <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang])}</p></div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang2])}</p></div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-white group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.projects}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.projects}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         ${data.projects.map(p => `
                         <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
@@ -481,7 +593,7 @@ function generateHTML(lang, activity = null) {
                     </div>
                 </section>`,
                 `<section class="flex flex-col gap-6 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.projects}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.projects}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         ${data.projects.map(p => `
                         <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
@@ -502,26 +614,20 @@ function generateHTML(lang, activity = null) {
 
                 ${flip(`
                 <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
                     <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-fr">
-                        <div class="absolute left-[59px] top-12 bottom-12 w-0.5 bg-slate-800/50 no-print">
-                            <div class="timeline-progress-bar" style="height: 0%"></div>
-                        </div>
                         ${data.experiences.map((exp, idx) => {
                             const expSkills = exp.details[lang].join(' ').match(/<strong>(.*?)<\/strong>/g)?.map(m => m.replace(/<\/?strong>/g, '').toLowerCase().trim()).join(' ') || '';
-                            return `<div class="exp-card relative pl-14 border-l-2 border-transparent group text-left" data-skills="${expSkills}">` + 
+                            return `<div class="exp-card relative pl-14 border-l-2 border-slate-800/50 group text-left" data-skills="${expSkills}">` + 
                             `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125 z-20"></div>` +
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-white mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${highlightMetrics(d)}</span></li>`).join('')}</ul></div>`}).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-[10px] font-black uppercase tracking-[0.3em] opacity-50" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
                     <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-en">
-                        <div class="absolute left-[59px] top-12 bottom-12 w-0.5 bg-slate-800/50 no-print">
-                            <div class="timeline-progress-bar" style="height: 0%"></div>
-                        </div>
                         ${data.experiences.map((exp, idx) => {
                             const expSkills = exp.details[lang2].join(' ').match(/<strong>(.*?)<\/strong>/g)?.map(m => m.replace(/<\/?strong>/g, '').toLowerCase().trim()).join(' ') || '';
-                            return `<div class="exp-card relative pl-14 border-l-2 border-transparent group text-left" data-skills="${expSkills}">` + 
+                            return `<div class="exp-card relative pl-14 border-l-2 border-slate-800/50 group text-left" data-skills="${expSkills}">` +
                             `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125 z-20"></div>` +
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-white mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang2].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${highlightMetrics(d)}</span></li>`).join('')}</ul></div>`}).join('')}</div>
                 </section>`, 'delay-400')}
