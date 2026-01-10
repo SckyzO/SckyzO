@@ -156,32 +156,19 @@ document.addEventListener('mousemove', e => {
     // document.querySelectorAll('.card').forEach(card => { ... });
 });
 
-// CROSS HIGHLIGHTING & RADAR SYNC
+// CROSS HIGHLIGHTING & INTERACTIONS
 document.addEventListener('mouseover', e => {
-    // 1. Radar Highlight (Toujours déclenché si on est dans une skill-card)
-    const card = e.target.closest('.skill-card');
-    if (card) {
-        const category = card.getAttribute('data-category');
-        console.log(`[MouseOver] Card found: ${category}`);
-        if (category) {
-            // Utilisation de CSS.escape pour gérer "Cloud/Virt" etc.
-            const selector = `.radar-point[data-category="${category.replace(/["\\]/g, '\\$&')}"]`; 
-            const points = document.querySelectorAll(selector);
-            console.log(`[MouseOver] Radar points found: ${points.length}`);
-            points.forEach(point => point.classList.add('active'));
-        }
-    }
-
-    // 2. Experience Highlight (Uniquement si on est sur un tag)
+    // Experience Highlight (Uniquement si on est sur un tag)
     const tag = e.target.closest('.skill-tag');
     if (tag) {
+        // Allumer le point interne
+        const dot = tag.querySelector('.tool-dot');
+        if (dot) dot.style.opacity = '1';
+
         const skill = tag.getAttribute('data-skill');
-        console.log(`[MouseOver] Tag found: ${skill}`);
         document.querySelectorAll('.exp-card').forEach(c => {
             const skillsStr = c.getAttribute('data-skills');
-            // Recherche souple : est-ce que la chaîne skills contient le skill ?
             if (skillsStr && skillsStr.includes(skill)) { 
-                console.log(`[MouseOver] Exp matched!`);
                 c.classList.add('highlight'); 
             } else { 
                 c.classList.add('dimmed'); 
@@ -191,16 +178,12 @@ document.addEventListener('mouseover', e => {
 });
 
 document.addEventListener('mouseout', e => {
-    // Nettoyage Radar
-    const card = e.target.closest('.skill-card');
-    if (card) {
-        if (e.relatedTarget && card.contains(e.relatedTarget)) return;
-        document.querySelectorAll('.radar-point').forEach(point => point.classList.remove('active'));
-    }
-
     // Nettoyage Expériences
     const tag = e.target.closest('.skill-tag');
     if (tag) {
+        const dot = tag.querySelector('.tool-dot');
+        if (dot) dot.style.opacity = '0.3'; // Retour à l'opacité par défaut
+
         document.querySelectorAll('.exp-card').forEach(c => c.classList.remove('highlight', 'dimmed'));
     }
 });

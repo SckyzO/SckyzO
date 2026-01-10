@@ -121,15 +121,7 @@ function generateRadarChart(skills) {
     return `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" font-weight="900" fill="currentColor" opacity="0.4" class="uppercase tracking-tighter">${s.category}</text>`;
   }).join('');
 
-  const pointsSVG = skills.map((s, i) => {
-    const val = s.level || levelsMapping[s.category] || 50;
-    const level = val / 100;
-    const x = center + Math.cos(i * angleStep - Math.PI / 2) * radius * level;
-    const y = center + Math.sin(i * angleStep - Math.PI / 2) * radius * level;
-    return `<circle cx="${x}" cy="${y}" r="4" fill="var(--accent)" class="radar-point transition-all duration-300 opacity-0" data-category="${s.category}" />`;
-  }).join('');
-
-  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}${pointsSVG}</svg>`;
+  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}</svg>`;
 }
 
 // --- GÉNÉRATEUR HTML ---
