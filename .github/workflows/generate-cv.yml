@@ -37,6 +37,7 @@ jobs:
             cv/*.html
             cv/*.pdf
             cv/*.md
+            cv/*.png
 
 # TODO: Ajouter l'étape d'upload vers tomzone.fr ici
 # exemple avec rsync ou ftp

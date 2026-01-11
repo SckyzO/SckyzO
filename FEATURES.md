@@ -2,60 +2,62 @@
 
 Ce document recense les fonctionnalités proposées, validées et en cours de développement pour le générateur de CV "SckyzO".
 
-## ✅ Terminées (Commit 93a24c8)
+## ✅ Terminées
 
 ### 🕹️ Interactivité & UX
 - [x] **Terminal Mode (Easter Egg)**
-    - Bouton `>_ TTY`, Toggle dans les réglages et raccourci `CTRL+ALT+T`.
-    - Design Retro CRT (VT323 font, vert phosphorescent, scanlines).
+    - Bouton `>_ TTY`, Toggle "Matrix Mode" dans les réglages et raccourci `CTRL+ALT+T`.
 - [x] **Language Flip 3D (Killer Feature)**
-    - [x] Bouton "Drapeau" pour changer de langue.
-    - [x] Animation de retournement 3D (Flip Card) des sections en cascade (staggered).
-    - [x] Gestion intelligente de la hauteur variable (Grid Method).
-    - [x] **SEO Friendly** : Utilisation de balises `hreflang`.
-    - [ ] *TODO: Retravailler le design et l'alignement du bouton Drapeau dans le header.*
+    - Sélecteur "Segmented Control" (FR/EN) avec drapeaux intégré dans le Settings Panel.
+    - Animation de retournement 3D (Flip Card).
+- [x] **Command Palette (CTRL+K)**
+    - Navigation rapide et recherche d'actions.
+- [x] **Cross-Highlighting**
+    - Survoler un skill (ex: Ansible) illumine instantanément les expériences liées.
+- [x] **Settings Mobile**
+    - Adaptation du panneau de configuration en "Bottom Sheet".
 
-### 🛠️ Engineering & SEO
-- [x] **SEO & Open Graph (Social Preview)**
-    - Balises `meta` (og:title, og:image) pour un partage LinkedIn/Twitter propre.
-    - Génération automatique de l'image de preview via Playwright lors du build.
+### 🎨 Design & UI (Pixel Perfect)
+- [x] **Refonte Section Contact**
+    - Design "Clean List" avec icônes, Heure locale et Âge calculé.
+    - Intégration des boutons GitHub et LinkedIn.
+- [x] **Section "Side Projects"**
+    - Grille de cartes avec liens GitHub.
+- [x] **Settings Panel Unifié**
+    - UI harmonisée avec des "Segmented Controls".
+
+### 📊 Visualisation & Contenu
+- [x] **Radar Chart Expertise**
+    - Graphique SVG pur pour visualiser les domaines de compétences.
+    - *Note : Interaction survol (points) désactivée pour alléger.*
+- [x] **Impact Metrics Highlighting**
+    - Mise en valeur automatique des chiffres clés.
+- [x] **GitHub Activity Badge**
+    - Indicateur "Live" du dernier projet actif.
+
+### 🛠️ Engineering
+- [x] **Architecture Client/Serveur**
+    - Séparation propre de `build.js` et `client.js`.
+- [x] **SEO & Open Graph**
+    - Génération automatique des previews PNG.
 
 ---
 
-## 🚧 En cours / À implémenter (Une par une)
+## 🚧 En cours / Prochaines étapes
 
-### 🎨 Design & UI (Pixel Perfect)
-- [ ] **Micro-Interactions "Glassmorphism" 2.0**
-    - Effet de lueur/reflet qui suit la souris sur les cartes (Card Spotlight/Glow).
-- [ ] **Scroll-Linked Animations (Timeline)**
-    - Barre de progression verticale pour la section Expérience qui se remplit au scroll.
-- [ ] **Settings Mobile**
-    - Adaptation du panneau de configuration en "Bottom Sheet" pour mobile.
+### 🛠️ Engineering
+- [ ] **Compilation CSS (No-CDN)** : Passage à un build Tailwind local (actuellement CDN pour stabilité Docker).
 
-### 📈 Contenu & RH
-- [ ] **Section "Side Projects" dédiée**
-    - Grille de cartes pour les projets perso avec liens GitHub et badges technos.
-- [ ] **Impact Metrics Highlighting**
-    - Détection et mise en valeur automatique des chiffres clés (budgets, serveurs, pourcentages).
+### 📄 PDF Spécifique
+- [ ] **QR Code Dynamique** : Lien vers la version web sur le PDF.
+- [ ] **Print Stylesheet** : Mode "Éco-ink" optimisé.
 
-### Navigation & Outils
-- [ ] **Command Palette (CTRL+K)**
-    - Navigation rapide et recherche d'actions.
-- [ ] **Cross-Highlighting**
-    - Survoler un skill (ex: Ansible) illumine instantanément les expériences liées.
-
-### Data Visualization
-- [ ] **Radar Chart Expertise**
-    - Graphique SVG pur pour visualiser les domaines de compétences.
-- [ ] **GitHub Activity Badge**
-    - Indicateur "Live" du dernier projet actif.
-
-### Engineering
-- [ ] **Compilation CSS (No-CDN)**
-    - Passage à un build Tailwind local pour la performance et le offline.
+### Accessibilité
+- [ ] **Mode Lecture (Focus)** : Version simplifiée pour la lisibilité.
+- [ ] **A11y Audit** : Labels ARIA manquants, contraste.
 
 ---
 
 ## 📅 Changelog
 
-- **09/01/2026** : Retour à l'état stable. Reprise itérative.
+- **09/01/2026** : Version stable avec toutes les fonctionnalités consolidées.
