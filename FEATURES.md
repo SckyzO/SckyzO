@@ -29,35 +29,37 @@ Ce document recense les fonctionnalités proposées, validées et en cours de d�
 ### 📊 Visualisation & Contenu
 - [x] **Radar Chart Expertise**
     - Graphique SVG pur pour visualiser les domaines de compétences.
-    - *Note : Interaction survol (points) désactivée pour alléger.*
 - [x] **Impact Metrics Highlighting**
-    - Mise en valeur automatique des chiffres clés.
+    - Mise en valeur automatique des chiffres clés (chiffres, %, métriques).
 - [x] **GitHub Activity Badge**
-    - Indicateur "Live" du dernier projet actif.
+    - Indicateur "Live" du dernier projet actif via API GitHub.
 
-### 🛠️ Engineering
-- [x] **Architecture Client/Serveur**
-    - Séparation propre de `build.js` et `client.js`.
-- [x] **SEO & Open Graph**
-    - Génération automatique des previews PNG.
+### 🛠️ Engineering & Stabilité
+- [x] **Architecture PDF Factory**
+    - Pages HTML dédiées (`index_fr.html` / `index_en.html`) pour un rendu déterministe.
+    - `pdf-mode` : Désactivation des JS/Animations pour une stabilité 100% pixel-perfect.
+- [x] **Offline Resilience**
+    - Téléchargement local des assets (Tailwind, Lucide) pour build sans dépendance réseau.
+- [x] **Export Multi-Format**
+    - PDF (Chromium), Markdown et **ATS Friendly (.txt)**.
+- [x] **SEO & Social Metadata**
+    - OpenGraph, Twitter Cards, balises Canonical et Hreflang.
+- [x] **QR Code Dynamique**
+    - QR Code "Live Version" généré localement et injecté dans le PDF.
+- [x] **Déploiement CI/CD**
+    - Pipeline GitHub Actions automatisé pour déploiement sur GitHub Pages.
+- [x] **Refactoring Modulaire**
+    - Architecture propre : `build.js` orchestrateur + `src/` (templates, utils, i18n).
 
----
-
-## 🚧 En cours / Prochaines étapes
-
-### 🛠️ Engineering
-- [ ] **Compilation CSS (No-CDN)** : Passage à un build Tailwind local (actuellement CDN pour stabilité Docker).
-
-### 📄 PDF Spécifique
-- [ ] **QR Code Dynamique** : Lien vers la version web sur le PDF.
-- [ ] **Print Stylesheet** : Mode "Éco-ink" optimisé.
-
-### Accessibilité
-- [ ] **Mode Lecture (Focus)** : Version simplifiée pour la lisibilité.
-- [ ] **A11y Audit** : Labels ARIA manquants, contraste.
+### 📄 PDF & Print
+- [x] **Print Stylesheet Optimisée**
+    - Force le noir pur, expose les URLs des liens, masque les artefacts UI.
+- [x] **Stabilité des Timeouts**
+    - Gestion sécurisée des requêtes API et des délais Playwright.
 
 ---
 
 ## 📅 Changelog
 
-- **09/01/2026** : Version stable avec toutes les fonctionnalités consolidées.
+- **11/01/2026** : Version Finale (CI/CD, Refactor, Offline, PDF Factory).
+- **09/01/2026** : Version stable avec fonctionnalités interactives (Flip 3D, Cmd Palette).

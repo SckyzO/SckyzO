@@ -1,65 +1,82 @@
-# 🚀 SckyzO CV Generator
+# CV Generator - Thomas Bourcey
 
-Bienvenue sur le dépôt du générateur de CV de **Thomas Bourcey (SckyzO)**. Ce projet remplace l'ancien site `tomzone.fr` par une approche "Data-Driven" moderne.
+Un générateur de CV moderne, performant et automatisé, conçu pour produire un site web interactif et des PDF pixel-perfect à partir d'une source unique de données JSON.
 
-Il génère automatiquement un CV professionnel sous trois formats (**HTML, PDF, Markdown**) et en deux langues (**Français, Anglais**) à partir d'une source de données unique.
+🌐 **Live Demo :** [sckyzo.github.io/SckyzO/](https://sckyzo.github.io/SckyzO/)
 
-## 🏗 Architecture
+## 🚀 Fonctionnalités Clés
 
-Le projet est conçu pour être statique, performant et automatisé.
+### 🎨 Frontend & UX
+- **Flip 3D Bilingue** : Bascule instantanée FR/EN sans rechargement de page.
+- **Mode Terminal (TTY)** : Easter egg pour les recruteurs tech (`CTRL+ALT+T`).
+- **Command Palette** : Navigation clavier type VS Code (`CTRL+K`).
+- **Cross-Highlighting** : Survoler une compétence illumine les expériences associées.
+- **Responsive** : Mobile-first avec panneau de réglages en bottom-sheet.
 
-- **Données** : `cv/data.json` (Source unique de vérité).
-- **Moteur de Rendu** : Node.js + Template Strings (Pas de framework lourd type React/Vue).
-- **Style** : Tailwind CSS (Themeable : Light, Dark, Deep).
-- **PDF Generation** : [Playwright](https://playwright.dev/) (Chromium) pour un rendu pixel-perfect.
-- **Iconographie** : Lucide Icons.
-- **Automatisation** : Docker & GitHub Actions.
+### ⚙️ Engineering & Build
+- **Source Unique** : Tout le contenu est dans `data.json`.
+- **PDF Factory Déterministe** :
+  - Génération via Playwright (Chromium Headless).
+  - Pages dédiées (`index_fr.html`, `index_en.html`) sans JS/Animations pour une stabilité absolue.
+  - CSS Print optimisé (Noir pur, liens exposés, suppression UI).
+- **Offline First** : Script de pré-téléchargement des assets (Tailwind, Lucide) pour un build résilient.
+- **ATS Friendly** : Export automatique en `.txt` structuré pour les robots recruteurs.
+- **CI/CD** : Déploiement automatique sur GitHub Pages via GitHub Actions.
 
-## 📂 Structure du Projet
+## 🛠️ Architecture
 
-```bash
-/cv
-├── build.js          # Script principal (Génération HTML -> MD -> PDF)
-├── data.json         # Données du CV (Expériences, Skills, Contact...)
-├── Dockerfile        # Image de production (Nginx) et Build stage
-├── docker-compose.yml # Environnement de développement local
-└── .github/workflows # Pipeline CI/CD
+```
+cv/
+├── build.js            # Orchestrateur de build (Node.js)
+├── client.js           # Logique UI interactive (Browser)
+├── data.json           # Source de vérité du contenu
+├── download-assets.js  # Gestionnaire de dépendances offline
+├── src/                # Modules logiques
+│   ├── templates.js    # Générateurs HTML/MD/TXT
+│   ├── utils.js        # Helpers (Calculs, Graphiques, API)
+│   └── i18n.js         # Dictionnaire de traduction
+├── Dockerfile          # Environnement de référence
+└── assets/             # Dépendances locales (généré)
 ```
 
-## 🛠 Installation & Développement
+## 📦 Installation & Utilisation
 
-L'environnement de développement est conteneurisé. Vous n'avez besoin que de **Docker**.
-
-### 1. Lancer l'environnement
-Utilisez Docker Compose pour lancer le "watcher" (qui surveille les modifications) et le serveur de prévisualisation.
+### Via Docker (Recommandé)
+L'environnement Docker gère tout : dépendances, téléchargement assets, build et serveur de prévisualisation.
 
 ```bash
 cd cv
-docker compose up
+docker compose up --build
+```
+Le site est accessible sur `http://localhost:8080`.
+
+### En Local (Node.js)
+Pré-requis : Node.js 20+ et Playwright.
+
+```bash
+cd cv
+npm install
+npx playwright install chromium
+node download-assets.js
+node build.js
 ```
 
-### 2. Accéder au CV
-Une fois lancé, le CV est accessible en local :
-- **Français** : http://localhost:8080/index_fr.html
-- **Anglais** : http://localhost:8080/index_en.html
-- **PDF** : http://localhost:8080/CV_Thomas_Bourcey_FR.pdf
+## 📄 Formats de Sortie
 
-Le service `builder` régénère automatiquement les fichiers (HTML, PDF, MD) à chaque modification de `data.json` ou `build.js`.
+Le build génère automatiquement dans le dossier racine :
+- `index.html` : Site web interactif complet.
+- `CV_Thomas_Bourcey_FR.pdf` : Version PDF optimisée pour impression.
+- `CV_Thomas_Bourcey_FR.txt` : Version texte brut pour ATS.
+- `CV_FR.md` : Version Markdown.
+- (Et les équivalents EN).
 
-## 📦 Pipeline CI/CD (GitHub Actions)
+## 🤖 CI/CD
 
-Le workflow `.github/workflows/generate-cv.yml` s'exécute à chaque push sur `main` :
+Le workflow `.github/workflows/deploy.yml` s'exécute à chaque push sur `main` :
+1. Installe l'environnement.
+2. Télécharge les assets.
+3. Lance le build.
+4. Déploie les artefacts sur la branche `gh-pages`.
 
-1.  **Build** : Installe les dépendances et exécute `build.js`.
-2.  **Artifacts** : Sauvegarde les fichiers générés (PDF, HTML, MD).
-3.  **Deploy** : (En cours) Déploie les fichiers statiques vers le serveur de production (`tomzone.fr`).
-
-## ✨ Fonctionnalités Uniques
-
-- **Thèmes Dynamiques** : Le visiteur peut changer le thème (Couleurs, Polices) en temps réel.
-- **Onboarding** : Une "aura" guide les nouveaux visiteurs vers les paramètres.
-- **Impression Parfaite** : Le PDF est généré via un moteur Chromium headless, garantissant que le document imprimé est identique au design écran.
-
-## 📄 Licence
-
-Ce projet est personnel. Le code est ouvert, mais les données personnelles (dans `data.json`) m'appartiennent.
+---
+*Développé avec passion par Thomas Bourcey.*
