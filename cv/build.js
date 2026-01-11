@@ -131,7 +131,9 @@ function generateRadarChart(skills) {
 
 // --- GÉNÉRATEUR HTML ---
 
-function generateHTML(lang, activity = null, qrCodeDataURI = '') {
+function generateHTML(lang, activity = null, qrDataURI = '', mode = 'pdf') {
+
+  const isInteractive = mode === 'interactive';
 
   const lang2 = lang === 'fr' ? 'en' : 'fr';
 
@@ -157,25 +159,46 @@ function generateHTML(lang, activity = null, qrCodeDataURI = '') {
 
   
 
-  const flip = (c1, c2, delay='') => `    <div class="flip-container ${delay}">
+  const flip = (c1, c2, delay='') => `
+
+    <div class="flip-container ${delay}">
+
         <div class="flip-card">
+
             <div class="flip-front">${c1}</div>
+
             <div class="flip-back">${c2}</div>
+
         </div>
+
     </div>`;
 
-  // Injection du script client
-  const clientScript = fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8');
+
+
+  // Injection du script client uniquement en mode interactif
+
+  const clientScript = isInteractive ? fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8') : '';
+
+
 
   return `<!DOCTYPE html>
+
 <html lang="${lang}" class="dark" id="html-root" style="font-size: 14px;">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>${c.name} - ${c.title[lang]}</title>
+
     <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
+
     <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
+
     <meta name="description" content="${data.summary[lang].substring(0, 150).replace(/<[^>]*>/g, '')}...">
+
     <meta property="og:title" content="${c.name} - ${c.title[lang]}">
     <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
@@ -192,6 +215,11 @@ function generateHTML(lang, activity = null, qrCodeDataURI = '') {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap');
         :root { --accent: #3b82f6; --accent-rgba: 59, 130, 246; --bg-page: #09090b; --bg-card: #18181b; --border-card: rgba(255, 255, 255, 0.05); --text-main: #f4f4f5; --text-muted: #a1a1aa; --track-color: #3f3f46; --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
+        
+        /* PDF MODE STYLES */
+        .pdf-mode * { animation: none !important; transition: none !important; }
+        .pdf-mode .flip-back, .pdf-mode .no-print, .pdf-mode #settings-panel, .pdf-mode #cmd-palette, .pdf-mode .cog-btn { display: none !important; }
+        .pdf-mode .card { box-shadow: none !important; transform: none !important; }
         
         /* Font Stacks */
         .font-hub { --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
@@ -299,7 +327,7 @@ function generateHTML(lang, activity = null, qrCodeDataURI = '') {
         }
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12 theme-deep font-hub" id="body-root">
+<body class="p-4 md:p-8 lg:p-12 theme-deep font-hub ${isInteractive ? '' : 'pdf-mode'}" id="body-root">
     
     <div id="onboarding-tip" class="no-print text-left">
         ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
@@ -673,13 +701,20 @@ function generateHTML(lang, activity = null, qrCodeDataURI = '') {
     </div>
 
     <div class="qr-code-container no-screen hidden print:flex">
-        <img src="${qrCodeDataURI}" alt="Scan for Live Version" style="width: 80px; height: 80px;">
+        <img src="${qrDataURI}" alt="Scan for Live Version" style="width: 80px; height: 80px;">
         <span style="font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Live Version</span>
     </div>
 
+    ${isInteractive ? `
     <script>
-        ${fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8')}
-    </script>
+        ${clientScript}
+    </script>` : `
+    <script>
+        // Init Icons specifically for PDF/Static mode
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    </script>`}
 </body>
 </html>`;
 }
@@ -751,39 +786,50 @@ async function build() {
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
   
+  // 1. Génération de l'index interactif (Default FR)
+  console.log("Génération de l'index interactif (index.html)...");
+  // On génère l'index interactif avec le QR Code FR par défaut (ou on pourrait ne pas en mettre)
+  const qrDefault = await QRCode.toDataURL('https://tomzone.fr', { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
+  const htmlInteractive = generateHTML('fr', activity, qrDefault, 'interactive');
+  fs.writeFileSync(path.join(__dirname, "index.html"), htmlInteractive);
+
+  // 2. Génération des fichiers dédiés PDF (FR/EN)
   for (const lang of ['fr', 'en']) {
-    console.log("Génération du CV en " + lang.toUpperCase() + "...");
+    console.log("Génération du fichier PDF-optimisé pour " + lang.toUpperCase() + "...");
     
     // Génération QR
     const qrTarget = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
     const qrDataURI = await QRCode.toDataURL(qrTarget, { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
 
-    const htmlContent = generateHTML(lang, activity, qrDataURI);
+    // Mode 'pdf' : pas de JS, pas d'anim, layout figé
+    const htmlContent = generateHTML(lang, activity, qrDataURI, 'pdf');
     const htmlPath = path.join(__dirname, "index_" + lang + ".html");
     fs.writeFileSync(htmlPath, htmlContent);
+
+    // Markdown & Txt (inchangés)
     const mdContent = generateMarkdown(lang);
     const mdFileName = lang === 'fr' ? "CV_FR.md" : "Resume_EN.md";
     fs.writeFileSync(path.join(__dirname, mdFileName), mdContent);
     
-    // Génération du texte brut (ATS)
     const txtContent = generatePlain(lang);
     const txtFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.txt" : "Resume_Thomas_Bourcey_EN.txt";
     fs.writeFileSync(path.join(__dirname, txtFileName), txtContent);
 
+    // Playwright utilise maintenant le fichier dédié (index_fr.html / index_en.html) qui est en mode PDF
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1500); // Wait for animations (flip, reveal) to complete
+    await page.waitForTimeout(100); // Délai réduit car animations désactivées en mode PDF !
     const pdfFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.pdf" : "Resume_Thomas_Bourcey_EN.pdf";
     await page.pdf({
       path: path.join(__dirname, pdfFileName), format: 'A4', printBackground: true,
       margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
     });
     
-    // --- SOCIAL PREVIEW GENERATION ---
+    // Pour la preview PNG, on préfère peut-être le rendu "Interactive" mais figé, ou le rendu PDF ?
+    // Le rendu PDF est très propre, utilisons-le pour la preview aussi pour garantir la cohérence.
     console.log(`Génération de la preview Open Graph pour ${lang}...`);
     await page.setViewportSize({ width: 1200, height: 630 });
-    // On attend un peu que le redimensionnement soit pris en compte (animations, layout)
-    await page.waitForTimeout(500); 
+    await page.waitForTimeout(100); 
     await page.screenshot({ path: path.join(__dirname, `preview_${lang}.png`) });
 
     await page.close();

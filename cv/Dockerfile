@@ -20,6 +20,7 @@ RUN node build.js
 FROM nginx:alpine
 
 # Copie des fichiers générés depuis le stage builder
+COPY --from=builder /app/index.html /usr/share/nginx/html/
 COPY --from=builder /app/*.html /usr/share/nginx/html/
 COPY --from=builder /app/*.pdf /usr/share/nginx/html/
 COPY --from=builder /app/*.md /usr/share/nginx/html/
