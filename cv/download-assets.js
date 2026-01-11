@@ -12,15 +12,42 @@ const assets = [
 
 async function download(url, dest) {
   return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(dest);
-    https.get(url, (res) => {
+    const handleResponse = (res) => {
+      // Gestion des redirections (301, 302, 303, 307, 308)
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        let newUrl = res.headers.location;
+        if (newUrl.startsWith('/')) {
+          const originalUrl = new URL(url);
+          newUrl = `${originalUrl.protocol}//${originalUrl.host}${newUrl}`;
+        }
+        console.log(`-> Redirecting to ${newUrl}`);
+        https.get(newUrl, handleResponse).on('error', reject);
+        return;
+      }
+
+      if (res.statusCode !== 200) {
+        reject(new Error(`Status code: ${res.statusCode}`));
+        return;
+      }
+
+      const file = fs.createWriteStream(dest);
       res.pipe(file);
       file.on('finish', () => {
         file.close();
         resolve();
       });
-    }).on('error', (err) => {
-      fs.unlink(dest, () => reject(err));
+    };
+
+    const req = https.get(url, handleResponse);
+    
+    req.on('error', (err) => {
+      fs.unlink(dest, () => {}); 
+      reject(err);
+    });
+
+    req.setTimeout(10000, () => {
+        req.destroy();
+        reject(new Error('Request timeout'));
     });
   });
 }
