@@ -8,7 +8,7 @@ services:
       - /app/node_modules
     # Installe les dépendances puis lance nodemon pour surveiller les changements
     command: >
-      sh -c "npm install && npx nodemon -L --watch build.js --watch data.json --exec 'node build.js'"
+      sh -c "npm install && npx nodemon -L --watch build.js --watch data.json --watch src --watch client.js --exec 'node build.js'"
     environment:
       - CI=true
 
