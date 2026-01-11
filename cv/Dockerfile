@@ -9,6 +9,7 @@ RUN npm install
 
 # Copie des sources
 COPY build.js client.js data.json download-assets.js ./
+COPY src/ ./src/
 
 # Téléchargement des assets pour le mode offline
 RUN node download-assets.js
