@@ -200,12 +200,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .exp-card.highlight .accent-text { text-shadow: 0 0 15px var(--accent); }
         .radar-point.active { opacity: 1 !important; r: 6px; fill: white; filter: drop-shadow(0 0 8px var(--accent)); }
         @media print { 
-            body { background-color: var(--bg-page) !important; color: var(--text-main) !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+            body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
             .no-print, .flip-back { display: none !important; } 
-            .card { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
-            strong, h1, h2, h3, p, span { color: var(--text-main) !important; font-weight: 800 !important; } 
-            .accent-text { color: var(--accent) !important; }
-            .accent-bg { background-color: var(--accent) !important; }
+            .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
+            strong, h1, h2, h3, p, span, li { color: black !important; font-weight: 800 !important; } 
+            .accent-text { color: black !important; border-bottom: 1px solid #ddd; }
+            .accent-bg { background-color: #eee !important; color: black !important; }
+            a { color: black !important; text-decoration: none !important; }
             a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
             .flip-card { transform: none !important; }
             .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }

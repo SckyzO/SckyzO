@@ -116,6 +116,19 @@ document.addEventListener('keydown', (e) => {
         const panel = document.getElementById('settings-panel');
         if (panel && panel.classList.contains('open')) toggleSettings();
     }
+    
+    // Focus Trap Tab logic
+    const panel = document.getElementById('settings-panel');
+    if (panel && panel.classList.contains('open') && e.key === 'Tab') {
+        const focusable = panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    }
 });
 
 // Command Palette
