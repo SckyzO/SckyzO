@@ -27,6 +27,7 @@ COPY --from=builder /app/*.pdf /usr/share/nginx/html/
 COPY --from=builder /app/*.md /usr/share/nginx/html/
 COPY --from=builder /app/*.txt /usr/share/nginx/html/
 COPY --from=builder /app/*.png /usr/share/nginx/html/
+COPY --from=builder /app/assets /usr/share/nginx/html/assets
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

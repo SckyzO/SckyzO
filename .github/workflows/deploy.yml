@@ -56,6 +56,8 @@ jobs:
           if [ ! -f public/index.html ]; then
             cp cv/index.html public/index.html
           fi
+          # Copy assets
+          cp -r cv/assets public/assets
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3

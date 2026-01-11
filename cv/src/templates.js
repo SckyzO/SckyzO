@@ -58,14 +58,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
     
-    <!-- Offline Assets Fallback -->
-    ${fs.existsSync(path.join(__dirname, '../assets', 'tailwind.js')) 
-        ? `<script>${fs.readFileSync(path.join(__dirname, '../assets', 'tailwind.js'), 'utf8')}</script>`
-        : `<script src="https://cdn.tailwindcss.com"></script>`}
-    
-    ${fs.existsSync(path.join(__dirname, '../assets', 'lucide.js'))
-        ? `<script>${fs.readFileSync(path.join(__dirname, '../assets', 'lucide.js'), 'utf8')}</script>`
-        : `<script src="https://unpkg.com/lucide@latest"></script>`}
+    <!-- Offline Assets -->
+    <script src="./assets/tailwind.js"></script>
+    <script src="./assets/lucide.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap');
