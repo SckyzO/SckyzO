@@ -3,6 +3,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 const { execSync } = require('child_process');
 const https = require('https');
+const QRCode = require('qrcode');
 
 // Chargement des données
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'data.json'), 'utf8'));
@@ -129,18 +130,34 @@ function generateRadarChart(skills) {
 }
 
 // --- GÉNÉRATEUR HTML ---
-function generateHTML(lang, activity = null) {
+
+function generateHTML(lang, activity = null, qrCodeDataURI = '') {
+
   const lang2 = lang === 'fr' ? 'en' : 'fr';
+
   const t1 = i18n[lang];
+
   const t2 = i18n[lang2];
+
   const c = data.contact;
+
   const updateDate = new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+
   const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
+
   
+
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
+
   
-  const flip = (c1, c2, delay='') => `
-    <div class="flip-container ${delay}">
+
+  // Génération QR Code
+
+  const qrUrl = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
+
+  
+
+  const flip = (c1, c2, delay='') => `    <div class="flip-container ${delay}">
         <div class="flip-card">
             <div class="flip-front">${c1}</div>
             <div class="flip-back">${c2}</div>
@@ -270,6 +287,7 @@ function generateHTML(lang, activity = null) {
             .accent-bg { background-color: #000 !important; }
             a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
             .flip-card { transform: none !important; }
+            .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }
         }
     </style>
 </head>
@@ -646,6 +664,11 @@ function generateHTML(lang, activity = null) {
         </div>
     </div>
 
+    <div class="qr-code-container no-screen hidden print:flex">
+        <img src="${qrCodeDataURI}" alt="Scan for Live Version" style="width: 80px; height: 80px;">
+        <span style="font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Live Version</span>
+    </div>
+
     <script>
         ${fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8')}
     </script>
@@ -722,7 +745,12 @@ async function build() {
   
   for (const lang of ['fr', 'en']) {
     console.log("Génération du CV en " + lang.toUpperCase() + "...");
-    const htmlContent = generateHTML(lang, activity);
+    
+    // Génération QR
+    const qrTarget = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
+    const qrDataURI = await QRCode.toDataURL(qrTarget, { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
+
+    const htmlContent = generateHTML(lang, activity, qrDataURI);
     const htmlPath = path.join(__dirname, "index_" + lang + ".html");
     fs.writeFileSync(htmlPath, htmlContent);
     const mdContent = generateMarkdown(lang);
