@@ -8,7 +8,10 @@ COPY package.json package-lock.json* ./
 RUN npm install
 
 # Copie des sources
-COPY build.js client.js data.json ./
+COPY build.js client.js data.json download-assets.js ./
+
+# Téléchargement des assets pour le mode offline
+RUN node download-assets.js
 
 # Génération des fichiers (HTML, PDF, MD)
 RUN node build.js

@@ -179,8 +179,16 @@ function generateHTML(lang, activity = null, qrCodeDataURI = '') {
     <meta property="og:title" content="${c.name} - ${c.title[lang]}">
     <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Offline Assets Fallback -->
+    ${fs.existsSync(path.join(__dirname, 'assets', 'tailwind.js')) 
+        ? `<script>${fs.readFileSync(path.join(__dirname, 'assets', 'tailwind.js'), 'utf8')}</script>`
+        : `<script src="https://cdn.tailwindcss.com"></script>`}
+    
+    ${fs.existsSync(path.join(__dirname, 'assets', 'lucide.js'))
+        ? `<script>${fs.readFileSync(path.join(__dirname, 'assets', 'lucide.js'), 'utf8')}</script>`
+        : `<script src="https://unpkg.com/lucide@latest"></script>`}
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap');
         :root { --accent: #3b82f6; --accent-rgba: 59, 130, 246; --bg-page: #09090b; --bg-card: #18181b; --border-card: rgba(255, 255, 255, 0.05); --text-main: #f4f4f5; --text-muted: #a1a1aa; --track-color: #3f3f46; --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }

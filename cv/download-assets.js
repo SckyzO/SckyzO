@@ -1,0 +1,41 @@
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+
+const ASSETS_DIR = path.join(__dirname, 'assets');
+if (!fs.existsSync(ASSETS_DIR)) fs.mkdirSync(ASSETS_DIR);
+
+const assets = [
+  { name: 'tailwind.js', url: 'https://cdn.tailwindcss.com' },
+  { name: 'lucide.js', url: 'https://unpkg.com/lucide@latest' }
+];
+
+async function download(url, dest) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(dest);
+    https.get(url, (res) => {
+      res.pipe(file);
+      file.on('finish', () => {
+        file.close();
+        resolve();
+      });
+    }).on('error', (err) => {
+      fs.unlink(dest, () => reject(err));
+    });
+  });
+}
+
+async function main() {
+  console.log('Downloading offline assets...');
+  for (const asset of assets) {
+    console.log(`- ${asset.name}...`);
+    try {
+      await download(asset.url, path.join(ASSETS_DIR, asset.name));
+    } catch (e) {
+      console.error(`Failed to download ${asset.name}:`, e.message);
+    }
+  }
+  console.log('Assets downloaded.');
+}
+
+main();
