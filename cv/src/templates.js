@@ -146,7 +146,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         @media (max-width: 768px) { #settings-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 85vh; border-radius: 2rem 2rem 0 0; transform: translateY(100%); padding: 24px; } #settings-panel.open { transform: translateY(0); } .panel-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: -12px auto 24px; display: block; } .theme-light .panel-handle { background: rgba(0,0,0,0.1); } }
         .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
         .font-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 32px; }
-        .panel-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 4px; border-radius: 1.25rem; font-size: 8px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
+        .panel-btn { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border-radius: 1.25rem; font-size: 9px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
         #btn-light { background: #f4f4f5; }
         #btn-deep { background: #27272a; }
         #btn-dark { background: #000000; }
