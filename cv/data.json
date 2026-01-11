@@ -140,8 +140,34 @@
       { "category": "IoT/3D", "tools": "MQTT, ESP32, Fusion 360", "icon": "radio", "level": 75 }
     ],
     "personal": {
-      "fr": ["Adaptable", "Minutieux", "Autonome", "Passionné", "Problem Solver", "Esprit d'équipe"],
-      "en": ["Adaptable", "Detail-Oriented", "Autonomous", "Passionate", "Problem Solver", "Team Player"]
+      "fr": [
+        { "label": "Adaptable", "desc": "S'adapte à divers environnements & projets", "icon": "refresh-cw" },
+        { "label": "Minutieux", "desc": "Précision dans les configurations & déploiements", "icon": "search" },
+        { "label": "Autonome", "desc": "Prise d'initiative et amélioration des processus", "icon": "rocket" },
+        { "label": "Communicant", "desc": "Explication claire de concepts complexes", "icon": "message-circle" },
+        { "label": "Passionné", "desc": "Investi dans la culture Tech & IT", "icon": "code-2" },
+        { "label": "Pragmatique", "desc": "Équilibre entre théorie et réalité terrain", "icon": "hammer" },
+        { "label": "Esprit d'équipe", "desc": "Travail efficace avec collègues & clients", "icon": "users" },
+        { "label": "Curieux", "desc": "Veille technologique constante", "icon": "lightbulb" },
+        { "label": "Créatif", "desc": "Solutions innovantes aux problèmes", "icon": "palette" },
+        { "label": "Fiable", "desc": "Travail de qualité dans les délais", "icon": "shield-check" },
+        { "label": "Analytique", "desc": "Résolution de défis techniques complexes", "icon": "bar-chart-2" },
+        { "label": "Problem Solver", "desc": "Troubleshooting rapide et efficace", "icon": "puzzle" }
+      ],
+      "en": [
+        { "label": "Adaptable", "desc": "Handling diverse environments & projects", "icon": "refresh-cw" },
+        { "label": "Detail-Oriented", "desc": "Ensuring precision in configurations & deployments", "icon": "search" },
+        { "label": "Autonomous", "desc": "Taking initiative and improving processes", "icon": "rocket" },
+        { "label": "Good Communicator", "desc": "Explaining complex concepts clearly", "icon": "message-circle" },
+        { "label": "Geek & Passionate", "desc": "Deeply invested in technology and IT culture", "icon": "code-2" },
+        { "label": "Hands-On", "desc": "Balancing theory with real-world application", "icon": "hammer" },
+        { "label": "Team Player", "desc": "Working efficiently with colleagues & clients", "icon": "users" },
+        { "label": "Curious", "desc": "Staying up-to-date with tech trends", "icon": "lightbulb" },
+        { "label": "Creative", "desc": "Finding innovative solutions to problems", "icon": "palette" },
+        { "label": "Reliable", "desc": "Delivering high-quality work on time", "icon": "shield-check" },
+        { "label": "Analytical", "desc": "Solving complex technical challenges", "icon": "bar-chart-2" },
+        { "label": "Problem Solver", "desc": "Quickly adapting to new issues & troubleshooting", "icon": "puzzle" }
+      ]
     }
   }
 }

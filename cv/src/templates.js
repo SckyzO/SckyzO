@@ -124,6 +124,15 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .surface-muted { background-color: rgba(255, 255, 255, 0.05); }
         .theme-light .surface-muted { background-color: #f1f5f9; } /* Slate-100 */
         
+        .has-tooltip { position: relative; }
+        .tooltip-content { 
+            visibility: hidden; opacity: 0; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+            background: var(--bg-card); border: 1px solid var(--border-card); color: var(--text-main); padding: 10px 16px; 
+            border-radius: 0.75rem; font-size: 0.75rem; font-weight: 500; white-space: nowrap; z-index: 50; transition: all 0.2s ease; pointer-events: none;
+            box-shadow: 0 0 25px rgba(var(--accent-rgba), 0.3); backdrop-filter: blur(12px); text-transform: none; letter-spacing: 0;
+        }
+        .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-8px); }
+        
         body { font-family: var(--font-sans); background-color: var(--bg-page); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
         .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; }
         .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(var(--accent-rgba), 0.08), transparent 40%); z-index: 0; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
@@ -477,11 +486,27 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.3s">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang].map(s => `<span class="px-4 py-2 surface-muted text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
+                        ${data.skills.personal[lang].map(s => `
+                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
+                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                ${s.label}
+                                <span class="tooltip-content">${s.desc}</span>
+                            </span>
+                        `).join('')}
+                    </div>
                 </section>`,
-                `<section class="flex flex-col gap-4 text-left">
+                `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang2].map(s => `<span class="px-4 py-2 surface-muted text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
+                        ${data.skills.personal[lang2].map(s => `
+                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
+                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                ${s.label}
+                                <span class="tooltip-content">${s.desc}</span>
+                            </span>
+                        `).join('')}
+                    </div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
