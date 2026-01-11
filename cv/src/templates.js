@@ -300,56 +300,120 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left">
         ${flip(`
-        <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group reveal" style="animation-delay: 0s">
-            <div class="absolute -top-6 -right-6 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left pointer-events-none"><i data-lucide="box" style="width: 180px; height: 180px;"></i></div>
-            <div class="w-40 h-40 surface-muted rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
-                <i data-lucide="user" class="w-20 h-20 accent-text"></i>
-                <div class="absolute -bottom-2 -right-2 w-8 h-8 accent-bg border-[6px] border-[#18181b] rounded-full animate-pulse shadow-[0_0_20px_var(--accent)]"></div>
+        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group reveal" style="animation-delay: 0s">
+            <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
+            
+            <!-- Left: Avatar Zone -->
+            <div class="relative shrink-0">
+                <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+                    <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                </div>
+                <div class="absolute bottom-4 right-4 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
             </div>
-            <div class="text-center md:text-left flex-grow text-left relative z-10">
-                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">${c.name}</h1>
-                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang]}</p>
-                <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
-                    <a href="${pdfFilename}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
+
+            <!-- Right: Info Zone -->
+            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
+                <!-- Top Badges -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
+                    </span>
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
+                    </span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
+                    THOMAS <span class="accent-text">BOURCEY</span>
+                </h1>
+                
+                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.2em] mb-8 opacity-90">
+                    ${c.title[lang]}
+                </p>
+
+                <!-- Metrics Bar -->
+                <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Years Exp.</span>
+                    </div>
+                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Certifications</span>
+                    </div>
+                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.projects.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Projects</span>
+                    </div>
+                    
+                    <div class="flex-grow"></div>
+                    
+                    <a href="${pdfFilename}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print">
+                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">Download PDF</span>
+                    </a>
                 </div>
             </div>
-            <div class="hidden lg:flex flex-col gap-4 text-right opacity-40 font-mono text-[10px] uppercase tracking-[0.2em]">
-                ${activityHtml}
-                <span>Status: system_ready</span>
-                <span>Uptime: 15y_experience</span>
-                <div class="flex items-center gap-2 justify-end opacity-60">
-                    <span class="px-1.5 py-0.5 border border-white/20 rounded">CTRL</span>
-                    <span>+</span>
-                    <span class="px-1.5 py-0.5 border border-white/20 rounded">K</span>
-                </div>
-                <span>Sync: ${updateDate}</span>
-            </div>
+            
+            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-emerald-500/80 font-bold no-print opacity-60 hover:opacity-100 transition-opacity"><div class="status-pulse"></div><span class="text-[10px] uppercase tracking-widest font-mono">Latest: ${activity.repo}</span></div>` : ''}
         </header>`, 
         `
-        <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
-            <div class="absolute -top-6 -right-6 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left pointer-events-none"><i data-lucide="box" style="width: 180px; height: 180px;"></i></div>
-            <div class="w-40 h-40 surface-muted rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
-                <i data-lucide="user" class="w-20 h-20 accent-text"></i>
-                <div class="absolute -bottom-2 -right-2 w-8 h-8 accent-bg border-[6px] border-[#18181b] rounded-full animate-pulse shadow-[0_0_20px_var(--accent)]"></div>
+        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
+            <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
+            
+            <div class="relative shrink-0">
+                <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
+                    <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                </div>
+                <div class="absolute bottom-4 right-4 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
             </div>
-            <div class="text-center md:text-left flex-grow text-left relative z-10">
-                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">${c.name}</h1>
-                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang2]}</p>
-                <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
-                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
+
+            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
+                    </span>
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
+                    </span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
+                    THOMAS <span class="accent-text">BOURCEY</span>
+                </h1>
+                
+                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.2em] mb-8 opacity-90">
+                    ${c.title[lang2]}
+                </p>
+
+                <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Years Exp.</span>
+                    </div>
+                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Certifications</span>
+                    </div>
+                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.projects.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Projects</span>
+                    </div>
+                    
+                    <div class="flex-grow"></div>
+                    
+                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print">
+                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">Download PDF</span>
+                    </a>
                 </div>
             </div>
-            <div class="hidden lg:flex flex-col gap-4 text-right opacity-40 font-mono text-[10px] uppercase tracking-[0.2em]">
-                ${activityHtml}
-                <span>Status: system_ready</span>
-                <span>Uptime: 15y_experience</span>
-                <div class="flex items-center gap-2 justify-end opacity-60">
-                    <span class="px-1.5 py-0.5 border border-white/20 rounded">CTRL</span>
-                    <span>+</span>
-                    <span class="px-1.5 py-0.5 border border-white/20 rounded">K</span>
-                </div>
-                <span>Sync: ${updateDate}</span>
-            </div>
+            
+            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-emerald-500/80 font-bold no-print opacity-60 hover:opacity-100 transition-opacity"><div class="status-pulse"></div><span class="text-[10px] uppercase tracking-widest font-mono">Latest: ${activity.repo}</span></div>` : ''}
         </header>`
         )}
 
