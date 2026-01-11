@@ -653,6 +653,50 @@ function generateHTML(lang, activity = null) {
 </html>`;
 }
 
+// --- GÉNÉRATEUR TEXTE (ATS FRIENDLY) ---
+function generatePlain(lang) {
+  const t = i18n[lang];
+  const c = data.contact;
+  const stripHtml = (html) => html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
+  
+  let txt = `${c.name.toUpperCase()}\n`;
+  txt += `${c.title[lang].toUpperCase()}\n`;
+  txt += `--------------------------------------------------\n\n`;
+  
+  txt += `CONTACT\n`;
+  txt += `Location: ${c.location}\n`;
+  txt += `Email: ${c.email}\n`;
+  txt += `Website: https://${c.website}\n`;
+  txt += `GitHub: https://github.com/${c.github}\n`;
+  txt += `LinkedIn: https://linkedin.com/in/${c.linkedin}\n\n`;
+  
+  txt += `${t.profile.toUpperCase()}\n`;
+  txt += `${stripHtml(data.summary[lang])}\n\n`;
+  
+  txt += `${t.experience.toUpperCase()}\n\n`;
+  data.experiences.forEach(exp => {
+    txt += `${exp.role[lang].toUpperCase()}\n`;
+    txt += `${exp.company} | ${exp.period}\n`;
+    exp.details[lang].forEach(d => txt += `- ${stripHtml(d)}\n`);
+    txt += `\n`;
+  });
+  
+  txt += `${t.proSkills.toUpperCase()}\n`;
+  data.skills.professional.forEach(s => {
+    txt += `${s.category}: ${s.tools}\n`;
+  });
+  
+  txt += `\n${t.education.toUpperCase()}\n`;
+  data.education.forEach(ed => {
+    txt += `${ed.degree[lang]} | ${ed.school} (${ed.year})\n`;
+  });
+
+  txt += `\n${t.certifications.toUpperCase()}\n`;
+  data.certifications.forEach(cert => txt += `- ${cert}\n`);
+  
+  return txt;
+}
+
 // --- GÉNÉRATEUR MARKDOWN ---
 function generateMarkdown(lang) {
   const t = i18n[lang]; const c = data.contact; const stripHtml = (html) => html.replace(/<[^>]*>?/gm, '');
@@ -684,6 +728,12 @@ async function build() {
     const mdContent = generateMarkdown(lang);
     const mdFileName = lang === 'fr' ? "CV_FR.md" : "Resume_EN.md";
     fs.writeFileSync(path.join(__dirname, mdFileName), mdContent);
+    
+    // Génération du texte brut (ATS)
+    const txtContent = generatePlain(lang);
+    const txtFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.txt" : "Resume_Thomas_Bourcey_EN.txt";
+    fs.writeFileSync(path.join(__dirname, txtFileName), txtContent);
+
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle' });
     await page.waitForTimeout(1500); // Wait for animations (flip, reveal) to complete

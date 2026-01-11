@@ -20,6 +20,7 @@ FROM nginx:alpine
 COPY --from=builder /app/*.html /usr/share/nginx/html/
 COPY --from=builder /app/*.pdf /usr/share/nginx/html/
 COPY --from=builder /app/*.md /usr/share/nginx/html/
+COPY --from=builder /app/*.txt /usr/share/nginx/html/
 COPY --from=builder /app/*.png /usr/share/nginx/html/
 
 EXPOSE 80
