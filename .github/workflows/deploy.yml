@@ -1,0 +1,67 @@
+name: Deploy CV to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: 'npm'
+          cache-dependency-path: cv/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./cv
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: ./cv
+        run: npx playwright install --with-deps chromium
+
+      - name: Download Offline Assets
+        working-directory: ./cv
+        run: node download-assets.js
+
+      - name: Build CV (HTML, PDF, TXT)
+        working-directory: ./cv
+        run: node build.js
+
+      - name: Prepare Deployment Artifact
+        run: |
+          mkdir public
+          cp cv/*.html public/
+          cp cv/*.pdf public/
+          cp cv/*.txt public/
+          cp cv/*.png public/
+          # Ensure index.html exists
+          if [ ! -f public/index.html ]; then
+            cp cv/index.html public/index.html
+          fi
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
