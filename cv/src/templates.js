@@ -293,12 +293,12 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         ${flip(`
         <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group reveal" style="animation-delay: 0s">
             <div class="absolute -top-6 -right-6 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left pointer-events-none"><i data-lucide="box" style="width: 180px; height: 180px;"></i></div>
-            <div class="w-40 h-40 bg-slate-800/20 rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
+            <div class="w-40 h-40 surface-muted rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
                 <i data-lucide="user" class="w-20 h-20 accent-text"></i>
                 <div class="absolute -bottom-2 -right-2 w-8 h-8 accent-bg border-[6px] border-[#18181b] rounded-full animate-pulse shadow-[0_0_20px_var(--accent)]"></div>
             </div>
             <div class="text-center md:text-left flex-grow text-left relative z-10">
-                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none" style="font-family: var(--font-sans);">${c.name}</h1>
+                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">${c.name}</h1>
                 <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang]}</p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
                     <a href="${pdfFilename}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
@@ -319,12 +319,12 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         `
         <header class="card p-10 md:p-16 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
             <div class="absolute -top-6 -right-6 p-12 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity text-left pointer-events-none"><i data-lucide="box" style="width: 180px; height: 180px;"></i></div>
-            <div class="w-40 h-40 bg-slate-800/20 rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
+            <div class="w-40 h-40 surface-muted rounded-[2.5rem] flex items-center justify-center border-2 accent-border relative shrink-0 z-10">
                 <i data-lucide="user" class="w-20 h-20 accent-text"></i>
                 <div class="absolute -bottom-2 -right-2 w-8 h-8 accent-bg border-[6px] border-[#18181b] rounded-full animate-pulse shadow-[0_0_20px_var(--accent)]"></div>
             </div>
             <div class="text-center md:text-left flex-grow text-left relative z-10">
-                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none" style="font-family: var(--font-sans);">${c.name}</h1>
+                <h1 class="text-5xl md:text-6xl font-black tracking-tighter uppercase italic mb-4 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">${c.name}</h1>
                 <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.3em] mb-8 text-left">${c.title[lang2]}</p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4 no-print text-left">
                     <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="accent-bg text-slate-950 px-8 py-3 rounded-2xl font-black text-xs tracking-widest transition-all hover:scale-105 shadow-xl shadow-cyan-500/10 flex items-center gap-3"><i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD PDF</a>
@@ -506,11 +506,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
             <div class="lg:col-span-8 flex flex-col gap-12 text-left">
                 ${flip(`
-                <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.1s">
+                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang])}</p></div>
                 </section>`,
-                `<section class="flex flex-col gap-4 text-left">
+                `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang2])}</p></div>
                 </section>`, 'delay-200')}
@@ -566,7 +566,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </section>`, 'delay-350')}
 
                 ${flip(`
-                <section class="flex flex-col gap-4 text-left reveal" style="animation-delay: 0.4s">
+                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.4s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
                     <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-fr">
                         ${data.experiences.map((exp, idx) => {
@@ -575,7 +575,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125 z-20"></div>` +
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${highlightMetrics(d)}</span></li>`).join('')}</ul></div>`}).join('')}</div>
                 </section>`,
-                `<section class="flex flex-col gap-4 text-left">
+                `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
                     <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-en">
                         ${data.experiences.map((exp, idx) => {
