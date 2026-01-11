@@ -146,7 +146,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         @media (max-width: 768px) { #settings-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 85vh; border-radius: 2rem 2rem 0 0; transform: translateY(100%); padding: 24px; } #settings-panel.open { transform: translateY(0); } .panel-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: -12px auto 24px; display: block; } .theme-light .panel-handle { background: rgba(0,0,0,0.1); } }
         .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
         .font-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 32px; }
-        .panel-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 1.25rem; font-size: 8px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
+        .panel-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 4px; border-radius: 1.25rem; font-size: 8px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
         #btn-light { background: #f4f4f5; }
         #btn-deep { background: #27272a; }
         #btn-dark { background: #000000; }
@@ -225,24 +225,24 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <div class="panel-handle md:hidden"></div>
         
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Language</label>
-        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
-            <button id="btn-lang-fr" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
+        <div class="grid grid-cols-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
+            <button id="btn-lang-fr" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇫🇷</span> FR
             </button>
-            <button id="btn-lang-en" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
+            <button id="btn-lang-en" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇬🇧</span> EN
             </button>
         </div>
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Appearance</label>
-        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
-            <button onclick="setTheme('light')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-light">
+        <div class="grid grid-cols-3 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
+            <button onclick="setTheme('light')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-light">
                 <i data-lucide="sun" class="w-3 h-3"></i> Light
             </button>
-            <button onclick="setTheme('deep')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-deep">
+            <button onclick="setTheme('deep')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-deep">
                 <i data-lucide="moon" class="w-3 h-3"></i> Deep
             </button>
-            <button onclick="setTheme('dark')" class="panel-btn flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-dark">
+            <button onclick="setTheme('dark')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-dark">
                 <i data-lucide="zap" class="w-3 h-3"></i> Dark
             </button>
         </div>
@@ -258,11 +258,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </div>
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">System Mode</label>
-        <div class="flex p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative">
-            <button onclick="updateTTY(false)" id="btn-std" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2">
+        <div class="grid grid-cols-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
+            <button onclick="updateTTY(false)" id="btn-std" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2">
                 <i data-lucide="monitor" class="w-3 h-3"></i> Standard
             </button>
-            <button onclick="updateTTY(true)" id="btn-matrix" class="flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2">
+            <button onclick="updateTTY(true)" id="btn-matrix" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2">
                 <i data-lucide="terminal" class="w-3 h-3"></i> Matrix
             </button>
         </div>
