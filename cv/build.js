@@ -191,17 +191,57 @@ function generateHTML(lang, activity = null, qrDataURI = '', mode = 'pdf') {
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>${c.name} - ${c.title[lang]}</title>
+        <title>${c.name} - ${c.title[lang]}</title>
 
-    <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
+        
 
-    <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
+        <!-- SEO & Canonical -->
 
-    <meta name="description" content="${data.summary[lang].substring(0, 150).replace(/<[^>]*>/g, '')}...">
+        <link rel="canonical" href="https://tomzone.fr/index_${lang}.html" />
 
-    <meta property="og:title" content="${c.name} - ${c.title[lang]}">
-    <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
+        <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
+
+        <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
+
+        <meta name="description" content="Expert HPC, DevOps & Observabilité - 15 ans d'expérience. Découvrez mon parcours et mes projets.">
+
+        <meta name="keywords" content="Thomas Bourcey, CV, HPC, DevOps, Linux, Système, Ingénieur, Toulouse, SRE">
+
+        <meta name="author" content="${c.name}">
+
+    
+
+        <!-- Open Graph / Facebook -->
+
+        <meta property="og:type" content="website">
+
+        <meta property="og:url" content="https://tomzone.fr/index_${lang}.html">
+
+        <meta property="og:title" content="${c.name} - ${c.title[lang]}">
+
+        <meta property="og:description" content="Expert HPC & DevOps. Plus de 15 ans d'expérience dans l'administration de systèmes critiques à grande échelle.">
+
+        <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
+
+        <meta property="og:site_name" content="${c.name} Portfolio">
+
+    
+
+        <!-- Twitter -->
+
+        <meta property="twitter:card" content="summary_large_image">
+
+        <meta property="twitter:url" content="https://tomzone.fr/index_${lang}.html">
+
+        <meta property="twitter:title" content="${c.name} - ${c.title[lang]}">
+
+        <meta property="twitter:description" content="Expert HPC & DevOps. Plus de 15 ans d'expérience dans l'administration de systèmes critiques à grande échelle.">
+
+        <meta property="twitter:image" content="https://tomzone.fr/preview_${lang}.png">
+
+    
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
     
     <!-- Offline Assets Fallback -->
     ${fs.existsSync(path.join(__dirname, 'assets', 'tailwind.js')) 
