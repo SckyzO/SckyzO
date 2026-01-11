@@ -16,7 +16,7 @@ async function getGitHubActivity(username) {
       headers: { 'User-Agent': 'Node.js-CV-Builder' }
     };
     
-    https.get(options, (res) => {
+    const req = https.get(options, (res) => {
       let body = '';
       res.on('data', (chunk) => body += chunk);
       res.on('end', () => {
@@ -32,7 +32,11 @@ async function getGitHubActivity(username) {
           }
         } catch (e) { resolve(null); }
       });
-    }).on('error', () => resolve(null));
+    });
+
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
+    req.setTimeout(3000); // 3s timeout
   });
 }
 
@@ -258,7 +262,15 @@ function generateHTML(lang, activity = null) {
         .exp-card.highlight { opacity: 1 !important; filter: none !important; transform: scale(1.02); border-left-color: var(--accent) !important; }
         .exp-card.highlight .accent-text { text-shadow: 0 0 15px var(--accent); }
         .radar-point.active { opacity: 1 !important; r: 6px; fill: white; filter: drop-shadow(0 0 8px var(--accent)); }
-        @media print { body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; } .no-print { display: none !important; } .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.5rem !important; } strong, .accent-text { color: black !important; font-weight: 800 !important; } .accent-bg { background-color: #000 !important; } }
+        @media print { 
+            body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; } 
+            .no-print, .flip-back { display: none !important; } 
+            .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.5rem !important; break-inside: avoid; } 
+            strong, .accent-text, h1, h2, h3, p, span { color: black !important; font-weight: 800 !important; } 
+            .accent-bg { background-color: #000 !important; }
+            a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
+            .flip-card { transform: none !important; }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 lg:p-12 theme-deep font-hub" id="body-root">
@@ -267,9 +279,9 @@ function generateHTML(lang, activity = null) {
         ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
     </div>
 
-    <button onclick="toggleSettings()" class="cog-btn no-print" id="main-cog"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></button>
+    <button onclick="toggleSettings()" class="cog-btn no-print" id="main-cog" aria-label="Open Settings"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></button>
 
-    <div id="settings-panel" class="no-print">
+    <div id="settings-panel" class="no-print" aria-label="Settings Panel">
         <div class="panel-handle md:hidden"></div>
         
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Language</label>
@@ -674,7 +686,7 @@ async function build() {
     fs.writeFileSync(path.join(__dirname, mdFileName), mdContent);
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(500); 
+    await page.waitForTimeout(1500); // Wait for animations (flip, reveal) to complete
     const pdfFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.pdf" : "Resume_Thomas_Bourcey_EN.pdf";
     await page.pdf({
       path: path.join(__dirname, pdfFileName), format: 'A4', printBackground: true,
