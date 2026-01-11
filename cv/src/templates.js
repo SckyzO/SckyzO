@@ -391,10 +391,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                             </div>
                         </div>
-                        <div class="h-px bg-white/5 w-full my-2"></div>
+                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
                         </div>
                     </div>
                 </section>`,
@@ -442,10 +442,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                             </div>
                         </div>
-                        <div class="h-px bg-white/5 w-full my-2"></div>
+                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
                         </div>
                     </div>
                 </section>`, 'delay-100')}
