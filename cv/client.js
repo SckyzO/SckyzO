@@ -4,10 +4,33 @@ const colors = [ { name: 'Blue', value: '59, 130, 246', hex: '#3b82f6' }, { name
 try { lucide.createIcons(); } catch(e) { console.error("Lucide init failed", e); }
 
 function toggleSettings() {
-    document.getElementById('settings-panel').classList.toggle('open');
+    const panel = document.getElementById('settings-panel');
+    const btn = document.getElementById('main-cog');
+    const isOpen = panel.classList.toggle('open');
+    
+    // Accessibility & Scroll Lock
+    if (isOpen) {
+        document.body.style.overflow = 'hidden'; // Lock scroll
+        btn.setAttribute('aria-expanded', 'true');
+        
+        // Focus Trap simple
+        const focusableElements = panel.querySelectorAll('button, input, [href], select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusableElements.length) focusableElements[0].focus();
+    } else {
+        document.body.style.overflow = ''; // Unlock scroll
+        btn.setAttribute('aria-expanded', 'false');
+        btn.focus(); // Return focus to trigger button
+    }
 }
 
 function updateToggleUI(type, state) {
+    // ... (existing logic kept intact by replace tool if I target correctly, but here I am rewriting the function block to be safe or assuming the user wants to keep it)
+    // Actually, to be safe with 'replace', I should target specific blocks or rewrite the whole function if I'm replacing it.
+    // Let's stick to the instruction: I am ADDING functionality.
+    // The previous 'toggleSettings' was very simple. I am replacing it entirely.
+    
+    // I will also add the document.title update logic in toggleLanguage.
+    
     const activeClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2 cursor-default";
     const inactiveClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2 cursor-pointer";
 
@@ -16,15 +39,21 @@ function updateToggleUI(type, state) {
         const btnEn = document.getElementById('btn-lang-en');
         if (btnFr && btnEn) {
             const isFrActive = btnFr.classList.contains('bg-white');
+            const body = document.getElementById('body-root');
             if (isFrActive) {
                 btnFr.className = inactiveClass;
                 btnEn.className = activeClass;
+                document.documentElement.lang = 'en';
+                if (body && body.dataset.titleEn) document.title = body.dataset.titleEn;
             } else {
                 btnFr.className = activeClass;
                 btnEn.className = inactiveClass;
+                document.documentElement.lang = 'fr';
+                if (body && body.dataset.titleFr) document.title = body.dataset.titleFr;
             }
         }
     } else if (type === 'tty') {
+       // ... existing tty logic
         const btnStd = document.getElementById('btn-std');
         const btnMatrix = document.getElementById('btn-matrix');
         if (btnStd && btnMatrix) {
@@ -82,7 +111,11 @@ window.toggleTTY = () => updateTTY();
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.altKey && e.key === 't') updateTTY();
     if (e.ctrlKey && e.key === 'k') { e.preventDefault(); toggleCmd(true); }
-    if (e.key === 'Escape') toggleCmd(false);
+    if (e.key === 'Escape') {
+        toggleCmd(false);
+        const panel = document.getElementById('settings-panel');
+        if (panel && panel.classList.contains('open')) toggleSettings();
+    }
 });
 
 // Command Palette

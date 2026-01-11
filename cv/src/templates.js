@@ -180,7 +180,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         }
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12 theme-deep font-hub ${isInteractive ? '' : 'pdf-mode'}" id="body-root">
+<body class="p-4 md:p-8 lg:p-12 theme-deep font-hub ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
     
     <div id="onboarding-tip" class="no-print text-left">
         ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
