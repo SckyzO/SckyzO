@@ -120,6 +120,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .theme-light { --bg-page: #f4f4f5; --bg-card: #ffffff; --border-card: #e4e4e7; --text-main: #18181b; --text-muted: #52525b; --track-color: #d4d4d8; }
         .theme-deep { --bg-page: #09090b; --bg-card: #18181b; --border-card: rgba(255, 255, 255, 0.05); --text-main: #f4f4f5; --text-muted: #a1a1aa; --track-color: #3f3f46; }
         .theme-dark { --bg-page: #000000; --bg-card: #09090b; --border-card: rgba(255, 255, 255, 0.05); --text-main: #f4f4f5; --text-muted: #a1a1aa; --track-color: #27272a; }
+        
+        .surface-muted { background-color: rgba(255, 255, 255, 0.05); }
+        .theme-light .surface-muted { background-color: #f1f5f9; } /* Slate-100 */
+        
         body { font-family: var(--font-sans); background-color: var(--bg-page); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
         .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; }
         .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(var(--accent-rgba), 0.08), transparent 40%); z-index: 0; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
@@ -141,17 +145,21 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .accent-text { color: var(--accent); }
         .accent-bg { background-color: var(--accent); }
         .accent-border { border-color: var(--accent); }
-        #settings-panel { position: fixed; top: 95px; right: 24px; width: 360px; padding: 32px; background: rgba(24, 24, 27, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2.5rem; z-index: 100; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.4s ease; backdrop-filter: blur(24px); }
+        #settings-panel { position: fixed; top: 95px; right: 24px; width: 360px; padding: 32px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 2.5rem; z-index: 100; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.4s ease; backdrop-filter: blur(24px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         #settings-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        @media (max-width: 768px) { #settings-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 85vh; border-radius: 2rem 2rem 0 0; transform: translateY(100%); padding: 24px; } #settings-panel.open { transform: translateY(0); } .panel-handle { width: 40px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: -12px auto 24px; display: block; } .theme-light .panel-handle { background: rgba(0,0,0,0.1); } }
+        @media (max-width: 768px) { #settings-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 85vh; border-radius: 2rem 2rem 0 0; transform: translateY(100%); padding: 24px; } #settings-panel.open { transform: translateY(0); } .panel-handle { width: 40px; height: 4px; background: var(--track-color); border-radius: 2px; margin: -12px auto 24px; display: block; } .theme-light .panel-handle { background: rgba(0,0,0,0.1); } }
         .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
         .font-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 32px; }
-        .panel-btn { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border-radius: 1.25rem; font-size: 9px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: rgba(255,255,255,0.05); color: #71717a; cursor: pointer; }
-        #btn-light { background: #f4f4f5; }
-        #btn-deep { background: #27272a; }
-        #btn-dark { background: #000000; }
-        .panel-btn:hover { border-color: var(--accent); transform: scale(1.05); }
-        .panel-btn.active { border-color: var(--accent); color: var(--accent); ring: 4px solid rgba(var(--accent-rgba), 0.2); }
+        .panel-btn { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border-radius: 1.25rem; font-size: 9px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: var(--bg-page); color: var(--text-muted); cursor: pointer; }
+        .panel-btn:hover { border-color: var(--accent); transform: scale(1.05); color: var(--text-main); }
+        .panel-btn.active { border-color: var(--accent); color: var(--accent); ring: 2px solid var(--accent); background: var(--bg-page); }
+        
+        /* Theme Preview Buttons Override */
+        #btn-light { background: #f4f4f5 !important; color: #18181b !important; }
+        #btn-deep { background: #27272a !important; color: #f4f4f5 !important; }
+        #btn-dark { background: #000000 !important; color: #f4f4f5 !important; }
+        
+        /* Specific overrides for preview buttons if needed, but var(--bg-page) should be enough context */
         .accent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; }
         .accent-dot { width: 36px; height: 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
         .accent-dot:hover { transform: scale(1.1); }
@@ -226,17 +234,17 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <div class="panel-handle md:hidden"></div>
         
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Language</label>
-        <div class="grid grid-cols-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
-            <button id="btn-lang-fr" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
+        <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
+            <button id="btn-lang-fr" onclick="if(!this.classList.contains('active-lang')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'active-lang bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇫🇷</span> FR
             </button>
-            <button id="btn-lang-en" onclick="if(!this.classList.contains('bg-white')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'bg-white text-black shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
+            <button id="btn-lang-en" onclick="if(!this.classList.contains('active-lang')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'active-lang bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-base">🇬🇧</span> EN
             </button>
         </div>
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Appearance</label>
-        <div class="grid grid-cols-3 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
+        <div class="grid grid-cols-3 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
             <button onclick="setTheme('light')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-light">
                 <i data-lucide="sun" class="w-3 h-3"></i> Light
             </button>
@@ -259,8 +267,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </div>
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">System Mode</label>
-        <div class="grid grid-cols-2 p-1 bg-white/5 rounded-xl border border-white/5 mb-8 relative gap-1">
-            <button onclick="updateTTY(false)" id="btn-std" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2">
+        <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
+            <button onclick="updateTTY(false)" id="btn-std" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg flex items-center justify-center gap-2">
                 <i data-lucide="monitor" class="w-3 h-3"></i> Standard
             </button>
             <button onclick="updateTTY(true)" id="btn-matrix" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2">
@@ -344,35 +352,35 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="card p-8 flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
                             <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
                                 </div>
                             </a>
                             <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
                                 </div>
                             </a>
                             <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
                                 </div>
                             </a>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} ans <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('fr-FR')})</span></span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col">
                                     <div class="flex items-center gap-2">
                                         <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
@@ -395,35 +403,35 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="card p-8 flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
                             <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
                                 </div>
                             </a>
                             <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
                                 </div>
                             </a>
                             <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
                                 </div>
                             </a>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} years old <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('en-US')})</span></span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col">
                                     <div class="flex items-center gap-2">
                                         <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
@@ -459,21 +467,21 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.3s">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang].map(s => `<span class="px-4 py-2 surface-muted text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang2].map(s => `<span class="px-4 py-2 bg-slate-800/50 text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left">${data.skills.personal[lang2].map(s => `<span class="px-4 py-2 surface-muted text-[0.7rem] font-bold border border-white/5 rounded-xl uppercase hover:accent-border transition-all cursor-default text-left">${s}</span>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
@@ -489,11 +497,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-4 reveal text-left" style="animation-delay: 0.5s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
-                    <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
+                    <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 surface-muted border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-4 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="check-circle-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
-                    <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 bg-slate-800/30 border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
+                    <div class="card p-8 text-left flex flex-wrap gap-3 text-left">${data.certifications.map(cert => `<div class="text-[0.75rem] font-mono font-bold opacity-50 px-4 py-2 surface-muted border border-white/5 rounded-xl hover:opacity-100 transition-all flex items-center gap-3 text-left"><i data-lucide="check" class="w-3 h-3 accent-text text-left"></i> ${cert}</div>`).join('')}</div>
                 </section>`, 'delay-500')}
             </div>
             <div class="lg:col-span-8 flex flex-col gap-12 text-left">
@@ -510,11 +518,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 bg-slate-800 rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 bg-black/40 border border-white/5 rounded-xl text-[0.85rem] font-mono text-slate-400 hover:text-white hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
@@ -524,7 +532,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         ${data.projects.map(p => `
                         <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
                             <div class="flex justify-between items-start">
-                                <div class="p-2 bg-slate-800 rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
+                                <div class="p-2 surface-muted rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
                                 <i data-lucide="external-link" class="w-4 h-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
                             </div>
                             <div>
@@ -532,7 +540,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 <p class="text-[0.75rem] opacity-60 leading-relaxed h-12 overflow-hidden">${p.description[lang]}</p>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-auto">
-                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 bg-white/5 rounded border border-white/5">${tool}</span>`).join('')}
+                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 surface-muted rounded border border-white/5">${tool}</span>`).join('')}
                             </div>
                         </a>`).join('')}
                     </div>
@@ -543,7 +551,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         ${data.projects.map(p => `
                         <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
                             <div class="flex justify-between items-start">
-                                <div class="p-2 bg-slate-800 rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
+                                <div class="p-2 surface-muted rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
                                 <i data-lucide="external-link" class="w-4 h-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
                             </div>
                             <div>
@@ -551,7 +559,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 <p class="text-[0.75rem] opacity-60 leading-relaxed h-12 overflow-hidden">${p.description[lang2]}</p>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-auto">
-                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 bg-white/5 rounded border border-white/5">${tool}</span>`).join('')}
+                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 surface-muted rounded border border-white/5">${tool}</span>`).join('')}
                             </div>
                         </a>`).join('')}
                     </div>

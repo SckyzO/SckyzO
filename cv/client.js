@@ -24,21 +24,14 @@ function toggleSettings() {
 }
 
 function updateToggleUI(type, state) {
-    // ... (existing logic kept intact by replace tool if I target correctly, but here I am rewriting the function block to be safe or assuming the user wants to keep it)
-    // Actually, to be safe with 'replace', I should target specific blocks or rewrite the whole function if I'm replacing it.
-    // Let's stick to the instruction: I am ADDING functionality.
-    // The previous 'toggleSettings' was very simple. I am replacing it entirely.
-    
-    // I will also add the document.title update logic in toggleLanguage.
-    
-    const activeClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-white text-black shadow-lg flex items-center justify-center gap-2 cursor-default";
+    const activeClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg flex items-center justify-center gap-2 cursor-default active-lang";
     const inactiveClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2 cursor-pointer";
 
     if (type === 'lang') {
         const btnFr = document.getElementById('btn-lang-fr');
         const btnEn = document.getElementById('btn-lang-en');
         if (btnFr && btnEn) {
-            const isFrActive = btnFr.classList.contains('bg-white');
+            const isFrActive = btnFr.classList.contains('active-lang');
             const body = document.getElementById('body-root');
             if (isFrActive) {
                 btnFr.className = inactiveClass;
@@ -53,7 +46,6 @@ function updateToggleUI(type, state) {
             }
         }
     } else if (type === 'tty') {
-       // ... existing tty logic
         const btnStd = document.getElementById('btn-std');
         const btnMatrix = document.getElementById('btn-matrix');
         if (btnStd && btnMatrix) {
