@@ -78,13 +78,21 @@
       "degree": { "fr": "BTS Informatique de Gestion", "en": "Associate Degree in IT Management" },
       "school": "Toulouse, FR",
       "year": "2006"
+    },
+    {
+      "degree": { "fr": "Baccalauréat STT Gestion & Compta (Arts Plastiques)", "en": "High School Diploma - Management & Accounting (Arts Option)" },
+      "school": "Montauban, FR",
+      "year": "2003"
     }
   ],
   "certifications": [
-    "AWS Architect Associate",
-    "RHCSA RedHat 7",
-    "NDCA NetApp Advanced",
-    "VMware vSphere & ESX"
+    { "name": "AWS Architect Associate", "issuer": "Amazon Web Services", "year": "2020", "icon": "cloud" },
+    { "name": "Kubernetes Les fondamentaux", "issuer": "GFI", "year": "2019", "icon": "box" },
+    { "name": "RHCSA Linux RedHat 7", "issuer": "RedHat", "year": "2017", "icon": "terminal" },
+    { "name": "RHCSA, Satellite", "issuer": "RedHat • Paris", "year": "2014", "icon": "server" },
+    { "name": "NetApp Cluster CDOT", "issuer": "NetApp • Paris", "year": "2013", "icon": "database" },
+    { "name": "VMware vSphere 5.1", "issuer": "VMware • Paris", "year": "2013", "icon": "monitor" },
+    { "name": "NDCA NetApp Advanced", "issuer": "NetApp • Paris", "year": "2011", "icon": "database" }
   ],
   "projects": [
     {
