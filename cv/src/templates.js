@@ -13,9 +13,31 @@ const flip = (c1, c2, delay='') => `
     </div>`;
 
 const stripHtml = (html) => html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
+const normalizeHex = (hex) => {
+  if (typeof hex !== 'string') return null;
+  const trimmed = hex.trim();
+  if (!trimmed.startsWith('#')) return null;
+  if (trimmed.length === 4) {
+    return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`.toLowerCase();
+  }
+  if (trimmed.length === 7) {
+    return trimmed.toLowerCase();
+  }
+  return null;
+};
+const hexToRgb = (hex) => {
+  const normalized = normalizeHex(hex);
+  if (!normalized) return null;
+  const value = normalized.slice(1);
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
+  return `${r}, ${g}, ${b}`;
+};
 
 // --- GÉNÉRATEUR HTML ---
-function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf', clientScriptContent = '') {
+function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf', clientScriptContent = '', options = {}) {
   const isInteractive = mode === 'interactive';
   const lang2 = lang === 'fr' ? 'en' : 'fr';
   const t1 = i18n[lang];
@@ -23,11 +45,21 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const c = data.contact;
   const updateDate = new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' });
   const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
+  const availableThemes = new Set(['light', 'deep', 'dark']);
+  const availableFonts = new Set(['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy']);
+  const theme = availableThemes.has(options.theme) ? options.theme : 'deep';
+  const fontStack = availableFonts.has(options.fontStack) ? options.fontStack : 'hub';
+  const defaultAccent = '#3b82f6';
+  const defaultAccentRgba = '59, 130, 246';
+  const accent = normalizeHex(options.accent) || defaultAccent;
+  const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
+  const fontSize = Number.isFinite(options.fontSize) ? Math.max(12, Math.min(20, options.fontSize)) : 14;
+  const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
   
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
   
   return `<!DOCTYPE html>
-<html lang="${lang}" class="dark" id="html-root" style="font-size: 14px;">
+<html lang="${lang}" class="dark" id="html-root" style="${rootStyle}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -168,18 +200,19 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .exp-card.highlight .accent-text { text-shadow: 0 0 15px var(--accent); }
         .radar-point.active { opacity: 1 !important; r: 6px; fill: white; filter: drop-shadow(0 0 8px var(--accent)); }
         @media print { 
-            body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; } 
+            body { background-color: var(--bg-page) !important; color: var(--text-main) !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
             .no-print, .flip-back { display: none !important; } 
-            .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.5rem !important; break-inside: avoid; } 
-            strong, .accent-text, h1, h2, h3, p, span { color: black !important; font-weight: 800 !important; } 
-            .accent-bg { background-color: #000 !important; }
+            .card { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
+            strong, h1, h2, h3, p, span { color: var(--text-main) !important; font-weight: 800 !important; } 
+            .accent-text { color: var(--accent) !important; }
+            .accent-bg { background-color: var(--accent) !important; }
             a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
             .flip-card { transform: none !important; }
             .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }
         }
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12 theme-deep font-hub ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
+<body class="p-4 md:p-8 lg:p-12 theme-${theme} font-${fontStack} ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
     
     <div id="onboarding-tip" class="no-print text-left">
         ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
