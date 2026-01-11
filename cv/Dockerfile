@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM mcr.microsoft.com/playwright:v1.40.0-jammy AS builder
+FROM mcr.microsoft.com/playwright:v1.57.0-jammy AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY package.json package-lock.json* ./
 RUN npm install
 
 # Copie des sources
-COPY build.js data.json ./
+COPY build.js client.js data.json ./
 
 # Génération des fichiers (HTML, PDF, MD)
 RUN node build.js
