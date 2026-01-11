@@ -8,11 +8,26 @@ const { generateHTML, generateMarkdown, generatePlain } = require('./src/templat
 // Chargement des données
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'data.json'), 'utf8'));
 
+const parseNumber = (value) => {
+  if (!value) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const getPdfAppearance = () => ({
+  theme: process.env.PDF_THEME || null,
+  accent: process.env.PDF_ACCENT || null,
+  accentRgba: process.env.PDF_ACCENT_RGBA || null,
+  fontSize: parseNumber(process.env.PDF_FONT_SIZE),
+  fontStack: process.env.PDF_FONT_STACK || null
+});
+
 // --- MAIN BUILD PROCESS ---
 async function build() {
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
   const clientScript = fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8');
+  const pdfAppearance = getPdfAppearance();
   
   // 1. Génération de l'index interactif (Default FR)
   console.log("Génération de l'index interactif (index.html)...");
@@ -29,7 +44,7 @@ async function build() {
     const qrDataURI = await QRCode.toDataURL(qrTarget, { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
 
     // Mode 'pdf' : pas de JS, pas d'anim, layout figé
-    const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf');
+    const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf', '', pdfAppearance);
     const htmlPath = path.join(__dirname, "index_" + lang + ".html");
     fs.writeFileSync(htmlPath, htmlContent);
 
