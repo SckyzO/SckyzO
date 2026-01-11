@@ -150,11 +150,7 @@ document.getElementById('cmd-input').addEventListener('keydown', (e) => {
 });
 
 // Spotlight & Interactions
-document.addEventListener('mousemove', e => {
-    // Suppression de l'effet Spotlight comme demandé, mais conservation de la logique souris si besoin pour autre chose
-    // (Lignes commentées pour éviter l'erreur)
-    // document.querySelectorAll('.card').forEach(card => { ... });
-});
+// (Interaction logic preserved for future use)
 
 // CROSS HIGHLIGHTING & INTERACTIONS
 document.addEventListener('mouseover', e => {

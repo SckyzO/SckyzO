@@ -155,8 +155,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .status-pulse { width: 8px; height: 8px; background: #10b981; border-radius: 50%; position: relative; }
         .status-pulse::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #10b981; animation: sonar 2s infinite; }
         @keyframes sonar { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.5); opacity: 0; } }
-        .timeline-progress-bar { position: absolute; left: -1px; top: 0; width: 2px; background: var(--accent); box-shadow: 0 0 20px var(--accent); transition: height 0.1s linear; z-index: 10; }
-        .timeline-progress-bar::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 50%); width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 15px var(--accent); }
         #cmd-palette { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-start; justify-content: center; padding-top: 15vh; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
         #cmd-palette.open { display: flex; }
         .cmd-box { width: 100%; max-width: 600px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.25rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); overflow: hidden; animation: slideUp 0.2s ease-out; }
