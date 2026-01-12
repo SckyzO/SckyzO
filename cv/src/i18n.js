@@ -16,7 +16,7 @@ const i18n = {
     publicRepos: "Repos Publics",
     downloadPdf: "Télécharger PDF",
     tooltipPdf: "Obtenir la version imprimable",
-    lastCommit: "Dernier commit"
+    lastCommit: "Dernier commit sur le repo"
   },
   en: {
     contact: "Contact",
@@ -34,7 +34,7 @@ const i18n = {
     publicRepos: "Public Repos",
     downloadPdf: "Download PDF",
     tooltipPdf: "Get the printable version",
-    lastCommit: "Last commit"
+    lastCommit: "Last commit on repo"
   }
 };
 

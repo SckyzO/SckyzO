@@ -408,6 +408,14 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
+                    ${activity ? `
+                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print" title="${t1.lastCommit}">
+                        <div class="relative flex items-center justify-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                            <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
+                        </div>
+                        <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t1.lastCommit} :</span>${activity.repo}</span>
+                    </a>` : ''}
                 </div>
 
                 <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
@@ -463,8 +471,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     </div>
                 </div>
             </div>
-            
-            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t1.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`, 
         `
         <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
@@ -494,6 +500,14 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
+                    ${activity ? `
+                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print" title="${t2.lastCommit}">
+                        <div class="relative flex items-center justify-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                            <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
+                        </div>
+                        <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t2.lastCommit} :</span>${activity.repo}</span>
+                    </a>` : ''}
                 </div>
 
                 <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
@@ -549,8 +563,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     </div>
                 </div>
             </div>
-            
-            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t2.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`
         )}
 
