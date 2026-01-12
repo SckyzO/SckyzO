@@ -133,6 +133,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-8px); }
         
         body { font-family: var(--font-sans); background-color: var(--bg-page); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
+        h1, h2, h3, p, span, div, li { font-family: inherit; }
         .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; }
         .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(var(--accent-rgba), 0.08), transparent 40%); z-index: 0; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
         .card:hover::before { opacity: 1; }
@@ -240,7 +241,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         }
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12 theme-${theme} font-${fontStack} ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
+<body class="p-4 md:p-8 lg:p-12 theme-${theme} font-architect ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
     
     <!-- Reading Progress Bar -->
     <div class="fixed top-0 left-0 w-full h-1 z-[9999] no-print">
@@ -639,11 +640,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
-                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang])}</p></div>
+                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang]}</p></div>
                 </section>`,
                 `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
-                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${highlightMetrics(data.summary[lang2])}</p></div>
+                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang2]}</p></div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
