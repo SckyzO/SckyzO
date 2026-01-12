@@ -9,6 +9,8 @@ const { generateHTML, generateMarkdown, generatePlain } = require('./src/templat
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'data.json'), 'utf8'));
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const REQUIRED_ASSETS = ['tailwind.js', 'lucide.js'];
+const PDF_THEMES = ['light', 'deep', 'dark'];
+const PDF_FONT_STACKS = ['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy'];
 
 function failValidation(message) {
   throw new Error(`Invalid data.json: ${message}`);
@@ -130,6 +132,77 @@ function assertOfflineAssets() {
   }
 }
 
+function parseNumber(value) {
+  if (!value) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function normalizeHex(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed.startsWith('#')) return null;
+  if (trimmed.length === 4) {
+    return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`.toLowerCase();
+  }
+  if (trimmed.length === 7) {
+    return trimmed.toLowerCase();
+  }
+  return null;
+}
+
+function validateRgb(value, label) {
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be an RGB string like "59, 130, 246".`);
+  }
+  const match = value.match(/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/);
+  if (!match) {
+    throw new Error(`${label} must be an RGB string like "59, 130, 246".`);
+  }
+  const parts = match.slice(1).map((part) => Number(part));
+  if (parts.some((part) => part < 0 || part > 255)) {
+    throw new Error(`${label} values must be in the 0-255 range.`);
+  }
+  return parts.join(', ');
+}
+
+function getPdfAppearance() {
+  const theme = process.env.PDF_THEME ? process.env.PDF_THEME.trim() : null;
+  if (theme && !PDF_THEMES.includes(theme)) {
+    throw new Error(`PDF_THEME must be one of: ${PDF_THEMES.join(', ')}.`);
+  }
+
+  const accent = process.env.PDF_ACCENT ? normalizeHex(process.env.PDF_ACCENT) : null;
+  if (process.env.PDF_ACCENT && !accent) {
+    throw new Error('PDF_ACCENT must be a hex color like "#3b82f6".');
+  }
+
+  const accentRgba = process.env.PDF_ACCENT_RGBA
+    ? validateRgb(process.env.PDF_ACCENT_RGBA, 'PDF_ACCENT_RGBA')
+    : null;
+
+  const fontSize = parseNumber(process.env.PDF_FONT_SIZE);
+  if (process.env.PDF_FONT_SIZE && fontSize === null) {
+    throw new Error('PDF_FONT_SIZE must be a valid number.');
+  }
+  if (fontSize !== null && (fontSize < 12 || fontSize > 20)) {
+    throw new Error('PDF_FONT_SIZE must be between 12 and 20.');
+  }
+
+  const fontStack = process.env.PDF_FONT_STACK ? process.env.PDF_FONT_STACK.trim() : null;
+  if (fontStack && !PDF_FONT_STACKS.includes(fontStack)) {
+    throw new Error(`PDF_FONT_STACK must be one of: ${PDF_FONT_STACKS.join(', ')}.`);
+  }
+
+  return {
+    theme,
+    accent,
+    accentRgba,
+    fontSize,
+    fontStack
+  };
+}
+
 const VALIDATE_ONLY = process.argv.includes('--validate-only');
 
 // --- MAIN BUILD PROCESS ---
@@ -143,6 +216,7 @@ async function build() {
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
   const clientScript = fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8');
+  const pdfAppearance = getPdfAppearance();
   
   // 1) Generate interactive index (default FR).
   console.log("Generating interactive index (index.html)...");
@@ -151,7 +225,7 @@ async function build() {
   fs.writeFileSync(path.join(__dirname, "index.html"), htmlInteractive);
 
   // 2) Generate PDF-specific files (FR/EN).
-  const themes = ['light', 'deep', 'dark'];
+  const themes = pdfAppearance.theme ? [pdfAppearance.theme] : PDF_THEMES;
   
   for (const lang of ['fr', 'en']) {
     console.log("Generating assets for " + lang.toUpperCase() + "...");
@@ -163,8 +237,13 @@ async function build() {
     // Generate PDFs for each theme.
     for (const theme of themes) {
         console.log(`  - PDF ${theme}...`);
-        // Force the HUB font for maximum PDF legibility.
-        const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf', '', { theme: theme, fontSize: 18, fontStack: 'hub' });
+        const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf', '', {
+          theme: theme,
+          fontSize: pdfAppearance.fontSize || 18,
+          fontStack: pdfAppearance.fontStack || 'hub',
+          accent: pdfAppearance.accent || null,
+          accentRgba: pdfAppearance.accentRgba || null
+        });
         // Write a temporary HTML file for Playwright.
         const tempHtmlPath = path.join(__dirname, `temp_${lang}_${theme}.html`);
         fs.writeFileSync(tempHtmlPath, htmlContent);

@@ -70,6 +70,22 @@ The build generates the following files in the `cv/` directory:
 - `CV_FR.md` Markdown version.
 - English equivalents for all outputs.
 
+## Build Configuration
+
+Optional environment variables to customize PDF output:
+
+- `PDF_THEME`: `light`, `deep`, or `dark`. When set, only that theme is generated.
+- `PDF_ACCENT`: Hex color (example: `#3b82f6`).
+- `PDF_ACCENT_RGBA`: RGB color (example: `59, 130, 246`).
+- `PDF_FONT_SIZE`: Number between 12 and 20.
+- `PDF_FONT_STACK`: `hub`, `geist`, `space`, `archivo`, `quantum`, `console`, `architect`, or `oxy`.
+
+Example:
+
+```bash
+PDF_THEME=deep PDF_ACCENT=#10b981 PDF_FONT_SIZE=18 node build.js
+```
+
 ## CI/CD (GitHub Pages)
 
 Workflow: `.github/workflows/deploy.yml`
