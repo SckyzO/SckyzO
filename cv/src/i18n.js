@@ -32,7 +32,11 @@ const i18n = {
     openLinkedIn: "Ouvrir LinkedIn",
     emailTooltip: "Envoyer un email",
     phoneTooltip: "Appeler ce numero",
-    websiteTooltip: "Visiter le site"
+    websiteTooltip: "Visiter le site",
+    developedWith: "Développé avec",
+    inYear: "en",
+    sourceCode: "Code Source",
+    lastUpdate: "Dernière mise à jour"
   },
   en: {
     contact: "Contact",
@@ -66,7 +70,11 @@ const i18n = {
     openLinkedIn: "Open LinkedIn",
     emailTooltip: "Send an email",
     phoneTooltip: "Call this number",
-    websiteTooltip: "Visit the website"
+    websiteTooltip: "Visit the website",
+    developedWith: "Developed with",
+    inYear: "in",
+    sourceCode: "Source Code",
+    lastUpdate: "Last updated"
   }
 };
 

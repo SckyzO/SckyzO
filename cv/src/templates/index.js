@@ -772,6 +772,25 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </div>
     </div>
 
+    <footer class="max-w-7xl mx-auto py-12 mt-12 border-t border-[var(--border-card)] text-center no-print">
+        <div class="flex flex-col gap-4 items-center justify-center">
+            <div class="flex items-center gap-2 text-sm font-mono opacity-60">
+                <span>${t1.developedWith}</span>
+                <i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500/20 animate-pulse"></i>
+                <span>&</span>
+                <i data-lucide="bot" class="w-4 h-4 text-[var(--accent)]"></i>
+                <span>${t1.inYear} ${new Date().getFullYear()}</span>
+            </div>
+            <div class="text-[10px] uppercase tracking-widest opacity-40">
+                ${t1.lastUpdate}: ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+            <a href="https://github.com/SckyzO/SckyzO" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-[10px] font-bold uppercase tracking-widest group">
+                <i data-lucide="github" class="w-3 h-3 group-hover:accent-text transition-colors"></i>
+                <span class="group-hover:text-[var(--text-main)] transition-colors">${t1.sourceCode}</span>
+            </a>
+        </div>
+    </footer>
+
     <div id="cmd-palette" onclick="toggleCmd(false)">
         <div class="cmd-box" onclick="event.stopPropagation()">
             <input type="text" class="cmd-input" id="cmd-input" placeholder="Type a command or search..." autocomplete="off">
