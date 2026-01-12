@@ -303,9 +303,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
 
             <!-- Left: Avatar Zone (Z-10) -->
-            <div class="relative shrink-0 p-10 md:p-12 z-10">
+            <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
                 <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
                         <picture>
                             <source srcset="assets/tom_avatar.webp" type="image/webp">
                             <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
@@ -399,9 +399,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
 
             <!-- Left: Avatar Zone (Z-10) -->
-            <div class="relative shrink-0 p-10 md:p-12 z-10">
+            <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
                 <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
                         <picture>
                             <source srcset="assets/tom_avatar.webp" type="image/webp">
                             <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">

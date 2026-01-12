@@ -38,6 +38,11 @@ function updateToggleUI(type, state) {
     const activeClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg flex items-center justify-center gap-2 cursor-default active-lang";
     const inactiveClass = "flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2 cursor-pointer";
 
+    // Auto-close on mobile
+    if (window.innerWidth <= 768) {
+        toggleSettings();
+    }
+
     if (type === 'lang') {
         const btnFr = document.getElementById('btn-lang-fr');
         const btnEn = document.getElementById('btn-lang-en');
