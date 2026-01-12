@@ -101,6 +101,17 @@ function setFontStack(f) {
 }
 
 // Welcome Modal Logic
+let welcomeTimer = null;
+
+window.resetWelcomeTimer = function() {
+    if (welcomeTimer) {
+        clearTimeout(welcomeTimer);
+        welcomeTimer = null;
+        const bar = document.getElementById('w-timer-bar');
+        if (bar) bar.style.width = '0%'; // Stop progress bar
+    }
+};
+
 window.setWelcomeLang = function(lang) {
     const btnFr = document.getElementById('w-lang-fr');
     const btnEn = document.getElementById('w-lang-en');
@@ -114,8 +125,8 @@ window.setWelcomeLang = function(lang) {
         btnEn.classList.add('opacity-50'); btnEn.classList.remove('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
         
         // Update Text
-        title.innerText = "Bienvenue";
-        sub.innerText = "Personnalisez votre expérience";
+        title.innerText = "Thomas Bourcey";
+        sub.innerText = "CV Interactif - Senior Engineer";
         btn.innerText = "Commencer l'exploration";
         
         // Trigger generic lang toggle if needed
@@ -125,8 +136,8 @@ window.setWelcomeLang = function(lang) {
         btnEn.classList.remove('opacity-50'); btnEn.classList.add('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
         btnFr.classList.add('opacity-50'); btnFr.classList.remove('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
         
-        title.innerText = "Welcome";
-        sub.innerText = "Customize your experience";
+        title.innerText = "Thomas Bourcey";
+        sub.innerText = "Interactive Resume - Senior Engineer";
         btn.innerText = "Start Exploring";
 
         const currentLang = document.documentElement.lang;
@@ -135,6 +146,7 @@ window.setWelcomeLang = function(lang) {
 };
 
 window.closeWelcome = function() {
+    resetWelcomeTimer();
     const m = document.getElementById('welcome-modal');
     m.style.opacity = '0';
     m.style.pointerEvents = 'none';
@@ -316,16 +328,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('cv-visited')) {
         const modal = document.getElementById('welcome-modal');
         if (modal) {
-            // Auto-detect browser lang for initial state
+            // 1. Generate Colors in Modal
+            const wPicker = document.getElementById('w-accent-picker');
+            if (wPicker && colors) {
+                 colors.forEach(c => {
+                    const btn = document.createElement('button'); 
+                    btn.className = 'w-6 h-6 rounded-full border border-white/20 hover:scale-125 transition-transform'; 
+                    btn.style.backgroundColor = c.hex;
+                    btn.onclick = () => { setAccent(c.hex); resetWelcomeTimer(); };
+                    wPicker.appendChild(btn);
+                });
+            }
+
+            // 2. Auto-detect browser lang
             const userLang = navigator.language || navigator.userLanguage; 
             const isFr = userLang.startsWith('fr');
-            
-            // Set initial UI state without triggering toggleLanguage yet (or defaulting to document lang)
             setWelcomeLang(isFr ? 'fr' : 'en');
 
+            // 3. Show Modal
             setTimeout(() => {
                 modal.style.opacity = '1';
                 modal.style.pointerEvents = 'auto';
+                
+                // 4. Start 15s Timer
+                const bar = document.getElementById('w-timer-bar');
+                if (bar) {
+                    // Force reflow
+                    void bar.offsetWidth; 
+                    bar.style.width = '100%'; // Start animation CSS
+                }
+                welcomeTimer = setTimeout(() => {
+                    closeWelcome();
+                }, 15000);
+
             }, 500);
         }
     }
