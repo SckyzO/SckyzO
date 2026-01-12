@@ -255,6 +255,10 @@ async function build() {
     const qrTarget = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
     const qrDataURI = await QRCode.toDataURL(qrTarget, { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
 
+    // Generate dedicated language HTML file (referenced in SEO/QR)
+    const htmlLang = generateHTML(data, lang, activity, qrDataURI, 'interactive', clientScript);
+    fs.writeFileSync(path.join(__dirname, `index_${lang}.html`), htmlLang);
+
     // Generate PDFs for each theme.
     for (const theme of themes) {
         console.log(`  - PDF ${theme}...`);

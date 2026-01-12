@@ -54,10 +54,9 @@ jobs:
         run: |
           rm -rf out
           mkdir -p out
-          cp build/index.html out/
           cp -R assets out/assets
           shopt -s nullglob
-          for file in build/*.pdf build/*.png build/*.md build/*.txt; do
+          for file in build/*.html build/*.pdf build/*.png build/*.md build/*.txt; do
             cp "$file" out/
           done
 
