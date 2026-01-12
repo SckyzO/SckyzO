@@ -251,7 +251,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         }
         
         /* Timeline Logic */
-        .timeline-border { border-color: rgba(255, 255, 255, 0.1); }
+        .timeline-border { border-color: rgba(255, 255, 255, 0.1); transition: border-color 0.3s; }
         .theme-light .timeline-border { border-color: rgba(0, 0, 0, 0.1); }
         .group:hover.timeline-border { border-color: var(--accent) !important; }
     </style>
@@ -330,21 +330,23 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left">
         ${flip(`
-        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group reveal" style="animation-delay: 0s">
-            <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
+        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break">
+            <!-- Background Layer (Clipped) -->
+            <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
+                <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
+            </div>
             
-            <!-- Left: Avatar Zone -->
-            <div class="relative shrink-0">
-                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+            <div class="relative shrink-0 p-10 md:p-12 z-10">
+                <div class="p-1.5 border border-accent/20 rounded-full">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
                         <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
                     </div>
                 </div>
-                <div class="absolute bottom-6 right-6 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
             </div>
 
-            <!-- Right: Info Zone -->
-            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
+            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
+
                 <!-- Top Badges -->
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
@@ -382,28 +384,48 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <a href="${pdfFilename}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print has-tooltip relative">
-                        <div class="absolute inset-0 bg-accent/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out rounded-xl overflow-hidden pointer-events-none"></div>
-                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform relative z-10"></i>
-                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)] relative z-10">${t1.downloadPdf}</span>
-                        <span class="tooltip-content" style="bottom: calc(100% + 10px);">${t1.tooltipPdf}</span>
-                    </a>
+                    <div class="relative group/dl z-20 hidden md:block no-print">
+                        <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
+                            <a href="${pdfFilename}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
+                                <i data-lucide="download" class="w-4 h-4 accent-text"></i>
+                                <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">${t1.downloadPdf}</span>
+                            </a>
+                            <div class="w-px bg-[var(--border-card)]"></div>
+                            <button class="px-2 hover:bg-accent/5 transition-all rounded-r-xl cursor-default">
+                                <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-2xl opacity-0 invisible group-hover/dl:opacity-100 group-hover/dl:visible transition-all transform translate-y-2 group-hover/dl:translate-y-0 flex flex-col overflow-hidden backdrop-blur-md">
+                            <a href="${pdfFilename}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#f4f4f5] border border-slate-300"></span> Light (Default)
+                            </a>
+                            <a href="${pdfFilename.replace('.pdf', '_Deep.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#18181b] border border-white/20"></span> Deep
+                            </a>
+                            <a href="${pdfFilename.replace('.pdf', '_Dark.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-black border border-white/20"></span> Dark
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t1.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`, 
         `
-        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
+        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative group !overflow-visible z-50">
             <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
             
-            <div class="relative shrink-0">
-                <div class="p-1.5 border border-accent/20 rounded-full">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
-                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+            <div class="relative shrink-0 overflow-hidden rounded-l-[2.5rem]">
+                <div class="p-10 flex items-center justify-center bg-[var(--text-main)] bg-opacity-5 h-full">
+                    <div class="p-1.5 border border-accent/20 rounded-full relative z-10">
+                        <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
+                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        </div>
                     </div>
+                    <div class="absolute bottom-14 right-14 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
                 </div>
-                <div class="absolute bottom-6 right-6 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
             </div>
 
             <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
@@ -442,12 +464,30 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print has-tooltip relative">
-                        <div class="absolute inset-0 bg-accent/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out rounded-xl overflow-hidden pointer-events-none"></div>
-                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform relative z-10"></i>
-                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)] relative z-10">${t2.downloadPdf}</span>
-                        <span class="tooltip-content" style="bottom: calc(100% + 10px);">${t2.tooltipPdf}</span>
-                    </a>
+                    <div class="relative group/dl z-20 hidden md:block no-print">
+                        <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
+                            <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
+                                <i data-lucide="download" class="w-4 h-4 accent-text"></i>
+                                <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">${t2.downloadPdf}</span>
+                            </a>
+                            <div class="w-px bg-[var(--border-card)]"></div>
+                            <button class="px-2 hover:bg-accent/5 transition-all rounded-r-xl cursor-default">
+                                <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-2xl opacity-0 invisible group-hover/dl:opacity-100 group-hover/dl:visible transition-all transform translate-y-2 group-hover/dl:translate-y-0 flex flex-col overflow-hidden backdrop-blur-md">
+                            <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#f4f4f5] border border-slate-300"></span> Light (Default)
+                            </a>
+                            <a href="${(lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf').replace('.pdf', '_Deep.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#18181b] border border-white/20"></span> Deep
+                            </a>
+                            <a href="${(lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf').replace('.pdf', '_Dark.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-black border border-white/20"></span> Dark
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -458,7 +498,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
             <div class="lg:col-span-4 flex flex-col gap-8 text-left">
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.1s">
+                <section class="flex flex-col gap-6 no-break reveal text-left no-break" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
                     <div class="card p-8 flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
@@ -509,7 +549,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         </div>
                     </div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
                     <div class="card p-8 flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
@@ -562,13 +602,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </section>`, 'delay-100')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.2s">
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
                         ${generateRadarChart(data.skills.professional)}
                     </div>
                 </section>`,`
-                <section class="flex flex-col gap-6 text-left">
+                <section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
                         ${generateRadarChart(data.skills.professional)}
@@ -576,17 +616,17 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </section>`, 'delay-200')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.3s">
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.3s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.4s">
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.4s">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
                     <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
                         ${data.skills.personal[lang].map(s => `
@@ -598,7 +638,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         `).join('')}
                     </div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
                     <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
                         ${data.skills.personal[lang2].map(s => `
@@ -612,17 +652,17 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </section>`, 'delay-400')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.5s">
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.5s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
                 </section>`, 'delay-500')}
                 
                 ${flip(`
-                <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.6s">
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.6s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
                     <div class="card p-6 text-left flex flex-col gap-4">
                         ${data.certifications.map(cert => `
@@ -638,7 +678,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         `).join('')}
                     </div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
                     <div class="card p-6 text-left flex flex-col gap-4">
                         ${data.certifications.map(cert => `
@@ -657,39 +697,38 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
             <div class="lg:col-span-8 flex flex-col gap-8 text-left">
                 ${flip(`
-                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.1s">
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang]}</p></div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
                     <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang2]}</p></div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.2s">
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
                 </section>`, 'delay-300')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.4s">
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.4s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
-                    <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-fr">
+                    <div class="flex flex-col gap-6" id="exp-container-fr">
                         ${data.experiences.map((exp, idx) => {
-                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` + 
-                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` +
+                            return `<div class="card p-10 relative overflow-hidden group text-left break-inside-avoid page-break-inside-avoid mb-6">` + 
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
                             `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
                             `<div class="space-y-6">` +
                             exp.domains.map(dom => `
                                 <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50"></span>${dom.title}</h4>
-                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] ml-1">
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang].map(item => {
                                             const { title, text } = parseItem(item);
                                             return `
@@ -704,7 +743,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `).join('') +
                             `</div></div>`}).join('')}</div>
                 </section>`,
-                `<section class="flex flex-col gap-6 text-left">
+                `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
                     <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-en">
                         ${data.experiences.map((exp, idx) => {
@@ -715,8 +754,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `<div class="space-y-6">` + 
                             exp.domains.map(dom => `
                                 <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50"></span>${dom.title}</h4>
-                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] ml-1">
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang2].map(item => {
                                             const { title, text } = parseItem(item);
                                             return `
