@@ -13,6 +13,16 @@ const flip = (c1, c2, delay='') => `
     </div>`;
 
 const stripHtml = (html) => html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
+
+// Helper pour parser "<strong>Titre</strong> : Description"
+const parseItem = (htmlString) => {
+  const match = htmlString.match(/<strong>(.*?)<\/strong>\s*[:\-]?\s*(.*)/);
+  if (match) {
+    return { title: match[1], text: match[2] };
+  }
+  return { title: '', text: htmlString }; 
+};
+
 const normalizeHex = (hex) => {
   if (typeof hex !== 'string') return null;
   const trimmed = hex.trim();
@@ -239,6 +249,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             .flip-card { transform: none !important; }
             .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }
         }
+        
+        /* Timeline Logic */
+        .timeline-border { border-color: rgba(255, 255, 255, 0.1); }
+        .theme-light .timeline-border { border-color: rgba(0, 0, 0, 0.1); }
+        .group:hover.timeline-border { border-color: var(--accent) !important; }
     </style>
 </head>
 <body class="p-4 md:p-8 lg:p-12 theme-${theme} font-architect ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
@@ -320,10 +335,12 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             
             <!-- Left: Avatar Zone -->
             <div class="relative shrink-0">
-                <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
-                    <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                    </div>
                 </div>
-                <div class="absolute bottom-4 right-4 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+                <div class="absolute bottom-6 right-6 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
             </div>
 
             <!-- Right: Info Zone -->
@@ -349,7 +366,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 <!-- Metrics Bar -->
                 <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
                     <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
                         <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.yearsExp}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
@@ -374,17 +391,19 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </div>
             </div>
             
-            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-emerald-500/80 font-bold no-print opacity-60 hover:opacity-100 transition-opacity"><div class="status-pulse"></div><span class="text-[10px] uppercase tracking-widest font-mono">Latest: ${activity.repo}</span></div>` : ''}
+            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t1.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`, 
         `
         <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden group">
             <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
             
             <div class="relative shrink-0">
-                <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
-                    <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                <div class="p-1.5 border border-accent/20 rounded-full">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
+                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                    </div>
                 </div>
-                <div class="absolute bottom-4 right-4 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
+                <div class="absolute bottom-6 right-6 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
             </div>
 
             <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
@@ -407,7 +426,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
                 <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
                     <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
                         <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.yearsExp}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
@@ -432,7 +451,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </div>
             </div>
             
-            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-emerald-500/80 font-bold no-print opacity-60 hover:opacity-100 transition-opacity"><div class="status-pulse"></div><span class="text-[10px] uppercase tracking-widest font-mono">Latest: ${activity.repo}</span></div>` : ''}
+            ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t2.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`
         )}
 
@@ -658,63 +677,59 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </section>`, 'delay-300')}
 
                 ${flip(`
-                <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.projects}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        ${data.projects.map(p => `
-                        <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
-                            <div class="flex justify-between items-start">
-                                <div class="p-2 surface-muted rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
-                                <i data-lucide="external-link" class="w-4 h-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-sm uppercase tracking-tight mb-2">${p.name}</h3>
-                                <p class="text-[0.75rem] opacity-60 leading-relaxed h-12 overflow-hidden">${p.description[lang]}</p>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 surface-muted rounded border border-white/5">${tool}</span>`).join('')}
-                            </div>
-                        </a>`).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.projects}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        ${data.projects.map(p => `
-                        <a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-4 group hover:border-accent/50 transition-all">
-                            <div class="flex justify-between items-start">
-                                <div class="p-2 surface-muted rounded-lg"><i data-lucide="${p.icon}" class="w-5 h-5 accent-text"></i></div>
-                                <i data-lucide="external-link" class="w-4 h-4 opacity-20 group-hover:opacity-100 transition-opacity"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-sm uppercase tracking-tight mb-2">${p.name}</h3>
-                                <p class="text-[0.75rem] opacity-60 leading-relaxed h-12 overflow-hidden">${p.description[lang2]}</p>
-                            </div>
-                            <div class="flex flex-wrap gap-2 mt-auto">
-                                ${p.tools.map(tool => `<span class="text-[0.6rem] font-mono opacity-40 px-2 py-0.5 surface-muted rounded border border-white/5">${tool}</span>`).join('')}
-                            </div>
-                        </a>`).join('')}
-                    </div>
-                </section>`, 'delay-350')}
-
-                ${flip(`
                 <section class="flex flex-col gap-6 text-left reveal" style="animation-delay: 0.4s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
-                    <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-fr">
+                    <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-fr">
                         ${data.experiences.map((exp, idx) => {
-                            const expSkills = exp.details[lang].join(' ').match(/<strong>(.*?)<\/strong>/g)?.map(m => m.replace(/<\/?strong>/g, '').toLowerCase().trim()).join(' ') || '';
-                            return `<div class="exp-card relative pl-14 border-l-2 border-slate-800/50 group text-left" data-skills="${expSkills}">` + 
-                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125 z-20"></div>` +
-                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${highlightMetrics(d)}</span></li>`).join('')}</ul></div>`}).join('')}</div>
+                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` + 
+                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` +
+                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
+                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
+                            `<div class="space-y-6">` +
+                            exp.domains.map(dom => `
+                                <div>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] ml-1">
+                                        ${dom.items[lang].map(item => {
+                                            const { title, text } = parseItem(item);
+                                            return `
+                                            <li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
+                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
+                                                <span class="text-left">${highlightMetrics(text)}</span>
+                                            </li>`;
+                                        }).join('')}
+                                    </ul>
+                                </div>
+                            `).join('') +
+                            `</div></div>`}).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
-                    <div class="card p-12 space-y-20 text-left relative overflow-hidden" id="exp-container-en">
+                    <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-en">
                         ${data.experiences.map((exp, idx) => {
-                            const expSkills = exp.details[lang2].join(' ').match(/<strong>(.*?)<\/strong>/g)?.map(m => m.replace(/<\/?strong>/g, '').toLowerCase().trim()).join(' ') || '';
-                            return `<div class="exp-card relative pl-14 border-l-2 border-slate-800/50 group text-left" data-skills="${expSkills}">` + 
-                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[#18181b] transition-all group-hover:scale-125 z-20"></div>` + 
-                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-8 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 uppercase tracking-widest shrink-0">${exp.period}</span></div><ul class="space-y-5 text-left">${exp.details[lang2].map(d => `<li class="text-[1.05rem] opacity-60 flex items-start gap-5 leading-relaxed group-hover:opacity-100 transition-opacity text-left"><span class="w-2 h-2 accent-bg rounded-full mt-2.5 shrink-0 opacity-20 group-hover:opacity-50 transition-all"></span><span>${highlightMetrics(d)}</span></li>`).join('')}</ul></div>`}).join('')}</div>
+                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` + 
+                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` + 
+                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` + 
+                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` + 
+                            `<div class="space-y-6">` + 
+                            exp.domains.map(dom => `
+                                <div>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] ml-1">
+                                        ${dom.items[lang2].map(item => {
+                                            const { title, text } = parseItem(item);
+                                            return `
+                                            <li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
+                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
+                                                <span class="text-left">${highlightMetrics(text)}</span>
+                                            </li>`;
+                                        }).join('')}
+                                    </ul>
+                                </div>
+                            `).join('') + 
+                            `</div></div>`}).join('')}</div>
                 </section>`, 'delay-400')}
             </div>
         </div>
@@ -769,7 +784,15 @@ function generatePlain(data, lang) {
   data.experiences.forEach(exp => {
     txt += `${exp.role[lang].toUpperCase()}\n`;
     txt += `${exp.company} | ${exp.period}\n`;
-    exp.details[lang].forEach(d => txt += `- ${stripHtml(d)}\n`);
+    txt += `${stripHtml(exp.summary[lang])}\n`; // Add summary text
+    
+    exp.domains.forEach(dom => {
+        txt += `\n* ${dom.title}\n`;
+        dom.items[lang].forEach(item => {
+             const { title, text } = parseItem(item);
+             txt += `- ${title ? title + ': ' : ''}${stripHtml(text)}\n`;
+        });
+    });
     txt += `\n`;
   });
   
@@ -798,8 +821,18 @@ function generateMarkdown(data, lang) {
   md += "## " + t.profile + "\n" + stripHtml(data.summary[lang]) + "\n\n";
   md += "## " + t.experience + "\n\n";
   data.experiences.forEach(exp => {
-    md += "### " + exp.role[lang] + " | " + exp.company + "\n*" + exp.period + "*\n";
-    exp.details[lang].forEach(d => md += "- " + stripHtml(d) + "\n"); md += "\n";
+    md += "### " + exp.role[lang] + " | " + exp.company + "\n*" + exp.period + "*\n\n";
+    md += "> " + stripHtml(exp.summary[lang]) + "\n\n"; // Add summary
+    
+    exp.domains.forEach(dom => {
+        md += "**" + dom.title + "**\n";
+        dom.items[lang].forEach(item => {
+             const { title, text } = parseItem(item);
+             md += "- " + (title ? "**" + title + "**: " : "") + stripHtml(text) + "\n";
+        });
+        md += "\n";
+    });
+    md += "\n";
   });
   md += "## " + t.proSkills + "\n";
   data.skills.professional.forEach(s => { md += "- **" + s.category + "**: " + s.tools + "\n"; });
