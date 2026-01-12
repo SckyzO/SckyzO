@@ -14,7 +14,7 @@ Live demo: https://sckyzo.github.io/SckyzO/
 - Mobile-first layout with a bottom-sheet settings panel.
 
 ### Engineering and Build
-- Single source of truth in `data.json`.
+- Single source of truth in `data/data.json`.
 - Deterministic PDF factory via Playwright (Chromium Headless).
 - Dedicated PDF pages (`index_fr.html`, `index_en.html`) without JS/animations.
 - Offline-first asset download (Tailwind, Lucide) for resilient builds.
@@ -25,14 +25,20 @@ Live demo: https://sckyzo.github.io/SckyzO/
 
 ```
 cv/
-├── build.js            # Build orchestrator (Node.js)
-├── client.js           # Interactive UI logic (browser)
-├── data.json           # Single source of truth
-├── download-assets.js  # Offline asset downloader
+├── build/              # Build tooling
+│   ├── build.js         # Build orchestrator (Node.js)
+│   └── download-assets.js  # Offline asset downloader
 ├── src/                # Core modules
-│   ├── templates.js    # HTML/MD/TXT generators
+│   ├── templates/      # HTML/MD/TXT generators
+│   │   └── index.js    # Entry point
+│   ├── styles/         # Shared styles
+│   │   └── main.css    # Base stylesheet
+│   ├── scripts/        # Frontend logic
+│   │   └── client.js   # Interactive UI logic (browser)
 │   ├── utils.js        # Helpers (metrics, charts, API)
 │   └── i18n.js         # Translation dictionary
+├── data/               # Content source of truth
+│   └── data.json       # Single source of truth
 ├── Dockerfile          # Reference environment
 └── assets/             # Local dependencies (generated)
 ```
@@ -57,8 +63,8 @@ cd cv
 npm install
 npm run validate
 npx playwright install --with-deps chromium
-node download-assets.js
-node build.js
+node build/download-assets.js
+node build/build.js
 ```
 
 ## Outputs
@@ -83,7 +89,7 @@ Optional environment variables to customize PDF output:
 Example:
 
 ```bash
-PDF_THEME=deep PDF_ACCENT=#10b981 PDF_FONT_SIZE=18 node build.js
+PDF_THEME=deep PDF_ACCENT=#10b981 PDF_FONT_SIZE=18 node build/build.js
 ```
 
 ## CI/CD (GitHub Pages)
@@ -97,3 +103,16 @@ On each push to `main`, the workflow:
 4. Publishes the `cv/` directory to GitHub Pages.
 
 Ensure GitHub Pages is configured to use GitHub Actions as the source.
+
+## CI/CD (SFTP)
+
+Workflow: `.github/workflows/deploy-sftp.yml`
+
+Required GitHub Actions secrets:
+- `SFTP_HOST`
+- `SFTP_PORT`
+- `SFTP_USER`
+- `SFTP_PASSWORD` (SFTP account password)
+- `SFTP_REMOTE_PATH` (target directory, example: `www`)
+
+The workflow builds the CV and syncs `cv/build/` to the remote path using `rsync --delete`.

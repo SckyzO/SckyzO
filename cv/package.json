@@ -2,10 +2,10 @@
   "name": "cv-thomas-bourcey",
   "version": "1.1.0",
   "description": "Générateur multi-langues de CV (HTML, PDF, Markdown)",
-  "main": "build.js",
+  "main": "build/build.js",
   "scripts": {
-    "build": "node build.js",
-    "validate": "node build.js --validate-only",
+    "build": "node build/build.js",
+    "validate": "node build/build.js --validate-only",
     "serve": "npx serve ."
   },
   "dependencies": {

@@ -1,0 +1,65 @@
+name: Deploy CV via SFTP
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "cv/**"
+      - ".github/workflows/deploy-sftp.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cv/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: cv
+
+      - name: Validate data
+        run: npm run validate
+        working-directory: cv
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        working-directory: cv
+
+      - name: Download offline assets
+        run: node build/download-assets.js
+        working-directory: cv
+
+      - name: Build CV outputs
+        run: node build/build.js
+        working-directory: cv
+
+      - name: Trust SFTP host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${SFTP_PORT}" "${SFTP_HOST}" >> ~/.ssh/known_hosts
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy build via rsync (delete remote)
+        run: |
+          sshpass -p "${SFTP_PASSWORD}" rsync -az --delete \
+            -e "ssh -p ${SFTP_PORT} -o StrictHostKeyChecking=yes" \
+            cv/build/ "${SFTP_USER}@${SFTP_HOST}:${SFTP_REMOTE_PATH}/"
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}

@@ -2,18 +2,18 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 const QRCode = require('qrcode');
-const { getGitHubActivity } = require('./src/utils');
-const { generateHTML, generateMarkdown, generatePlain } = require('./src/templates');
+const { getGitHubActivity } = require('../src/utils');
+const { generateHTML, generateMarkdown, generatePlain } = require('../src/templates');
 
 // Load content data.
-const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'data.json'), 'utf8'));
-const ASSETS_DIR = path.join(__dirname, 'assets');
+const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/data.json'), 'utf8'));
+const ASSETS_DIR = path.join(__dirname, '../assets');
 const REQUIRED_ASSETS = ['tailwind.js', 'lucide.js'];
 const PDF_THEMES = ['light', 'deep', 'dark'];
 const PDF_FONT_STACKS = ['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy'];
 
 function failValidation(message) {
-  throw new Error(`Invalid data.json: ${message}`);
+  throw new Error(`Invalid data/data.json: ${message}`);
 }
 
 function isObject(value) {
@@ -140,7 +140,7 @@ function assertOfflineAssets() {
   if (missing.length > 0) {
     throw new Error(
       `Missing offline assets: ${missing.join(', ')}. ` +
-      'Run "node download-assets.js" with network access before building.'
+      'Run "node build/download-assets.js" with network access before building.'
     );
   }
 }
@@ -222,13 +222,13 @@ const VALIDATE_ONLY = process.argv.includes('--validate-only');
 async function build() {
   validateData(data);
   if (VALIDATE_ONLY) {
-    console.log('Validation OK: data.json structure is valid.');
+    console.log('Validation OK: data/data.json structure is valid.');
     return;
   }
   assertOfflineAssets();
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
-  const clientScript = fs.readFileSync(path.join(__dirname, 'client.js'), 'utf8');
+  const clientScript = fs.readFileSync(path.join(__dirname, '../src/scripts/client.js'), 'utf8');
   const pdfAppearance = getPdfAppearance();
   
   // 1) Generate interactive index (default FR).

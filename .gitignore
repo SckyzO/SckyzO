@@ -3,23 +3,41 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 .pnpm-debug.log*
+.pnpm-store/
 
-# Build outputs (Generated CV files)
-cv/*.html
-cv/*.pdf
-cv/*.md
-!cv/README.md
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
 
 # OS files
 .DS_Store
 Thumbs.db
 
+# IDE
+.idea/
+.vscode/
+
 # Docker
 .dockerignore
-cv/*.txt
 cv/.cache/
 cv/.npm/
 cv/.pki/
+
+# Build outputs
+dist/
+build/
+coverage/
+cv/build/
+cv/*.html
+cv/*.pdf
+cv/*.md
+cv/*.txt
+cv/preview_*.png
+!cv/README.md
 
 AGENTS.md
