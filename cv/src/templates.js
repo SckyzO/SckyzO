@@ -421,21 +421,26 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             ${activity ? `<div class="absolute top-6 right-6 hidden xl:flex items-center gap-3 text-[var(--text-main)] no-print opacity-40 hover:opacity-100 transition-opacity"><i data-lucide="github" class="w-4 h-4"></i><span class="text-[10px] uppercase tracking-widest font-mono">${t1.lastCommit} :</span><a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="flex items-center gap-2 hover:accent-text transition-colors"><i data-lucide="git-branch" class="w-3 h-3 accent-text"></i><span class="text-[10px] uppercase tracking-widest font-black">${activity.repo}</span></a></div>` : ''}
         </header>`, 
         `
-        <header class="card p-10 md:p-12 flex flex-col md:flex-row items-center gap-12 relative group !overflow-visible z-50">
-            <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity pointer-events-none rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
-            
-            <div class="relative shrink-0 overflow-hidden rounded-l-[2.5rem]">
-                <div class="p-10 flex items-center justify-center bg-[var(--text-main)] bg-opacity-5 h-full">
-                    <div class="p-1.5 border border-accent/20 rounded-full relative z-10">
-                        <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
-                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <div class="absolute bottom-14 right-14 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
-                </div>
+        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
+            <!-- Background Layer (Clipped) -->
+            <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
+                <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
             </div>
 
-            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-10">
+            <!-- Left: Avatar Zone (Z-10) -->
+            <div class="relative shrink-0 p-10 md:p-12 z-10">
+                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
+                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+            </div>
+
+            <!-- Right: Info Zone (Z-20 for Dropdown) -->
+            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
+
+                <!-- Top Badges -->
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                         <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
@@ -453,6 +458,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     ${c.title[lang2]}
                 </p>
 
+                <!-- Metrics Bar -->
                 <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
