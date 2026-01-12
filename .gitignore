@@ -13,6 +13,7 @@ pnpm-debug.log*
 # Environment
 .env
 .env.*
+.act.secrets
 
 # OS files
 .DS_Store

@@ -115,4 +115,4 @@ Required GitHub Actions secrets:
 - `SFTP_PASSWORD` (SFTP account password)
 - `SFTP_REMOTE_PATH` (target directory, example: `www`)
 
-The workflow builds the CV and syncs `cv/build/` to the remote path using `rsync --delete`.
+The workflow builds the CV and syncs `cv/build/` to the remote path using `lftp mirror --delete` over SFTP.

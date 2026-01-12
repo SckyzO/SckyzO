@@ -41,22 +41,23 @@ jobs:
         run: node build/build.js
         working-directory: cv
 
-      - name: Trust SFTP host key
+      - name: Install lftp and ssh
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p "${SFTP_PORT}" "${SFTP_HOST}" >> ~/.ssh/known_hosts
-        env:
-          SFTP_HOST: ${{ secrets.SFTP_HOST }}
-          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          sudo apt-get update
+          sudo apt-get install -y lftp openssh-client
+          /usr/bin/ssh -V
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - name: Deploy build via rsync (delete remote)
+      - name: Deploy build via lftp (SFTP mirror, delete remote)
+        working-directory: cv
         run: |
-          sshpass -p "${SFTP_PASSWORD}" rsync -az --delete \
-            -e "ssh -p ${SFTP_PORT} -o StrictHostKeyChecking=yes" \
-            cv/build/ "${SFTP_USER}@${SFTP_HOST}:${SFTP_REMOTE_PATH}/"
+          lftp -e "
+            set sftp:auto-confirm yes;
+            set net:max-retries 2;
+            set net:timeout 20;
+            open -u ${SFTP_USER},${SFTP_PASSWORD} sftp://${SFTP_HOST}:${SFTP_PORT};
+            mirror --delete --verbose build ${SFTP_REMOTE_PATH};
+            bye
+          "
         env:
           SFTP_HOST: ${{ secrets.SFTP_HOST }}
           SFTP_PORT: ${{ secrets.SFTP_PORT }}
