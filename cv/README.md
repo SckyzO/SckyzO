@@ -1,82 +1,83 @@
 # CV Generator - Thomas Bourcey
 
-Un générateur de CV moderne, performant et automatisé, conçu pour produire un site web interactif et des PDF pixel-perfect à partir d'une source unique de données JSON.
+A modern CV generator that builds an interactive website and pixel-perfect PDFs from a single JSON data source.
 
-🌐 **Live Demo :** [sckyzo.github.io/SckyzO/](https://sckyzo.github.io/SckyzO/)
+Live demo: https://sckyzo.github.io/SckyzO/
 
-## 🚀 Fonctionnalités Clés
+## Key Features
 
-### 🎨 Frontend & UX
-- **Flip 3D Bilingue** : Bascule instantanée FR/EN sans rechargement de page.
-- **Mode Terminal (TTY)** : Easter egg pour les recruteurs tech (`CTRL+ALT+T`).
-- **Command Palette** : Navigation clavier type VS Code (`CTRL+K`).
-- **Cross-Highlighting** : Survoler une compétence illumine les expériences associées.
-- **Responsive** : Mobile-first avec panneau de réglages en bottom-sheet.
+### Frontend and UX
+- Bilingual 3D flip with instant FR/EN toggle (no reload).
+- TTY mode easter egg for tech audiences (CTRL+ALT+T).
+- Command palette navigation (CTRL+K).
+- Cross-highlighting between skills and experiences.
+- Mobile-first layout with a bottom-sheet settings panel.
 
-### ⚙️ Engineering & Build
-- **Source Unique** : Tout le contenu est dans `data.json`.
-- **PDF Factory Déterministe** :
-  - Génération via Playwright (Chromium Headless).
-  - Pages dédiées (`index_fr.html`, `index_en.html`) sans JS/Animations pour une stabilité absolue.
-  - CSS Print optimisé (Noir pur, liens exposés, suppression UI).
-- **Offline First** : Script de pré-téléchargement des assets (Tailwind, Lucide) pour un build résilient.
-- **ATS Friendly** : Export automatique en `.txt` structuré pour les robots recruteurs.
-- **CI/CD** : Déploiement automatique sur GitHub Pages via GitHub Actions.
+### Engineering and Build
+- Single source of truth in `data.json`.
+- Deterministic PDF factory via Playwright (Chromium Headless).
+- Dedicated PDF pages (`index_fr.html`, `index_en.html`) without JS/animations.
+- Offline-first asset download (Tailwind, Lucide) for resilient builds.
+- ATS-friendly `.txt` export.
+- CI/CD deployment to GitHub Pages with GitHub Actions.
 
-## 🛠️ Architecture
+## Architecture
 
 ```
 cv/
-├── build.js            # Orchestrateur de build (Node.js)
-├── client.js           # Logique UI interactive (Browser)
-├── data.json           # Source de vérité du contenu
-├── download-assets.js  # Gestionnaire de dépendances offline
-├── src/                # Modules logiques
-│   ├── templates.js    # Générateurs HTML/MD/TXT
-│   ├── utils.js        # Helpers (Calculs, Graphiques, API)
-│   └── i18n.js         # Dictionnaire de traduction
-├── Dockerfile          # Environnement de référence
-└── assets/             # Dépendances locales (généré)
+├── build.js            # Build orchestrator (Node.js)
+├── client.js           # Interactive UI logic (browser)
+├── data.json           # Single source of truth
+├── download-assets.js  # Offline asset downloader
+├── src/                # Core modules
+│   ├── templates.js    # HTML/MD/TXT generators
+│   ├── utils.js        # Helpers (metrics, charts, API)
+│   └── i18n.js         # Translation dictionary
+├── Dockerfile          # Reference environment
+└── assets/             # Local dependencies (generated)
 ```
 
-## 📦 Installation & Utilisation
+## Install and Usage
 
-### Via Docker (Recommandé)
-L'environnement Docker gère tout : dépendances, téléchargement assets, build et serveur de prévisualisation.
+### Docker (recommended)
+Docker manages dependencies, offline assets, build, and preview server.
 
 ```bash
 cd cv
 docker compose up --build
 ```
-Le site est accessible sur `http://localhost:8080`.
 
-### En Local (Node.js)
-Pré-requis : Node.js 20+ et Playwright.
+Preview is available at http://localhost:8080.
+
+### Local (Node.js)
+Requirements: Node.js 20+ and Playwright.
 
 ```bash
 cd cv
 npm install
-npx playwright install chromium
+npx playwright install --with-deps chromium
 node download-assets.js
 node build.js
 ```
 
-## 📄 Formats de Sortie
+## Outputs
 
-Le build génère automatiquement dans le dossier racine :
-- `index.html` : Site web interactif complet.
-- `CV_Thomas_Bourcey_FR.pdf` : Version PDF optimisée pour impression.
-- `CV_Thomas_Bourcey_FR.txt` : Version texte brut pour ATS.
-- `CV_FR.md` : Version Markdown.
-- (Et les équivalents EN).
+The build generates the following files in the `cv/` directory:
+- `index.html` interactive website.
+- `CV_Thomas_Bourcey_FR.pdf` print-optimized PDF.
+- `CV_Thomas_Bourcey_FR.txt` ATS-friendly text.
+- `CV_FR.md` Markdown version.
+- English equivalents for all outputs.
 
-## 🤖 CI/CD
+## CI/CD (GitHub Pages)
 
-Le workflow `.github/workflows/deploy.yml` s'exécute à chaque push sur `main` :
-1. Installe l'environnement.
-2. Télécharge les assets.
-3. Lance le build.
-4. Déploie les artefacts sur la branche `gh-pages`.
+Workflow: `.github/workflows/deploy.yml`
 
----
-*Développé avec passion par Thomas Bourcey.*
+On each push to `main`, the workflow:
+1. Installs dependencies.
+2. Downloads offline assets.
+3. Builds all outputs.
+4. Publishes the `cv/` directory to GitHub Pages.
+
+Ensure GitHub Pages is configured to use GitHub Actions as the source.
+
