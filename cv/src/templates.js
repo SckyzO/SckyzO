@@ -115,6 +115,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .pdf-mode * { animation: none !important; transition: none !important; }
         .pdf-mode .flip-back, .pdf-mode .no-print, .pdf-mode #settings-panel, .pdf-mode #cmd-palette, .pdf-mode .cog-btn { display: none !important; }
         .pdf-mode .card { box-shadow: none !important; transform: none !important; }
+        .pdf-mode .qr-code-container { display: flex !important; }
         
         /* Font Stacks */
         .font-hub { --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
@@ -142,9 +143,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         }
         .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-8px); }
         
+        .no-break { break-inside: avoid; page-break-inside: avoid; }
+
         body { font-family: var(--font-sans); background-color: var(--bg-page); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.6; }
         h1, h2, h3, p, span, div, li { font-family: inherit; }
-        .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.5rem; transition: transform 0.3s ease, border-color 0.3s ease; position: relative; overflow: hidden; break-inside: avoid; page-break-inside: avoid; }
         .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(var(--accent-rgba), 0.08), transparent 40%); z-index: 0; opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
         .card:hover::before { opacity: 1; }
         .card > * { position: relative; z-index: 1; }
@@ -242,9 +245,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             .no-print, .flip-back { display: none !important; } 
             .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
             strong, h1, h2, h3, p, span, li { color: black !important; font-weight: 800 !important; } 
-            .accent-text { color: black !important; border-bottom: 1px solid #ddd; }
-            .accent-bg { background-color: #eee !important; color: black !important; }
-            a { color: black !important; text-decoration: none !important; }
             a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
             .flip-card { transform: none !important; }
             .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }

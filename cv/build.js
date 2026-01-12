@@ -58,13 +58,21 @@ async function build() {
     fs.writeFileSync(path.join(__dirname, txtFileName), txtContent);
 
     // Playwright
+    // Playwright utilise maintenant le fichier dédié (index_fr.html / index_en.html) qui est en mode PDF
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle' });
+    // Force le rendu "écran" pour préserver les couleurs et le thème dans le PDF
+    await page.emulateMedia({ media: 'screen' });
+    // Force un viewport large pour déclencher le layout Desktop (Sidebar)
+    await page.setViewportSize({ width: 1400, height: 1200 });
+    
+    // Utilisation de 'file://' pour que les liens relatifs (./assets/...) fonctionnent
+    await page.goto(`file://${htmlPath}`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(100); 
     const pdfFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.pdf" : "Resume_Thomas_Bourcey_EN.pdf";
     await page.pdf({
       path: path.join(__dirname, pdfFileName), format: 'A4', printBackground: true,
-      margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
+      scale: 0.65, // Scale down to fit desktop layout on A4
+      margin: { top: '10px', right: '10px', bottom: '10px', left: '10px' }
     });
     
     console.log(`Génération de la preview Open Graph pour ${lang}...`);
