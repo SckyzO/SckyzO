@@ -21,3 +21,5 @@ cv/*.txt
 cv/.cache/
 cv/.npm/
 cv/.pki/
+
+AGENTS.md
