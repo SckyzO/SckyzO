@@ -13,7 +13,7 @@ const assets = [
 async function download(url, dest) {
   return new Promise((resolve, reject) => {
     const handleResponse = (res) => {
-      // Gestion des redirections (301, 302, 303, 307, 308)
+      // Handle redirects (301, 302, 303, 307, 308).
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         let newUrl = res.headers.location;
         if (newUrl.startsWith('/')) {
@@ -54,13 +54,20 @@ async function download(url, dest) {
 
 async function main() {
   console.log('Downloading offline assets...');
+  const failures = [];
   for (const asset of assets) {
     console.log(`- ${asset.name}...`);
     try {
       await download(asset.url, path.join(ASSETS_DIR, asset.name));
     } catch (e) {
       console.error(`Failed to download ${asset.name}:`, e.message);
+      failures.push(asset.name);
     }
+  }
+  if (failures.length > 0) {
+    console.error(`Asset download failed for: ${failures.join(', ')}`);
+    console.error('Offline build requires these files. Re-run when network access is available.');
+    process.exit(1);
   }
   console.log('Assets downloaded.');
 }
