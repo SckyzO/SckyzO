@@ -145,6 +145,13 @@ function assertOfflineAssets() {
   }
 }
 
+function syncAssetsToBuild() {
+  const targetDir = path.join(__dirname, 'assets');
+  fs.rmSync(targetDir, { recursive: true, force: true });
+  fs.mkdirSync(targetDir, { recursive: true });
+  fs.cpSync(ASSETS_DIR, targetDir, { recursive: true });
+}
+
 function parseNumber(value) {
   if (!value) return null;
   const parsed = Number(value);
@@ -226,6 +233,7 @@ async function build() {
     return;
   }
   assertOfflineAssets();
+  syncAssetsToBuild();
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
   const clientScript = fs.readFileSync(path.join(__dirname, '../src/scripts/client.js'), 'utf8');
