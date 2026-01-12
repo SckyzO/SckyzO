@@ -53,41 +53,72 @@ function generateRadarChart(skills) {
   return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}</svg>`;
 }
 
-async function getGitHubActivity(username) {
-  return new Promise((resolve) => {
-    const headers = { 'User-Agent': 'Node.js-CV-Builder' };
-    
-    // 1. Fetch User Info (public_repos)
-    const userReq = https.get({ hostname: 'api.github.com', path: `/users/${username}`, headers }, (res) => {
+const GITHUB_HOST = 'api.github.com';
+const GITHUB_TIMEOUT_MS = 5000;
+
+function fetchGitHubJson(path, headers, timeoutMs = GITHUB_TIMEOUT_MS) {
+  return new Promise((resolve, reject) => {
+    const req = https.request({ hostname: GITHUB_HOST, path, headers, method: 'GET' }, (res) => {
       let body = '';
       res.on('data', c => body += c);
       res.on('end', () => {
+        const statusCode = res.statusCode || 0;
+        if (statusCode >= 400) {
+          const rateRemaining = res.headers['x-ratelimit-remaining'];
+          const rateReset = res.headers['x-ratelimit-reset'];
+          const rateInfo = rateRemaining === '0' && rateReset
+            ? ` Rate limit resets at ${new Date(Number(rateReset) * 1000).toISOString()}.`
+            : '';
+          return reject(new Error(`GitHub API request failed (${statusCode}) for ${path}.${rateInfo}`));
+        }
         try {
-          const user = JSON.parse(body);
-          const publicRepos = user.public_repos || 0;
-          
-          // 2. Fetch Events (Latest Push)
-          const eventsReq = https.get({ hostname: 'api.github.com', path: `/users/${username}/events/public`, headers }, (resEv) => {
-            let bodyEv = '';
-            resEv.on('data', c => bodyEv += c);
-            resEv.on('end', () => {
-              try {
-                const events = JSON.parse(bodyEv);
-                const lastPush = events.find(e => e.type === 'PushEvent');
-                resolve({ 
-                  repo: lastPush ? lastPush.repo.name.split('/')[1] : null, 
-                  date: lastPush ? new Date(lastPush.created_at) : null,
-                  public_repos: publicRepos
-                });
-              } catch (e) { resolve({ public_repos: publicRepos }); }
-            });
-          });
-          eventsReq.on('error', () => resolve({ public_repos: publicRepos }));
-        } catch (e) { resolve(null); }
+          resolve(JSON.parse(body));
+        } catch (error) {
+          reject(new Error(`Invalid JSON from GitHub API for ${path}: ${error.message}`));
+        }
       });
     });
-    userReq.on('error', () => resolve(null));
+
+    req.on('error', (error) => {
+      reject(new Error(`GitHub API request error for ${path}: ${error.message}`));
+    });
+
+    req.setTimeout(timeoutMs, () => {
+      req.destroy(new Error(`Request timeout after ${timeoutMs}ms`));
+    });
+
+    req.end();
   });
+}
+
+async function getGitHubActivity(username) {
+  if (!username) {
+    console.error('GitHub username is missing; activity badge will be skipped.');
+    return null;
+  }
+
+  const headers = { 'User-Agent': 'Node.js-CV-Builder' };
+
+  try {
+    const user = await fetchGitHubJson(`/users/${username}`, headers);
+    const publicRepos = user.public_repos || 0;
+    let repo = null;
+    let date = null;
+
+    try {
+      const events = await fetchGitHubJson(`/users/${username}/events/public`, headers);
+      const lastPush = Array.isArray(events) ? events.find(e => e.type === 'PushEvent') : null;
+      repo = lastPush && lastPush.repo ? lastPush.repo.name.split('/')[1] : null;
+      date = lastPush && lastPush.created_at ? new Date(lastPush.created_at) : null;
+    } catch (error) {
+      console.error(`GitHub activity fetch failed: ${error.message}`);
+    }
+
+    return { repo, date, public_repos: publicRepos };
+  } catch (error) {
+    console.error(`GitHub user fetch failed: ${error.message}`);
+    return null;
+  }
 }
 
 module.exports = { highlightMetrics, getAge, generateRadarChart, getGitHubActivity };
