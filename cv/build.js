@@ -79,7 +79,7 @@ async function build() {
                 });        if (theme === 'deep') { // On utilise le thème Deep pour la preview PNG
              console.log(`  - Preview PNG...`);
              await page.setViewportSize({ width: 1200, height: 630 });
-             await page.waitForTimeout(100); 
+             await page.waitForTimeout(5000); 
              await page.screenshot({ path: path.join(__dirname, `preview_${lang}.png`) });
         }
 

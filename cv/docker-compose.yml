@@ -6,7 +6,6 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - .:/app
-      - /app/node_modules
     # Installe les dépendances puis lance nodemon pour surveiller les changements
     command: >
       sh -c "npm install && npx nodemon -L --watch build.js --watch data.json --watch src --watch client.js --exec 'node build.js'"
