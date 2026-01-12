@@ -266,7 +266,14 @@ async function build() {
         await page.setViewportSize({ width: 1400, height: 1200 });
         
         await page.goto(`file://${tempHtmlPath}`, { waitUntil: 'networkidle' });
-        await page.waitForTimeout(100); 
+        
+        // Ensure avatar is loaded
+        await page.waitForFunction(() => {
+          const img = document.querySelector('img[alt="Thomas Bourcey"]');
+          return img && img.complete && img.naturalHeight !== 0;
+        }).catch(() => console.warn("Avatar image did not load in time for PDF/Preview"));
+
+        await page.waitForTimeout(500); 
         
         // Default file is Light: CV_Thomas_Bourcey_FR.pdf, Resume_Thomas_Bourcey_EN.pdf.
         
@@ -287,7 +294,8 @@ async function build() {
         if (theme === 'deep') {
           console.log(`  - Preview PNG...`);
           await page.setViewportSize({ width: 1200, height: 630 });
-          await page.waitForTimeout(5000);
+          // Final check for animations or fonts
+          await page.waitForTimeout(2000);
           await page.screenshot({ path: path.join(__dirname, `preview_${lang}.png`) });
         }
 
