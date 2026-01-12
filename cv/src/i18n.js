@@ -11,7 +11,11 @@ const i18n = {
     print: "PDF / IMPRIMER",
     proSkills: "Compétences",
     projects: "Projets Side",
-    onboarding: "Personnalisez votre expérience ici"
+    onboarding: "Personnalisez votre expérience ici",
+    yearsExp: "Années Exp.",
+    publicRepos: "Repos Publics",
+    downloadPdf: "Télécharger PDF",
+    tooltipPdf: "Obtenir la version imprimable"
   },
   en: {
     contact: "Contact",
@@ -24,7 +28,11 @@ const i18n = {
     print: "PDF / PRINT",
     proSkills: "Professional Skills",
     projects: "Side Projects",
-    onboarding: "Personalize your experience here"
+    onboarding: "Personalize your experience here",
+    yearsExp: "Years Exp.",
+    publicRepos: "Public Repos",
+    downloadPdf: "Download PDF",
+    tooltipPdf: "Get the printable version"
   }
 };
 

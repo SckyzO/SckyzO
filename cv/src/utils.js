@@ -55,33 +55,38 @@ function generateRadarChart(skills) {
 
 async function getGitHubActivity(username) {
   return new Promise((resolve) => {
-    const options = {
-      hostname: 'api.github.com',
-      path: `/users/${username}/events/public`,
-      headers: { 'User-Agent': 'Node.js-CV-Builder' }
-    };
+    const headers = { 'User-Agent': 'Node.js-CV-Builder' };
     
-    const req = https.get(options, (res) => {
+    // 1. Fetch User Info (public_repos)
+    const userReq = https.get({ hostname: 'api.github.com', path: `/users/${username}`, headers }, (res) => {
       let body = '';
-      res.on('data', (chunk) => body += chunk);
+      res.on('data', c => body += c);
       res.on('end', () => {
         try {
-          const events = JSON.parse(body);
-          const lastPush = events.find(e => e.type === 'PushEvent');
-          if (lastPush) {
-            const repoName = lastPush.repo.name.split('/')[1];
-            const date = new Date(lastPush.created_at);
-            resolve({ repo: repoName, date: date });
-          } else {
-            resolve(null);
-          }
+          const user = JSON.parse(body);
+          const publicRepos = user.public_repos || 0;
+          
+          // 2. Fetch Events (Latest Push)
+          const eventsReq = https.get({ hostname: 'api.github.com', path: `/users/${username}/events/public`, headers }, (resEv) => {
+            let bodyEv = '';
+            resEv.on('data', c => bodyEv += c);
+            resEv.on('end', () => {
+              try {
+                const events = JSON.parse(bodyEv);
+                const lastPush = events.find(e => e.type === 'PushEvent');
+                resolve({ 
+                  repo: lastPush ? lastPush.repo.name.split('/')[1] : null, 
+                  date: lastPush ? new Date(lastPush.created_at) : null,
+                  public_repos: publicRepos
+                });
+              } catch (e) { resolve({ public_repos: publicRepos }); }
+            });
+          });
+          eventsReq.on('error', () => resolve({ public_repos: publicRepos }));
         } catch (e) { resolve(null); }
       });
     });
-
-    req.on('error', () => resolve(null));
-    req.on('timeout', () => { req.destroy(); resolve(null); });
-    req.setTimeout(3000); // 3s timeout
+    userReq.on('error', () => resolve(null));
   });
 }
 

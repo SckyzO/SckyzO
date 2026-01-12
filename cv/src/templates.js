@@ -48,8 +48,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const availableThemes = new Set(['light', 'deep', 'dark']);
   const availableFonts = new Set(['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy']);
   const theme = availableThemes.has(options.theme) ? options.theme : 'deep';
-  const fontStack = availableFonts.has(options.fontStack) ? options.fontStack : 'hub';
-  const defaultAccent = '#3b82f6';
+          const fontStack = availableFonts.has(options.fontStack) ? options.fontStack : 'architect';  const defaultAccent = '#3b82f6';
   const defaultAccentRgba = '59, 130, 246';
   const accent = normalizeHex(options.accent) || defaultAccent;
   const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
@@ -139,12 +138,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .card:hover::before { opacity: 1; }
         .card > * { position: relative; z-index: 1; }
         .card:hover { transform: translateY(-4px); box-shadow: 0 0 40px 5px rgba(var(--accent-rgba), 0.15); border-color: rgba(var(--accent-rgba), 0.4) !important; }
-        .flip-container { perspective: 2000px; }
-        .flip-card { display: grid; grid-template-columns: 1fr; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-        .flip-front, .flip-back { grid-area: 1 / 1; backface-visibility: hidden; width: 100%; }
-        .flip-front { transform: rotateY(0deg); z-index: 2; }
-        .flip-back { transform: rotateY(180deg); z-index: 1; }
+        
+        /* Dynamic Height Flip Logic */
+        .flip-container { perspective: 2000px; position: relative; }
+        .flip-card { position: relative; width: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        
+        /* Default State (FR Visible) */
+        .flip-front { position: relative; width: 100%; backface-visibility: hidden; z-index: 2; transform: rotateY(0deg); }
+        .flip-back { position: absolute; top: 0; left: 0; width: 100%; backface-visibility: hidden; z-index: 1; transform: rotateY(180deg); opacity: 0; pointer-events: none; }
+        
+        /* Flipped State (EN Visible) */
+        .flip-container.flipped .flip-front { position: absolute; top: 0; left: 0; opacity: 0; pointer-events: none; }
+        .flip-container.flipped .flip-back { position: relative; opacity: 1; pointer-events: auto; }
         .flip-container.flipped .flip-card { transform: rotateY(-180deg); }
+
         .delay-50 .flip-card { transition-delay: 0.05s; }
         .delay-100 .flip-card { transition-delay: 0.1s; }
         .delay-200 .flip-card { transition-delay: 0.2s; }
@@ -169,8 +176,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         #btn-dark { background: #000000 !important; color: #f4f4f5 !important; }
         
         /* Specific overrides for preview buttons if needed, but var(--bg-page) should be enough context */
-        .accent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 32px; }
-        .accent-dot { width: 36px; height: 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+        .accent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+        .accent-dot { width: 36px; height: 36px; border-radius: 999px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; margin: 0 auto; }
         .accent-dot:hover { transform: scale(1.1); }
         .accent-dot.active { border-color: white; box-shadow: 0 0 15px var(--accent); }
         @keyframes aura { 0% { box-shadow: 0 0 0 0px rgba(var(--accent-rgba), 0.4); } 100% { box-shadow: 0 0 0 30px rgba(var(--accent-rgba), 0); } }
@@ -287,14 +294,14 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Font Stack</label>
         <div class="font-grid">
-            <button onclick="setFontStack('hub')" class="panel-btn font-btn" id="f-hub">HUB</button>
-            <button onclick="setFontStack('geist')" class="panel-btn font-btn" id="f-geist">GEIST</button>
-            <button onclick="setFontStack('space')" class="panel-btn font-btn" id="f-space">SPACE</button>
-            <button onclick="setFontStack('archivo')" class="panel-btn font-btn" id="f-archivo">ARCHIV</button>
-            <button onclick="setFontStack('quantum')" class="panel-btn font-btn" id="f-quantum">QUANT</button>
-            <button onclick="setFontStack('console')" class="panel-btn font-btn" id="f-console">CONSOL</button>
             <button onclick="setFontStack('architect')" class="panel-btn font-btn" id="f-architect">ARCHI</button>
+            <button onclick="setFontStack('archivo')" class="panel-btn font-btn" id="f-archivo">ARCHIV</button>
+            <button onclick="setFontStack('console')" class="panel-btn font-btn" id="f-console">CONSOL</button>
+            <button onclick="setFontStack('geist')" class="panel-btn font-btn" id="f-geist">GEIST</button>
+            <button onclick="setFontStack('hub')" class="panel-btn font-btn" id="f-hub">HUB</button>
             <button onclick="setFontStack('oxy')" class="panel-btn font-btn" id="f-oxy">OXY</button>
+            <button onclick="setFontStack('quantum')" class="panel-btn font-btn" id="f-quantum">QUANT</button>
+            <button onclick="setFontStack('space')" class="panel-btn font-btn" id="f-space">SPACE</button>
         </div>
     </div>
 
@@ -335,24 +342,26 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Years Exp.</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.yearsExp}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Certifications</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.certifications}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Projects</span>
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.publicRepos}</span>
                     </div>
                     
                     <div class="flex-grow"></div>
                     
-                    <a href="${pdfFilename}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print">
-                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform"></i>
-                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">Download PDF</span>
+                    <a href="${pdfFilename}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print has-tooltip relative">
+                        <div class="absolute inset-0 bg-accent/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out rounded-xl overflow-hidden pointer-events-none"></div>
+                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform relative z-10"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)] relative z-10">${t1.downloadPdf}</span>
+                        <span class="tooltip-content" style="bottom: calc(100% + 10px);">${t1.tooltipPdf}</span>
                     </a>
                 </div>
             </div>
@@ -391,24 +400,26 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">15+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Years Exp.</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.yearsExp}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Certifications</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.certifications}</span>
                     </div>
                     <div class="w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">Projects</span>
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.publicRepos}</span>
                     </div>
                     
                     <div class="flex-grow"></div>
                     
-                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print">
-                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform"></i>
-                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">Download PDF</span>
+                    <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="hidden md:flex items-center gap-3 px-6 py-3 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent hover:bg-accent/5 transition-all group/btn no-print has-tooltip relative">
+                        <div class="absolute inset-0 bg-accent/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out rounded-xl overflow-hidden pointer-events-none"></div>
+                        <i data-lucide="download" class="w-4 h-4 accent-text group-hover/btn:scale-110 transition-transform relative z-10"></i>
+                        <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)] relative z-10">${t2.downloadPdf}</span>
+                        <span class="tooltip-content" style="bottom: calc(100% + 10px);">${t2.tooltipPdf}</span>
                     </a>
                 </div>
             </div>
