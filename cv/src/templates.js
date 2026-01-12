@@ -200,9 +200,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .accent-dot.active { border-color: white; box-shadow: 0 0 15px var(--accent); }
         @keyframes aura { 0% { box-shadow: 0 0 0 0px rgba(var(--accent-rgba), 0.4); } 100% { box-shadow: 0 0 0 30px rgba(var(--accent-rgba), 0); } }
         .aura-pulse { animation: aura 2s infinite !important; border-color: var(--accent) !important; }
-        #onboarding-tip { position: fixed; top: 95px; right: 24px; z-index: 150; background: var(--accent); color: white; padding: 14px 24px; border-radius: 1.5rem; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; box-shadow: 0 10px 30px rgba(var(--accent-rgba), 0.4); pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-        #onboarding-tip.show { opacity: 1; transform: translateY(0); }
-        #onboarding-tip::after { content: ""; position: absolute; top: -8px; right: 22px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid var(--accent); }
+
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 32px; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: var(--track-color); border-radius: 3px; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -7px; border: 3px solid var(--bg-card); box-shadow: 0 0 15px var(--accent); }
@@ -268,8 +266,45 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <div id="progress-bar" class="h-full accent-bg shadow-[0_0_10px_var(--accent)] transition-all duration-100 ease-out" style="width: 0%"></div>
     </div>
 
-    <div id="onboarding-tip" class="no-print text-left">
-        ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="fixed inset-0 z-[9999] w-full h-full bg-black/60 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-500 no-print">
+        <div class="bg-[var(--bg-card)] border border-[var(--border-card)] rounded-3xl shadow-2xl p-8 max-w-sm w-full transform scale-95 transition-transform duration-500 text-center relative overflow-hidden group/modal">
+            <!-- Decoration -->
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--accent)] to-purple-500"></div>
+            
+            <div class="mb-8 mt-2">
+                <div class="w-16 h-16 bg-[var(--bg-page)] rounded-2xl border border-[var(--border-card)] flex items-center justify-center mx-auto mb-5 text-[var(--accent)] shadow-[0_0_30px_rgba(var(--accent-rgba),0.15)]">
+                    <i data-lucide="sparkles" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-black uppercase tracking-tight text-[var(--text-main)] mb-2" id="w-title">Welcome</h2>
+                <p class="text-sm opacity-60 font-mono" id="w-subtitle">Customize your experience</p>
+            </div>
+
+            <!-- Settings Grid -->
+            <div class="grid grid-cols-1 gap-5 mb-8">
+                <!-- Lang -->
+                <div class="space-y-2">
+                    <label class="text-[0.6rem] font-black uppercase tracking-widest opacity-40">Language</label>
+                    <div class="grid grid-cols-2 bg-[var(--bg-page)] rounded-xl p-1.5 border border-[var(--border-card)] gap-1">
+                        <button id="w-lang-fr" onclick="setWelcomeLang('fr')" class="py-2.5 rounded-lg text-xs font-bold transition-all hover:bg-[var(--bg-card)] hover:shadow-sm opacity-50 flex items-center justify-center gap-2"><span>🇫🇷</span> FR</button>
+                        <button id="w-lang-en" onclick="setWelcomeLang('en')" class="py-2.5 rounded-lg text-xs font-bold transition-all hover:bg-[var(--bg-card)] hover:shadow-sm opacity-50 flex items-center justify-center gap-2"><span>🇬🇧</span> EN</button>
+                    </div>
+                </div>
+                 <!-- Theme -->
+                <div class="space-y-2">
+                    <label class="text-[0.6rem] font-black uppercase tracking-widest opacity-40">Theme</label>
+                    <div class="grid grid-cols-3 bg-[var(--bg-page)] rounded-xl p-1.5 border border-[var(--border-card)] gap-1">
+                         <button onclick="setTheme('light')" class="py-2 rounded-lg flex items-center justify-center hover:bg-[var(--bg-card)] hover:shadow-sm transition-all text-[var(--text-main)] opacity-70 hover:opacity-100"><i data-lucide="sun" class="w-4 h-4"></i></button>
+                         <button onclick="setTheme('deep')" class="py-2 rounded-lg flex items-center justify-center hover:bg-[var(--bg-card)] hover:shadow-sm transition-all text-[var(--text-main)] opacity-70 hover:opacity-100"><i data-lucide="moon" class="w-4 h-4"></i></button>
+                         <button onclick="setTheme('dark')" class="py-2 rounded-lg flex items-center justify-center hover:bg-[var(--bg-card)] hover:shadow-sm transition-all text-[var(--text-main)] opacity-70 hover:opacity-100"><i data-lucide="zap" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeWelcome()" class="w-full py-4 rounded-xl bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(var(--accent-rgba),0.4)] hover:shadow-[0_15px_30px_-5px_rgba(var(--accent-rgba),0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+                <span id="w-btn">Start Exploring</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            </button>
+        </div>
     </div>
 
     <button onclick="toggleSettings()" class="cog-btn no-print" id="main-cog" aria-label="Open Settings"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></button>

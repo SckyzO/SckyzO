@@ -100,6 +100,55 @@ function setFontStack(f) {
     localStorage.setItem('cv-font-stack', f);
 }
 
+// Welcome Modal Logic
+window.setWelcomeLang = function(lang) {
+    const btnFr = document.getElementById('w-lang-fr');
+    const btnEn = document.getElementById('w-lang-en');
+    const title = document.getElementById('w-title');
+    const sub = document.getElementById('w-subtitle');
+    const btn = document.getElementById('w-btn');
+
+    // Update Buttons UI
+    if (lang === 'fr') {
+        btnFr.classList.remove('opacity-50'); btnFr.classList.add('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
+        btnEn.classList.add('opacity-50'); btnEn.classList.remove('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
+        
+        // Update Text
+        title.innerText = "Bienvenue";
+        sub.innerText = "Personnalisez votre expérience";
+        btn.innerText = "Commencer l'exploration";
+        
+        // Trigger generic lang toggle if needed
+        const currentLang = document.documentElement.lang;
+        if (currentLang !== 'fr') toggleLanguage();
+    } else {
+        btnEn.classList.remove('opacity-50'); btnEn.classList.add('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
+        btnFr.classList.add('opacity-50'); btnFr.classList.remove('bg-[var(--bg-card)]', 'shadow-sm', 'text-[var(--text-main)]');
+        
+        title.innerText = "Welcome";
+        sub.innerText = "Customize your experience";
+        btn.innerText = "Start Exploring";
+
+        const currentLang = document.documentElement.lang;
+        if (currentLang !== 'en') toggleLanguage();
+    }
+};
+
+window.closeWelcome = function() {
+    const m = document.getElementById('welcome-modal');
+    m.style.opacity = '0';
+    m.style.pointerEvents = 'none';
+    setTimeout(() => { m.style.display = 'none'; }, 500);
+    localStorage.setItem('cv-visited', 'true');
+    
+    // Pulse settings cog to show where it is
+    const cog = document.getElementById('main-cog');
+    if (cog) {
+        cog.classList.add('aura-pulse');
+        setTimeout(() => cog.classList.remove('aura-pulse'), 2000);
+    }
+};
+
 // TTY Mode
 function updateTTY(forceState = null) {
     const newState = (forceState !== null) ? forceState : !document.body.classList.contains('mode-tty');
@@ -265,11 +314,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rangeInput) rangeInput.value = savedFontSize;
 
     if (!localStorage.getItem('cv-visited')) {
-        const tip = document.getElementById('onboarding-tip'); 
-        const cog = document.getElementById('main-cog');
-        if (tip && cog) {
-            setTimeout(() => { tip.classList.add('show'); cog.classList.add('aura-pulse'); }, 1000);
-            setTimeout(() => { tip.classList.remove('show'); cog.classList.remove('aura-pulse'); localStorage.setItem('cv-visited', 'true'); }, 10000);
+        const modal = document.getElementById('welcome-modal');
+        if (modal) {
+            // Auto-detect browser lang for initial state
+            const userLang = navigator.language || navigator.userLanguage; 
+            const isFr = userLang.startsWith('fr');
+            
+            // Set initial UI state without triggering toggleLanguage yet (or defaulting to document lang)
+            setWelcomeLang(isFr ? 'fr' : 'en');
+
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                modal.style.pointerEvents = 'auto';
+            }, 500);
         }
     }
 
