@@ -8,6 +8,8 @@ const colors = [
     { name: 'Violet', value: '139, 92, 246', hex: '#8b5cf6' }, 
     { name: 'Rose', value: '244, 63, 94', hex: '#f43f5e' } 
 ];
+const defaultAccent = '#3b82f6';
+const defaultAccentRgba = '59, 130, 246';
 
 // Initialisation immédiate des icônes
 try { lucide.createIcons(); } catch(e) { console.error("Lucide init failed", e); }
@@ -83,9 +85,11 @@ function setTheme(t) {
 
 function setAccent(hex) {
     const color = colors.find(c => c.hex === hex);
-    document.documentElement.style.setProperty('--accent', hex);
-    document.documentElement.style.setProperty('--accent-rgba', color.value);
-    localStorage.setItem('cv-accent', hex);
+    const accentHex = color ? color.hex : defaultAccent;
+    const accentRgba = color ? color.value : defaultAccentRgba;
+    document.documentElement.style.setProperty('--accent', accentHex);
+    document.documentElement.style.setProperty('--accent-rgba', accentRgba);
+    localStorage.setItem('cv-accent', accentHex);
 }
 
 function setFontSize(s) {
@@ -205,6 +209,7 @@ const actions = [
 ];
 
 let selectedIdx = 0;
+let filteredActions = actions.slice();
 
 function toggleCmd(show) {
     const p = document.getElementById('cmd-palette');
@@ -220,11 +225,16 @@ function toggleCmd(show) {
 function renderResults(query) {
     const results = document.getElementById('cmd-results');
     const filtered = actions.filter(a => a.title.toLowerCase().includes(query.toLowerCase()));
+    filteredActions = filtered;
     selectedIdx = 0;
 
-    // Utilisation de backticks normaux car nous sommes dans un fichier JS pur
+    if (filtered.length === 0) {
+        results.innerHTML = '';
+        return;
+    }
+
     results.innerHTML = filtered.map((a, i) => `
-        <div class="cmd-item ${i === 0 ? 'active' : ''}" onclick="executeAction('${a.id}')">
+        <div class="cmd-item ${i === 0 ? 'active' : ''}" data-id="${a.id}" onclick="executeAction('${a.id}')">
             <i data-lucide="${a.icon}" class="w-4 h-4"></i><span>${a.title}</span>
         </div>`).join('');
 
@@ -239,6 +249,7 @@ function executeAction(id) {
 document.getElementById('cmd-input').addEventListener('input', (e) => renderResults(e.target.value));
 document.getElementById('cmd-input').addEventListener('keydown', (e) => {
     const items = document.querySelectorAll('.cmd-item');
+    if (items.length === 0) return;
     if (e.key === 'ArrowDown') {
         e.preventDefault();
         items[selectedIdx].classList.remove('active');
@@ -252,8 +263,8 @@ document.getElementById('cmd-input').addEventListener('keydown', (e) => {
         items[selectedIdx].classList.add('active');
         items[selectedIdx].scrollIntoView({ block: 'nearest' });
     } else if (e.key === 'Enter') {
-        const active = document.querySelector('.cmd-item.active');
-        if (active) executeAction(active.getAttribute('data-id'));
+        const action = filteredActions[selectedIdx];
+        if (action) executeAction(action.id);
     }
 });
 
