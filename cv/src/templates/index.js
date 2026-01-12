@@ -125,7 +125,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <meta property="twitter:description" content="${t1.twitterDescription}">
     <meta property="twitter:image" content="https://tomzone.fr/preview_${lang}.png">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     
     <!-- Offline Assets (Inlined for PDF stability) -->
     <script>
@@ -303,7 +306,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             <div class="relative shrink-0 p-10 md:p-12 z-10">
                 <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
                     <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
-                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        <picture>
+                            <source srcset="assets/tom_avatar.webp" type="image/webp">
+                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        </picture>
                     </div>
                 </div>
                 <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
@@ -396,7 +402,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             <div class="relative shrink-0 p-10 md:p-12 z-10">
                 <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
                     <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
-                        <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        <picture>
+                            <source srcset="assets/tom_avatar.webp" type="image/webp">
+                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        </picture>
                     </div>
                 </div>
                 <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
