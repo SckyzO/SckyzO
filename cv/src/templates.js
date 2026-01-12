@@ -158,6 +158,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .delay-300 .flip-card { transition-delay: 0.3s; }
         .delay-350 .flip-card { transition-delay: 0.35s; }
         .delay-400 .flip-card { transition-delay: 0.4s; }
+        .delay-500 .flip-card { transition-delay: 0.5s; }
+        .delay-600 .flip-card { transition-delay: 0.6s; }
         .accent-text { color: var(--accent); }
         .accent-bg { background-color: var(--accent); }
         .accent-border { border-color: var(--accent); }
@@ -240,6 +242,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 </head>
 <body class="p-4 md:p-8 lg:p-12 theme-${theme} font-${fontStack} ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
     
+    <!-- Reading Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1 z-[9999] no-print">
+        <div id="progress-bar" class="h-full accent-bg shadow-[0_0_10px_var(--accent)] transition-all duration-100 ease-out" style="width: 0%"></div>
+    </div>
+
     <div id="onboarding-tip" class="no-print text-left">
         ${flip(`<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t1.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`, `<div class="flex items-center gap-3"><i data-lucide="sparkles" class="w-4 h-4"></i><span>${t2.onboarding}</span><i data-lucide="arrow-up" class="w-3 h-3 opacity-50 ml-1"></i></div>`)}
     </div>
@@ -546,7 +553,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="card p-4 flex items-center justify-center h-64">
                         ${generateRadarChart(data.skills.professional)}
                     </div>
-                </section>`, 'delay-50')}
+                </section>`, 'delay-200')}
 
                 ${flip(`
                 <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.3s">
@@ -556,7 +563,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>`, 'delay-200')}
+                </section>`, 'delay-300')}
 
                 ${flip(`
                 <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.4s">
@@ -582,7 +589,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             </span>
                         `).join('')}
                     </div>
-                </section>`, 'delay-300')}
+                </section>`, 'delay-400')}
 
                 ${flip(`
                 <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.5s">
@@ -592,7 +599,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 `<section class="flex flex-col gap-6 text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.education}</h2></div>
                     <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>`, 'delay-400')}
+                </section>`, 'delay-500')}
                 
                 ${flip(`
                 <section class="flex flex-col gap-6 reveal text-left" style="animation-delay: 0.6s">
@@ -626,7 +633,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             </div>
                         `).join('')}
                     </div>
-                </section>`, 'delay-500')}
+                </section>`, 'delay-600')}
             </div>
             <div class="lg:col-span-8 flex flex-col gap-8 text-left">
                 ${flip(`

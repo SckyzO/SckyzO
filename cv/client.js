@@ -1,4 +1,13 @@
-const colors = [ { name: 'Blue', value: '59, 130, 246', hex: '#3b82f6' }, { name: 'Emerald', value: '16, 185, 129', hex: '#10b981' }, { name: 'Violet', value: '139, 92, 246', hex: '#8b5cf6' }, { name: 'Amber', value: '245, 158, 11', hex: '#f5a623' }, { name: 'Rose', value: '244, 63, 94', hex: '#f43f5e' }, { name: 'Sky', value: '14, 165, 233', hex: '#0ea5e9' }, { name: 'Orange', value: '249, 115, 22', hex: '#f97316' }, { name: 'Teal', value: '20, 184, 166', hex: '#14b8a6' }, { name: 'Cyan', value: '6, 182, 212', hex: '#06b6d4' }, { name: 'Fuchsia', value: '217, 70, 239', hex: '#d946ef' } ];
+const colors = [ 
+    { name: 'Red', value: '239, 68, 68', hex: '#ef4444' }, 
+    { name: 'Orange', value: '249, 115, 22', hex: '#f97316' }, 
+    { name: 'Amber', value: '245, 158, 11', hex: '#f59e0b' }, 
+    { name: 'Emerald', value: '16, 185, 129', hex: '#10b981' }, 
+    { name: 'Cyan', value: '6, 182, 212', hex: '#06b6d4' }, 
+    { name: 'Blue', value: '59, 130, 246', hex: '#3b82f6' }, 
+    { name: 'Violet', value: '139, 92, 246', hex: '#8b5cf6' }, 
+    { name: 'Rose', value: '244, 63, 94', hex: '#f43f5e' } 
+];
 
 // Initialisation immédiate des icônes
 try { lucide.createIcons(); } catch(e) { console.error("Lucide init failed", e); }
@@ -245,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('cv-theme') || 'deep'; 
     const savedAccent = localStorage.getItem('cv-accent') || '#3b82f6';
     const savedFontSize = localStorage.getItem('cv-font-size') || '14'; 
-    const savedFontStack = localStorage.getItem('cv-font-stack') || 'hub';
+    const savedFontStack = localStorage.getItem('cv-font-stack') || 'architect';
 
     setTheme(savedTheme); 
     setAccent(savedAccent); 
@@ -288,3 +297,12 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+// Scroll Progress Bar
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    const bar = document.getElementById("progress-bar");
+    if (bar) bar.style.width = scrolled + "%";
+});
