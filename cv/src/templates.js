@@ -103,15 +103,15 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <link rel="canonical" href="https://tomzone.fr/index_${lang}.html" />
     <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
     <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
-    <meta name="description" content="Expert HPC, DevOps & Observabilité - 15 ans d'expérience. Découvrez mon parcours et mes projets.">
-    <meta name="keywords" content="Thomas Bourcey, CV, HPC, DevOps, Linux, Système, Ingénieur, Toulouse, SRE">
+    <meta name="description" content="${t1.seoDescription}">
+    <meta name="keywords" content="${t1.seoKeywords}">
     <meta name="author" content="${c.name}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tomzone.fr/index_${lang}.html">
     <meta property="og:title" content="${c.name} - ${c.title[lang]}">
-    <meta property="og:description" content="Expert HPC & DevOps. Plus de 15 ans d'expérience dans l'administration de systèmes critiques à grande échelle.">
+    <meta property="og:description" content="${t1.ogDescription}">
     <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
     <meta property="og:site_name" content="${c.name} Portfolio">
 
@@ -119,7 +119,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://tomzone.fr/index_${lang}.html">
     <meta property="twitter:title" content="${c.name} - ${c.title[lang]}">
-    <meta property="twitter:description" content="Expert HPC & DevOps. Plus de 15 ans d'expérience dans l'administration de systèmes critiques à grande échelle.">
+    <meta property="twitter:description" content="${t1.twitterDescription}">
     <meta property="twitter:image" content="https://tomzone.fr/preview_${lang}.png">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
@@ -141,7 +141,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .pdf-mode .flip-back, .pdf-mode .no-print, .pdf-mode #settings-panel, .pdf-mode #cmd-palette, .pdf-mode .cog-btn { display: none !important; }
         .pdf-mode .card { box-shadow: none !important; transform: none !important; }
         .pdf-mode .qr-code-container { display: flex !important; }
-        .pdf-mode { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+        .pdf-mode { padding-top: 0 !important; padding-bottom: 0 !important; }
+        .pdf-mode .max-w-7xl { padding-top: 24px; padding-bottom: 24px; }
         
         /* Font Stacks */
         .font-hub { --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
@@ -351,7 +352,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .exp-card.highlight .accent-text { text-shadow: 0 0 15px var(--accent); }
         .radar-point.active { opacity: 1 !important; r: 6px; fill: white; filter: drop-shadow(0 0 8px var(--accent)); }
         @media print { 
+            @page { margin: 0; }
             body { background-color: white !important; color: black !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+            .max-w-7xl { padding-top: 24px !important; padding-bottom: 24px !important; }
             .no-print, .flip-back { display: none !important; } 
             .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
             strong, h1, h2, h3, p, span, li { color: black !important; font-weight: 800 !important; } 
