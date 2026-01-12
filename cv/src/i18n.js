@@ -1,22 +1,22 @@
-// Dictionnaire de traduction
+// Translation dictionary.
 const i18n = {
   fr: {
     contact: "Contact",
     languages: "Langues",
-    skills: "Soft Skills",
+    skills: "Qualites humaines",
     certifications: "Certifications",
     profile: "À Propos",
     experience: "Expériences",
     education: "Formation",
     print: "PDF / IMPRIMER",
     proSkills: "Compétences",
-    projects: "Projets Side",
+    projects: "Projets personnels",
     onboarding: "Personnalisez votre expérience ici",
-    yearsExp: "Années Exp.",
-    publicRepos: "Repos Publics",
+    yearsExp: "Années d'exp.",
+    publicRepos: "Dépôts publics",
     downloadPdf: "Télécharger PDF",
     tooltipPdf: "Obtenir la version imprimable",
-    lastCommit: "Dernier commit sur le repo"
+    lastCommit: "Dernier commit sur le dépôt"
   },
   en: {
     contact: "Contact",
@@ -34,7 +34,7 @@ const i18n = {
     publicRepos: "Public Repos",
     downloadPdf: "Download PDF",
     tooltipPdf: "Get the printable version",
-    lastCommit: "Last commit on repo"
+    lastCommit: "Last commit on repository"
   }
 };
 
