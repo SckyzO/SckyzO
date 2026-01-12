@@ -104,8 +104,9 @@ jobs:
             set sftp:auto-confirm yes;
             set net:max-retries 2;
             set net:timeout 20;
+            lcd ${GITHUB_WORKSPACE}/cv-out;
             open -u ${SFTP_USER},${SFTP_PASSWORD} sftp://${SFTP_HOST}:${SFTP_PORT};
-            mirror --delete --verbose cv-out ${SFTP_REMOTE_PATH};
+            mirror --delete --verbose . ${SFTP_REMOTE_PATH};
             bye
           "
         env:
