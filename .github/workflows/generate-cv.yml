@@ -1,4 +1,4 @@
-name: Generate and Deploy CV
+name: "🧰 Generate and Deploy CV"
 
 on:
   push:
@@ -11,25 +11,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: "🧾 Checkout"
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "🟢 Setup Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: cv/package.json
 
-      - name: Install dependencies
+      - name: "📦 Install dependencies"
         run: cd cv && npm install
 
-      - name: Install Playwright Browsers
+      - name: "🧭 Install Playwright browsers"
         run: cd cv && npx playwright install chromium --with-deps
 
-      - name: Build CV (HTML, PDF, MD)
+      - name: "🏗️ Build CV (HTML, PDF, MD)"
         run: cd cv && npm run build
 
-      - name: Upload Artifacts
+      - name: "📤 Upload artifacts"
         uses: actions/upload-artifact@v4
         with:
           name: cv-outputs
@@ -39,8 +40,8 @@ jobs:
             cv/*.md
             cv/*.png
 
-# TODO: Ajouter l'étape d'upload vers tomzone.fr ici
-# exemple avec rsync ou ftp
+# TODO: Add the upload step to tomzone.fr here.
+# Example with rsync or FTP:
 #      - name: Deploy to tomzone.fr
 #        run: |
 #          ...

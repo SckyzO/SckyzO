@@ -1,4 +1,4 @@
-name: Deploy CV to GitHub Pages
+name: "🚀 Deploy CV to GitHub Pages"
 
 on:
   push:
@@ -25,32 +25,32 @@ jobs:
       run:
         working-directory: cv
     steps:
-      - name: Checkout
+      - name: "🧾 Checkout"
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "🟢 Setup Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: cv/package-lock.json
 
-      - name: Install dependencies
+      - name: "📦 Install dependencies"
         run: npm ci
 
-      - name: Validate data/data.json
+      - name: "✅ Validate data/data.json"
         run: npm run validate
 
-      - name: Install Playwright browsers
+      - name: "🧭 Install Playwright browsers"
         run: npx playwright install --with-deps chromium
 
-      - name: Download offline assets
+      - name: "⬇️ Download offline assets"
         run: node build/download-assets.js
 
-      - name: Build CV outputs
+      - name: "🏗️ Build CV outputs"
         run: node build/build.js
 
-      - name: Upload Pages artifact
+      - name: "📤 Upload Pages artifact"
         uses: actions/upload-pages-artifact@v3
         with:
           path: cv
@@ -62,6 +62,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: "🌍 Deploy to GitHub Pages"
         id: deployment
         uses: actions/deploy-pages@v4

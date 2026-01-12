@@ -1,4 +1,4 @@
-name: Deploy CV via SFTP
+name: "🚀 Deploy CV via SFTP"
 
 on:
   push:
@@ -6,48 +6,49 @@ on:
     paths:
       - "cv/**"
       - ".github/workflows/deploy-sftp.yml"
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: "🧾 Checkout"
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: "🟢 Setup Node.js"
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: cv/package-lock.json
 
-      - name: Install dependencies
+      - name: "📦 Install dependencies"
         run: npm ci
         working-directory: cv
 
-      - name: Validate data
+      - name: "✅ Validate data"
         run: npm run validate
         working-directory: cv
 
-      - name: Install Playwright browsers
+      - name: "🧭 Install Playwright browsers"
         run: npx playwright install --with-deps chromium
         working-directory: cv
 
-      - name: Download offline assets
+      - name: "⬇️ Download offline assets"
         run: node build/download-assets.js
         working-directory: cv
 
-      - name: Build CV outputs
+      - name: "🏗️ Build CV outputs"
         run: node build/build.js
         working-directory: cv
 
-      - name: Install lftp and ssh
+      - name: "🔐 Install lftp and ssh"
         run: |
           sudo apt-get update
           sudo apt-get install -y lftp openssh-client
           /usr/bin/ssh -V
 
-      - name: Deploy build via lftp (SFTP mirror, delete remote)
+      - name: "📤 Deploy build via lftp (SFTP mirror, delete remote)"
         working-directory: cv
         run: |
           lftp -e "
