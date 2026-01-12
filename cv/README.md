@@ -103,6 +103,7 @@ On each push to `main`, the workflow:
 4. Publishes the `cv/` directory to GitHub Pages.
 
 Ensure GitHub Pages is configured to use GitHub Actions as the source.
+Pull requests run `.github/workflows/pr-check.yml` to validate data for branch rulesets.
 
 ## CI/CD (SFTP)
 
