@@ -58,7 +58,15 @@ async function main() {
   for (const asset of assets) {
     console.log(`- ${asset.name}...`);
     try {
-      await download(asset.url, path.join(ASSETS_DIR, asset.name));
+      const destPath = path.join(ASSETS_DIR, asset.name);
+      await download(asset.url, destPath);
+      // Post-process: Remove source map comments
+      let content = fs.readFileSync(destPath, 'utf8');
+      if (content.includes('sourceMappingURL=')) {
+        content = content.replace(/^\/\/#\s*sourceMappingURL=.*$/gm, '');
+        fs.writeFileSync(destPath, content);
+        console.log(`  (Cleaned source map from ${asset.name})`);
+      }
     } catch (e) {
       console.error(`Failed to download ${asset.name}:`, e.message);
       failures.push(asset.name);
