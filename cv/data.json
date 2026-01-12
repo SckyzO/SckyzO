@@ -22,53 +22,91 @@
     {
       "company": "Eviden (ex-Bull)",
       "period": "2020 – Present",
-      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "role": { "fr": "Tech Lead Monitoring / Ingénieur Système", "en": "Monitoring Tech Lead / System Engineer" },
       "details": {
         "fr": [
-          "Projets <strong>HPC internationaux</strong> : Administration, support et automatisation (<strong>Ansible</strong>, <strong>Slurm</strong>, <strong>Infiniband</strong>).",
-          "Expertise Stockage : <strong>IBM HPSS</strong>, NetApp, DDN, IBM ESS, Tape Libraries.",
-          "Observabilité : <strong>Tech Lead</strong> sur les solutions <strong>Prometheus & Grafana</strong>.",
-          "<strong>Infrastructure as Code</strong> et scripting avancé (Bash, Python)."
+          "<strong>HPC (Calcul Haute Performance)</strong> : Installation et optimisation de clusters mondiaux (Slurm, Infiniband, GPU acceleration).",
+          "<strong>Stockage HPSS</strong> : Mise en œuvre et maintenance d'infrastructures critiques (IBM HPSS, DDN, ESS, Tape Libraries).",
+          "<strong>Monitoring & Observabilité</strong> : Tech Lead France. Conception de stacks Prometheus/Grafana et dashboards sur-mesure.",
+          "<strong>Développement & Automatisation</strong> : Scripting avancé (Bash, Python) et déploiements Infrastructure as Code (Ansible)."
         ],
         "en": [
-          "International <strong>HPC projects</strong>: Administration, support, and automation (<strong>Ansible</strong>, <strong>Slurm</strong>, <strong>Infiniband</strong>).",
-          "Storage Expertise: <strong>IBM HPSS</strong>, NetApp, DDN, IBM ESS, Tape Libraries.",
-          "Observability: <strong>Tech Lead</strong> on <strong>Prometheus & Grafana</strong> solutions.",
-          "<strong>Infrastructure as Code</strong> and advanced scripting (Bash, Python)."
+          "<strong>HPC (High-Performance Computing)</strong>: Installing and optimizing large-scale systems worldwide (Slurm, Infiniband, GPU).",
+          "<strong>HPSS Storage</strong>: Implementing and maintaining high-performance storage (IBM HPSS, DDN, ESS, Tape Libraries).",
+          "<strong>Monitoring & Observability</strong>: Technical Lead. Designing custom Prometheus/Grafana stacks and alerting strategies.",
+          "<strong>Development & Automation</strong>: Advanced Bash & Python scripting and Infrastructure as Code (Ansible) deployments."
         ]
       }
     },
     {
-      "company": "Gfi Informatique (Thales Alenia Space)",
+      "company": "Gfi Informatique",
       "period": "2018 – 2020",
       "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
       "details": {
         "fr": [
-          "<strong>Cloud Privé</strong> : Déploiement et support de conteneurs (<strong>Docker</strong>, <strong>Kubernetes</strong>, <strong>Rancher</strong>).",
-          "Virtualisation & Monitoring : <strong>vRealize Suite</strong>, ESX, <strong>ELK</strong>, Prometheus.",
-          "Automatisation : <strong>Ansible AWX</strong>, Jenkins, Gitlab CI."
+          "<strong>Infrastructures Cloud</strong> : Gestion de déploiements AWS, GCP, OpenShift et architectures hybrides.",
+          "<strong>Linux & Virtualisation</strong> : Administration d'environnements Red Hat, Debian, KVM et VMware.",
+          "<strong>DevOps & Automatisation</strong> : Mise en place de pipelines CI/CD et automatisation via Ansible.",
+          "<strong>Stockage & Observabilité</strong> : Administration NetApp/Ceph et gestion des logs via stack ELK et Prometheus."
         ],
         "en": [
-          "<strong>Private Cloud</strong>: Deployment and support of containers (<strong>Docker</strong>, <strong>Kubernetes</strong>, <strong>Rancher</strong>).",
-          "Virtualization & Monitoring: <strong>vRealize Suite</strong>, ESX, <strong>ELK</strong>, Prometheus.",
-          "Automation: <strong>Ansible AWX</strong>, Jenkins, Gitlab CI."
+          "<strong>Cloud Infrastructure</strong>: Managing AWS, GCP, OpenShift and hybrid cloud deployments.",
+          "<strong>Linux & Virtualization</strong>: Administering Red Hat, Debian, KVM, and VMware environments.",
+          "<strong>DevOps & Automation</strong>: Deploying CI/CD pipelines and Infrastructure as Code with Ansible.",
+          "<strong>Storage & Monitoring</strong>: Administering NetApp/Ceph and log management with ELK Stack and Prometheus."
         ]
       }
     },
     {
-      "company": "D-Fi Services (Safran Electrical & Power)",
+      "company": "D-Fi Services",
       "period": "2010 – 2018",
       "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
       "details": {
         "fr": [
-          "<strong>HPC</strong> : Architecture clusters de calcul (Nastran, Abaqus), <strong>PBS Scheduler</strong>.",
-          "Stockage : <strong>NetApp MetroCluster</strong>, SnapMirror, Commvault.",
-          "Architecture IdM : <strong>Red Hat IdM (LDAP)</strong>, Satellite."
+          "<strong>Administration HPC</strong> : Architecture de supercalculateurs pour l'aéronautique (Nastran, Abaqus, Samcef).",
+          "<strong>Stockage & Sauvegarde</strong> : Expertise NetApp MetroCluster, SnapMirror, Commvault et Veeam.",
+          "<strong>Architecture Linux</strong> : Déploiement d'infrastructures Red Hat, IdM (LDAP) et Satellite.",
+          "<strong>Virtualisation & CI/CD</strong> : Architecture VMware/KVM et intégration continue via Ansible, Jenkins et Git."
         ],
         "en": [
-          "<strong>HPC</strong>: Computing cluster architecture (Nastran, Abaqus), <strong>PBS Scheduler</strong>.",
-          "Storage: <strong>NetApp MetroCluster</strong>, SnapMirror, Commvault.",
-          "IdM Architecture: <strong>Red Hat IdM (LDAP)</strong>, Satellite."
+          "<strong>HPC Administration</strong>: Architecting supercomputers for the aeronautics industry (Nastran, Abaqus, Samcef).",
+          "<strong>Storage & Backup</strong>: NetApp MetroCluster, SnapMirror, Commvault, and Veeam expertise.",
+          "<strong>Linux System Architecture</strong>: Deploying Red Hat-based infrastructures, LDAP IdM, and Satellite.",
+          "<strong>Virtualization & CI/CD</strong>: Architecting VMware/KVM and continuous integration with Ansible, Jenkins, and Git."
+        ]
+      }
+    },
+    {
+      "company": "APX (Axians)",
+      "period": "2006 – 2010",
+      "role": { "fr": "Administrateur Systèmes & Réseaux", "en": "System & Network Administrator" },
+      "details": {
+        "fr": [
+          "<strong>Solutions PCA/PRA</strong> : Mise en place pour grands comptes (Banque Populaire, Airbus, CNES) sur technologies NetApp et VMware.",
+          "<strong>Stockage & Sauvegarde</strong> : Déploiement de NAS NetApp et solutions de sauvegarde Time Navigator (Atempo).",
+          "<strong>Infrastructures Mixtes</strong> : Gestion de parcs hétérogènes Linux/Unix/Windows et sécurisation des environnements."
+        ],
+        "en": [
+          "<strong>BCP/DR Solutions</strong>: Implementation for major accounts (Airbus, CNES) using NetApp and VMware technologies.",
+          "<strong>Storage & Backup</strong>: Deployment of NetApp NAS and Time Navigator backup solutions.",
+          "<strong>Mixed Infrastructures</strong>: Management of heterogeneous Linux/Unix/Windows environments and system hardening."
+        ]
+      }
+    },
+    {
+      "company": "Scasicomp",
+      "period": "2004 – 2006",
+      "role": { "fr": "Administrateur Systèmes & Réseaux", "en": "System & Network Administrator" },
+      "details": {
+        "fr": [
+          "<strong>Stockage NetApp</strong> : Installation et configuration de NAS pour grands comptes (Airbus, Motorola).",
+          "<strong>Sauvegarde Industrielle</strong> : Gestion de robotiques (STK, Quantum) et solutions Time Navigator / NetBackup.",
+          "<strong>Systèmes</strong> : Administration Windows/Linux et support technique niveau 2/3."
+        ],
+        "en": [
+          "<strong>NetApp Storage</strong>: Installation and configuration of NAS for key accounts (Airbus, Motorola).",
+          "<strong>Industrial Backup</strong>: Management of robotics (STK, Quantum) and Time Navigator / NetBackup solutions.",
+          "<strong>Systems</strong>: Windows/Linux administration and L2/L3 technical support."
         ]
       }
     }
