@@ -16,7 +16,19 @@ const i18n = {
     publicRepos: "Dépôts publics",
     downloadPdf: "Télécharger PDF",
     tooltipPdf: "Obtenir la version imprimable",
-    lastCommit: "Dernier commit sur le dépôt"
+    lastCommit: "Dernier commit sur le dépôt",
+    settingsHintTitle: "Personalisation",
+    settingsHintSubtitle: "Menu Rapide",
+    settingsHintText: "Ce panneau permet d'ajuster l'affichage et d'ameliorer la navigation.",
+    settingsHintItems: ["Langue", "Couleur", "Theme", "Taille", "Matrix", "Accessibilite"],
+    settingsTooltip: "Acces direct aux reglages du site",
+    debugTooltip: "Vider le stockage local",
+    goToRepo: "Aller sur le repo",
+    openGithub: "Ouvrir GitHub",
+    openLinkedIn: "Ouvrir LinkedIn",
+    emailTooltip: "Envoyer un email",
+    phoneTooltip: "Appeler ce numero",
+    websiteTooltip: "Visiter le site"
   },
   en: {
     contact: "Contact",
@@ -34,7 +46,19 @@ const i18n = {
     publicRepos: "Public Repos",
     downloadPdf: "Download PDF",
     tooltipPdf: "Get the printable version",
-    lastCommit: "Last commit on repository"
+    lastCommit: "Last commit on repository",
+    settingsHintTitle: "Personalization",
+    settingsHintSubtitle: "Quick Panel",
+    settingsHintText: "Use this panel to fine-tune the experience and improve navigation.",
+    settingsHintItems: ["Language", "Accent", "Theme", "Scale", "Matrix", "Accessibility"],
+    settingsTooltip: "Direct access to site settings",
+    debugTooltip: "Clear local storage",
+    goToRepo: "Go to repo",
+    openGithub: "Open GitHub",
+    openLinkedIn: "Open LinkedIn",
+    emailTooltip: "Send an email",
+    phoneTooltip: "Call this number",
+    websiteTooltip: "Visit the website"
   }
 };
 

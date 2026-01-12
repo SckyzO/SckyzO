@@ -40,6 +40,17 @@ function requireLangObject(value, pathLabel) {
   requireString(value.en, `${pathLabel}.en`);
 }
 
+function requireSummaryItems(items, pathLabel) {
+  requireArray(items, pathLabel);
+  items.forEach((item, index) => {
+    const itemPath = `${pathLabel}[${index}]`;
+    requireObject(item, itemPath);
+    requireString(item.title, `${itemPath}.title`);
+    requireString(item.text, `${itemPath}.text`);
+    requireString(item.icon, `${itemPath}.icon`);
+  });
+}
+
 function validateData(payload) {
   requireObject(payload, 'root');
   requireObject(payload.contact, 'contact');
@@ -52,7 +63,9 @@ function validateData(payload) {
   requireString(payload.contact.github, 'contact.github');
   requireString(payload.contact.linkedin, 'contact.linkedin');
 
-  requireLangObject(payload.summary, 'summary');
+  requireObject(payload.summary, 'summary');
+  requireSummaryItems(payload.summary.fr, 'summary.fr');
+  requireSummaryItems(payload.summary.en, 'summary.en');
 
   requireArray(payload.experiences, 'experiences');
   payload.experiences.forEach((exp, expIndex) => {

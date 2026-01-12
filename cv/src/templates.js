@@ -3,7 +3,7 @@ const path = require('path');
 const { i18n } = require('./i18n');
 const { highlightMetrics, getAge, generateRadarChart } = require('./utils');
 
-// Helpers internes
+// Internal helpers.
 const flip = (c1, c2, delay='') => `
     <div class="flip-container ${delay}">
         <div class="flip-card">
@@ -13,8 +13,14 @@ const flip = (c1, c2, delay='') => `
     </div>`;
 
 const stripHtml = (html) => html.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ');
+const escapeHtml = (value) => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
 
-// Helper pour parser "<strong>Titre</strong> : Description"
+// Helper to parse "<strong>Title</strong> : Description".
 const parseItem = (htmlString) => {
   const match = htmlString.match(/<strong>(.*?)<\/strong>\s*[:\-]?\s*(.*)/);
   if (match) {
@@ -46,7 +52,25 @@ const hexToRgb = (hex) => {
   return `${r}, ${g}, ${b}`;
 };
 
-// --- GÉNÉRATEUR HTML ---
+const renderSummaryHtml = (items = []) => `
+  <div class="flex flex-col gap-6">
+    ${items.map(item => `
+      <div>
+        <h3 class="font-bold accent-text mb-2 flex items-center gap-2 text-sm uppercase tracking-wide">
+          <i data-lucide="${escapeHtml(item.icon)}" class="w-4 h-4"></i> ${escapeHtml(item.title)}
+        </h3>
+        <p class="leading-relaxed opacity-80">${escapeHtml(item.text)}</p>
+      </div>
+    `).join('')}
+  </div>`;
+
+const summaryToText = (items = []) => items
+  .map(item => `${item.title}\n${item.text}`)
+  .join('\n\n');
+
+const settingsHintIcons = ['languages', 'palette', 'sun', 'type', 'terminal', 'accessibility'];
+
+// --- HTML GENERATOR ---
 function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf', clientScriptContent = '', options = {}) {
   const isInteractive = mode === 'interactive';
   const lang2 = lang === 'fr' ? 'en' : 'fr';
@@ -144,6 +168,77 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             box-shadow: 0 0 25px rgba(var(--accent-rgba), 0.3); backdrop-filter: blur(12px); text-transform: none; letter-spacing: 0;
         }
         .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-8px); }
+        .icon-tooltip { position: relative; }
+        .icon-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%) translateX(6px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            color: var(--text-main);
+            padding: 10px 16px;
+            border-radius: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 25px rgba(var(--accent-rgba), 0.3);
+            backdrop-filter: blur(12px);
+            text-transform: none;
+            letter-spacing: 0;
+            z-index: 140;
+        }
+        .icon-tooltip::before {
+            content: "";
+            position: absolute;
+            right: calc(100% + 4px);
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            transform: translateY(-50%) rotate(45deg);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-card);
+            border-top: 1px solid var(--border-card);
+            opacity: 0;
+            transition: all 0.2s ease;
+            z-index: 139;
+        }
+        .icon-tooltip:hover::after,
+        .icon-tooltip:focus-visible::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+        .icon-tooltip:hover::before,
+        .icon-tooltip:focus-visible::before {
+            opacity: 1;
+            transform: translateY(-50%) rotate(45deg);
+        }
+        @media (max-width: 768px) {
+            .icon-tooltip::after {
+                right: 50%;
+                top: auto;
+                bottom: calc(100% + 12px);
+                transform: translateX(50%) translateY(6px);
+            }
+            .icon-tooltip::before {
+                right: 50%;
+                top: auto;
+                bottom: calc(100% + 6px);
+                transform: translateX(50%) rotate(45deg);
+            }
+            .icon-tooltip:hover::after,
+            .icon-tooltip:focus-visible::after {
+                transform: translateX(50%) translateY(0);
+            }
+            .icon-tooltip:hover::before,
+            .icon-tooltip:focus-visible::before {
+                transform: translateX(50%) rotate(45deg);
+            }
+        }
         
         .no-break { break-inside: avoid; page-break-inside: avoid; }
 
@@ -179,9 +274,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .accent-text { color: var(--accent); }
         .accent-bg { background-color: var(--accent); }
         .accent-border { border-color: var(--accent); }
-        #settings-panel { position: fixed; top: 95px; right: 24px; width: 360px; padding: 32px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 2.5rem; z-index: 100; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.4s ease; backdrop-filter: blur(24px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        #settings-panel { position: fixed; top: 120px; right: 24px; width: 360px; padding: 32px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 2.5rem; z-index: 100; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.4s ease; backdrop-filter: blur(24px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         #settings-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
         @media (max-width: 768px) { #settings-panel { top: auto; bottom: 0; right: 0; left: 0; width: 100%; max-height: 85vh; border-radius: 2rem 2rem 0 0; transform: translateY(100%); padding: 24px; } #settings-panel.open { transform: translateY(0); } .panel-handle { width: 40px; height: 4px; background: var(--track-color); border-radius: 2px; margin: -12px auto 24px; display: block; } .theme-light .panel-handle { background: rgba(0,0,0,0.1); } }
+        .welcome-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-page); border: 1px solid var(--border-card); color: var(--text-muted); transition: all 0.2s ease; }
+        .welcome-close:hover { color: var(--text-main); border-color: rgba(var(--accent-rgba), 0.4); box-shadow: 0 0 18px rgba(var(--accent-rgba), 0.2); }
+        #settings-hint { position: fixed; max-width: 320px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 1.25rem; padding: 16px 18px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45), 0 0 25px rgba(var(--accent-rgba), 0.3); opacity: 0; pointer-events: none; transform: translateY(10px) scale(0.98); transition: all 0.25s ease; z-index: 120; }
+        #settings-hint.show { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+        #settings-hint .hint-arrow { position: absolute; top: 22px; right: -8px; width: 16px; height: 16px; background: var(--bg-card); border-right: 1px solid var(--border-card); border-top: 1px solid var(--border-card); transform: rotate(45deg); }
+        #settings-hint .hint-close { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); border: 1px solid transparent; transition: all 0.2s ease; }
+        #settings-hint .hint-close:hover { color: var(--text-main); border-color: rgba(var(--accent-rgba), 0.4); }
+        @media (max-width: 768px) { #settings-hint { top: auto; right: 16px; left: 16px; bottom: 90px; max-width: none; } #settings-hint .hint-arrow { display: none; } }
+        #debug-clear { position: fixed; right: 24px; bottom: 24px; width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border: 1px solid var(--border-card); color: var(--text-muted); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.5), 0 0 20px rgba(var(--accent-rgba), 0.25); transition: all 0.2s ease; z-index: 90; }
+        #debug-clear:hover { color: var(--text-main); border-color: rgba(var(--accent-rgba), 0.4); box-shadow: 0 0 20px rgba(var(--accent-rgba), 0.2); transform: translateY(-2px); }
+        @media (max-width: 768px) { #debug-clear { right: 16px; bottom: 16px; } }
         .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
         .font-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 32px; }
         .panel-btn { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; padding: 8px 4px; border-radius: 1.25rem; font-size: 9px; font-weight: 800; text-transform: uppercase; border: 2px solid transparent; transition: all 0.2s; background: var(--bg-page); color: var(--text-muted); cursor: pointer; }
@@ -206,9 +312,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -7px; border: 3px solid var(--bg-card); box-shadow: 0 0 15px var(--accent); }
         input[type=range]::-moz-range-track { width: 100%; height: 6px; background: var(--track-color); border-radius: 3px; }
         input[type=range]::-moz-range-thumb { height: 18px; width: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 15px var(--accent); }
-        .cog-btn { position: fixed; top: 24px; right: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; color: #a1a1aa; cursor: pointer; z-index: 101; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cog-btn { position: fixed; top: 16px; right: 16px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; color: #a1a1aa; cursor: pointer; z-index: 101; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .theme-light .cog-btn { background: rgba(255, 255, 255, 0.8); border-color: rgba(0, 0, 0, 0.1); color: #52525b; }
-        .cog-btn:hover { border-color: var(--accent); color: var(--text-main); transform: rotate(30deg) scale(1.05); }
+        .cog-btn:hover { border-color: var(--accent); color: var(--text-main); }
+        .cog-icon { display: flex; align-items: center; justify-content: center; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .cog-btn:hover .cog-icon { transform: rotate(30deg) scale(1.05); }
+        @media (min-width: 768px) { .cog-btn { top: 32px; right: 32px; } }
+        @media (min-width: 1024px) { .cog-btn { top: 48px; right: 48px; } }
         .mode-tty { --bg-page: #000000 !important; --bg-card: #000000 !important; --text-main: #33ff00 !important; --text-muted: #008f11 !important; --accent: #33ff00 !important; --border-card: #008f11 !important; --font-sans: 'VT323', monospace !important; --font-mono: 'VT323', monospace !important; cursor: text; }
         .mode-tty * { border-radius: 0 !important; box-shadow: none !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; }
         .mode-tty .card { border: 1px solid var(--border-card) !important; background: transparent !important; }
@@ -257,6 +367,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .timeline-border { border-color: rgba(255, 255, 255, 0.1); transition: border-color 0.3s; }
         .theme-light .timeline-border { border-color: rgba(0, 0, 0, 0.1); }
         .group:hover.timeline-border { border-color: var(--accent) !important; }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            #settings-panel, #settings-hint, .tooltip-content, .cmd-box { box-shadow: 0 18px 38px -16px rgba(0,0,0,0.55); }
+            #cmd-palette { background: rgba(0,0,0,0.55); }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 lg:p-12 theme-${theme} font-architect ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
@@ -272,6 +386,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             <!-- Decoration -->
             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[var(--accent)] to-purple-500"></div>
             
+            <button class="welcome-close" onclick="closeWelcome()" aria-label="Close welcome modal"><i data-lucide="x" class="w-4 h-4"></i></button>
+
             <div class="mb-8 mt-2">
                 <div class="w-20 h-20 bg-[var(--bg-page)] rounded-2xl border border-[var(--border-card)] flex items-center justify-center mx-auto mb-5 text-[var(--accent)] shadow-[0_0_30px_rgba(var(--accent-rgba),0.15)]">
                     <i data-lucide="file-user" class="w-10 h-10"></i>
@@ -312,13 +428,43 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
 
             <button onclick="closeWelcome()" class="w-full py-4 rounded-xl bg-[var(--accent)] text-white font-black uppercase tracking-widest shadow-[0_10px_20px_-5px_rgba(var(--accent-rgba),0.4)] hover:shadow-[0_15px_30px_-5px_rgba(var(--accent-rgba),0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group relative overflow-hidden">
-                <span id="w-btn">Start Exploring</span> <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
-                <div id="w-timer-bar" class="absolute bottom-0 left-0 h-1 bg-white/30 w-full transition-all duration-[15000ms] ease-linear"></div>
+                <span id="w-btn" class="relative z-10">Start Exploring</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10"></i>
+                <div id="w-timer-bar" class="absolute inset-0 bg-white/20 w-0 transition-all duration-[15000ms] ease-linear pointer-events-none shadow-[0_0_18px_rgba(255,255,255,0.35)]"></div>
+                <div id="w-timer-bar-line" class="absolute bottom-0 left-0 h-1 bg-white/60 w-0 transition-all duration-[15000ms] ease-linear pointer-events-none"></div>
             </button>
         </div>
     </div>
 
-    <button onclick="toggleSettings()" class="cog-btn no-print" id="main-cog" aria-label="Open Settings"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></button>
+    <button onclick="toggleSettings()" class="cog-btn no-print icon-tooltip" id="main-cog" aria-label="Open Settings" data-tooltip="${t1.settingsTooltip}"><span class="cog-icon"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></span></button>
+
+    <div id="settings-hint" class="no-print" aria-live="polite">
+        <div class="hint-arrow"></div>
+        <button class="hint-close" onclick="hideSettingsHint()" aria-label="Close settings hint"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <div class="flex items-start gap-3 mb-3">
+            <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 border border-[var(--border-card)] text-[var(--accent)]">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+            <div>
+                <div class="text-sm font-black uppercase tracking-widest text-[var(--text-main)]">${t1.settingsHintTitle}</div>
+                <div class="text-[0.7rem] opacity-60 font-mono uppercase tracking-[0.3em]">${t1.settingsHintSubtitle}</div>
+            </div>
+        </div>
+        <p class="text-[0.75rem] opacity-70 mb-3">${t1.settingsHintText}</p>
+        <div class="grid grid-cols-2 gap-2 text-[0.75rem]">
+            ${t1.settingsHintItems.map((item, idx) => `
+            <div class="flex items-center gap-2 p-2 rounded-xl surface-muted border border-[var(--border-card)]">
+                <i data-lucide="${settingsHintIcons[idx] || 'settings'}" class="w-4 h-4 accent-text"></i>
+                <span class="text-[var(--text-main)] font-semibold">${item}</span>
+            </div>`).join('')}
+        </div>
+    </div>
+
+    ${isInteractive ? `
+    <button id="debug-clear" class="no-print icon-tooltip" onclick="clearDebugState()" aria-label="Clear debug storage" data-tooltip="${t1.debugTooltip}">
+        <i data-lucide="trash-2" class="w-4 h-4"></i>
+    </button>
+    ` : ''}
 
     <div id="settings-panel" class="no-print" aria-label="Settings Panel">
         <div class="panel-handle md:hidden"></div>
@@ -409,12 +555,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
                     ${activity ? `
-                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print" title="${t1.lastCommit}">
+                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
                         <div class="relative flex items-center justify-center">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
                             <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
                         </div>
                         <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t1.lastCommit} :</span>${activity.repo}</span>
+                        <span class="tooltip-content">${t1.goToRepo} ${activity.repo}</span>
                     </a>` : ''}
                 </div>
 
@@ -501,12 +648,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
                     ${activity ? `
-                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print" title="${t2.lastCommit}">
+                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
                         <div class="relative flex items-center justify-center">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
                             <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
                         </div>
                         <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t2.lastCommit} :</span>${activity.repo}</span>
+                        <span class="tooltip-content">${t2.goToRepo} ${activity.repo}</span>
                     </a>` : ''}
                 </div>
 
@@ -571,28 +719,31 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-6 no-break reveal text-left no-break" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6">
+                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
                         <div class="flex flex-col gap-2">
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
                                 </div>
+                                <span class="tooltip-content">${t1.emailTooltip}</span>
                             </a>
-                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
                                 </div>
+                                <span class="tooltip-content">${t1.phoneTooltip}</span>
                             </a>
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
                                 </div>
+                                <span class="tooltip-content">${t1.websiteTooltip}</span>
                             </a>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
@@ -615,35 +766,38 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         </div>
                         <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t1.openGithub}</span></a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t1.openLinkedIn}</span></a>
                         </div>
                     </div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6">
+                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
                         <div class="flex flex-col gap-2">
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
                                 </div>
+                                <span class="tooltip-content">${t2.emailTooltip}</span>
                             </a>
-                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
                                 </div>
+                                <span class="tooltip-content">${t2.phoneTooltip}</span>
                             </a>
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
                                     <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
                                     <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
                                 </div>
+                                <span class="tooltip-content">${t2.websiteTooltip}</span>
                             </a>
                             <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
@@ -666,8 +820,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         </div>
                         <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub</a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn</a>
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t2.openGithub}</span></a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t2.openLinkedIn}</span></a>
                         </div>
                     </div>
                 </section>`, 'delay-100')}
@@ -770,11 +924,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${flip(`
                 <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
-                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang]}</p></div>
+                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
-                    <div class="card p-12 text-left"><p class="text-[1.15rem] leading-relaxed opacity-80 font-medium text-left" style="text-wrap: balance;">${data.summary[lang2]}</p></div>
+                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
                 </section>`, 'delay-200')}
 
                 ${flip(`
@@ -869,7 +1023,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 </html>`;
 }
 
-// --- GÉNÉRATEUR TEXTE (ATS FRIENDLY) ---
+// --- TEXT GENERATOR (ATS FRIENDLY) ---
 function generatePlain(data, lang) {
   const t = i18n[lang];
   const c = data.contact;
@@ -886,7 +1040,7 @@ function generatePlain(data, lang) {
   txt += `LinkedIn: https://linkedin.com/in/${c.linkedin}\n\n`;
   
   txt += `${t.profile.toUpperCase()}\n`;
-  txt += `${stripHtml(data.summary[lang])}\n\n`;
+  txt += `${summaryToText(data.summary[lang])}\n\n`;
   
   txt += `${t.experience.toUpperCase()}\n\n`;
   data.experiences.forEach(exp => {
@@ -920,13 +1074,13 @@ function generatePlain(data, lang) {
   return txt;
 }
 
-// --- GÉNÉRATEUR MARKDOWN ---
+// --- MARKDOWN GENERATOR ---
 function generateMarkdown(data, lang) {
   const t = i18n[lang]; const c = data.contact;
   let md = "# " + c.name + "\n"; md += "**" + c.title[lang] + "**\n\n"; md += "📍 " + c.location + "  \n";
   md += "📧 [" + c.email + "](mailto:" + c.email + ") | 🌐 [" + c.website + "](https://" + c.website + ")  \n";
   md += "🐙 [GitHub](https://github.com/" + c.github + ") | 🔗 [LinkedIn](https://linkedin.com/in/" + c.linkedin + ")\n\n";
-  md += "## " + t.profile + "\n" + stripHtml(data.summary[lang]) + "\n\n";
+  md += "## " + t.profile + "\n" + summaryToText(data.summary[lang]) + "\n\n";
   md += "## " + t.experience + "\n\n";
   data.experiences.forEach(exp => {
     md += "### " + exp.role[lang] + " | " + exp.company + "\n*" + exp.period + "*\n\n";

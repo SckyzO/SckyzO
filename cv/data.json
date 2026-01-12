@@ -15,8 +15,30 @@
     "twitter": "SckyzO"
   },
   "summary": {
-    "fr": "<div class='flex flex-col gap-6'><div><h3 class='font-bold accent-text mb-2 flex items-center gap-2 text-sm uppercase tracking-wide'><i data-lucide='briefcase' class='w-4 h-4'></i> Ingénieur Système passionné</h3><p class='leading-relaxed opacity-80'>Avec <strong>20 ans d'expérience</strong> dans l'IT, j'ai exploré de nombreux domaines, mais mon expertise s'est forgée sur <strong>Linux, le HPC et l'Automatisation</strong>. Aujourd'hui, mon focus est l'<strong>Observabilité</strong> : en tant que Tech Lead, je conçois des architectures de monitoring avancées et je développe mes propres outils, comme des exporters Prometheus, pour répondre aux défis techniques les plus complexes.</p></div><div><h3 class='font-bold accent-text mb-2 flex items-center gap-2 text-sm uppercase tracking-wide'><i data-lucide='cpu' class='w-4 h-4'></i> Tech Geek & Maker</h3><p class='leading-relaxed opacity-80'>Au-delà du pro, je suis un pur <strong>Geek et Gamer</strong>. J'adore expérimenter avec le <strong>hardware (IoT, ESP...)</strong>, concevoir des systèmes domotiques intelligents et utiliser l'<strong>impression 3D</strong> pour concrétiser mes projets. Curieux par nature, je cherche toujours à apprendre et à repousser les limites de ce qui est possible.</p></div></div>",
-    "en": "<div class='flex flex-col gap-6'><div><h3 class='font-bold accent-text mb-2 flex items-center gap-2 text-sm uppercase tracking-wide'><i data-lucide='briefcase' class='w-4 h-4'></i> Passionate System Engineer</h3><p class='leading-relaxed opacity-80'>With <strong>20 years of IT experience</strong>, I’ve worked across many domains, but my core expertise lies in <strong>Linux, HPC, and Automation</strong>. Currently, my focus is <strong>Observability</strong>: as a Tech Lead, I architect advanced monitoring solutions and develop custom Prometheus exporters to tackle the most complex technical challenges.</p></div><div><h3 class='font-bold accent-text mb-2 flex items-center gap-2 text-sm uppercase tracking-wide'><i data-lucide='cpu' class='w-4 h-4'></i> Tech Geek & Maker</h3><p class='leading-relaxed opacity-80'>Beyond work, I am a true <strong>Tech Geek and Gamer</strong>. I love experimenting with <strong>hardware (IoT, ESP...)</strong>, building smart home systems, and using <strong>3D printing</strong> to bring ideas to life. Always curious, I constantly strive to learn new things and push the limits of technology.</p></div></div>"
+    "fr": [
+      {
+        "title": "Ingénieur Système passionné",
+        "text": "Avec 20 ans d'expérience dans l'IT, j'ai exploré de nombreux domaines, mais mon expertise s'est forgée sur Linux, le HPC et l'Automatisation. Aujourd'hui, mon focus est l'Observabilité : en tant que Tech Lead, je conçois des architectures de monitoring avancées et je développe mes propres outils, comme des exporters Prometheus, pour répondre aux défis techniques les plus complexes.",
+        "icon": "briefcase"
+      },
+      {
+        "title": "Tech Geek & Maker",
+        "text": "Au-delà du pro, je suis un pur Geek et Gamer. J'adore expérimenter avec le hardware (IoT, ESP...), concevoir des systèmes domotiques intelligents et utiliser l'impression 3D pour concrétiser mes projets. Curieux par nature, je cherche toujours à apprendre et à repousser les limites de ce qui est possible.",
+        "icon": "cpu"
+      }
+    ],
+    "en": [
+      {
+        "title": "Passionate System Engineer",
+        "text": "With 20 years of IT experience, I’ve worked across many domains, but my core expertise lies in Linux, HPC, and Automation. Currently, my focus is Observability: as a Tech Lead, I architect advanced monitoring solutions and develop custom Prometheus exporters to tackle the most complex technical challenges.",
+        "icon": "briefcase"
+      },
+      {
+        "title": "Tech Geek & Maker",
+        "text": "Beyond work, I am a true Tech Geek and Gamer. I love experimenting with hardware (IoT, ESP...), building smart home systems, and using 3D printing to bring ideas to life. Always curious, I constantly strive to learn new things and push the limits of technology.",
+        "icon": "cpu"
+      }
+    ]
   },
   "experiences": [
     {
@@ -257,7 +279,7 @@
     {
       "name": "CV Generator",
       "description": {
-        "fr": "Moteur de CV 'Data-driven' générant du HTML, PDF et Markdown via une pipeline CI/CD automatisée.",
+        "fr": "Moteur de CV 'Data-driven' générant du HTML, PDF et Markdown via un pipeline CI/CD automatisé.",
         "en": "Data-driven CV engine generating HTML, PDF, and Markdown via an automated CI/CD pipeline."
       },
       "github": "SckyzO/SckyzO",
@@ -291,15 +313,14 @@
         { "label": "Adaptable", "desc": "S'adapte à divers environnements & projets", "icon": "refresh-cw" },
         { "label": "Minutieux", "desc": "Précision dans les configurations & déploiements", "icon": "search" },
         { "label": "Autonome", "desc": "Prise d'initiative et amélioration des processus", "icon": "rocket" },
-        { "label": "Communicant", "desc": "Explication claire de concepts complexes", "icon": "message-circle" },
+        { "label": "Communiquant", "desc": "Explication claire de concepts complexes", "icon": "message-circle" },
         { "label": "Passionné", "desc": "Investi dans la culture Tech & IT", "icon": "code-2" },
         { "label": "Pragmatique", "desc": "Équilibre entre théorie et réalité terrain", "icon": "hammer" },
         { "label": "Esprit d'équipe", "desc": "Travail efficace avec collègues & clients", "icon": "users" },
         { "label": "Curieux", "desc": "Veille technologique constante", "icon": "lightbulb" },
         { "label": "Créatif", "desc": "Solutions innovantes aux problèmes", "icon": "palette" },
         { "label": "Fiable", "desc": "Travail de qualité dans les délais", "icon": "shield-check" },
-        { "label": "Analytique", "desc": "Résolution de défis techniques complexes", "icon": "bar-chart-2" },
-        { "label": "Problem Solver", "desc": "Troubleshooting rapide et efficace", "icon": "puzzle" }
+        { "label": "Analytique", "desc": "Résolution de défis techniques complexes", "icon": "bar-chart-2" }
       ],
       "en": [
         { "label": "Adaptable", "desc": "Handling diverse environments & projects", "icon": "refresh-cw" },
@@ -312,8 +333,7 @@
         { "label": "Curious", "desc": "Staying up-to-date with tech trends", "icon": "lightbulb" },
         { "label": "Creative", "desc": "Finding innovative solutions to problems", "icon": "palette" },
         { "label": "Reliable", "desc": "Delivering high-quality work on time", "icon": "shield-check" },
-        { "label": "Analytical", "desc": "Solving complex technical challenges", "icon": "bar-chart-2" },
-        { "label": "Problem Solver", "desc": "Quickly adapting to new issues & troubleshooting", "icon": "puzzle" }
+        { "label": "Analytical", "desc": "Solving complex technical challenges", "icon": "bar-chart-2" }
       ]
     }
   }

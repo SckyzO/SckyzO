@@ -106,13 +106,17 @@ function setFontStack(f) {
 
 // Welcome Modal Logic
 let welcomeTimer = null;
+const WELCOME_TIMEOUT_MS = 15000;
+const SETTINGS_HINT_TIMEOUT_MS = 15000;
 
 window.resetWelcomeTimer = function() {
     if (welcomeTimer) {
         clearTimeout(welcomeTimer);
         welcomeTimer = null;
         const bar = document.getElementById('w-timer-bar');
+        const line = document.getElementById('w-timer-bar-line');
         if (bar) bar.style.width = '0%'; // Stop progress bar
+        if (line) line.style.width = '0%'; // Stop progress line
     }
 };
 
@@ -156,6 +160,7 @@ window.closeWelcome = function() {
     m.style.pointerEvents = 'none';
     setTimeout(() => { m.style.display = 'none'; }, 500);
     localStorage.setItem('cv-visited', 'true');
+    showSettingsHint();
     
     // Pulse settings cog to show where it is
     const cog = document.getElementById('main-cog');
@@ -164,6 +169,65 @@ window.closeWelcome = function() {
         setTimeout(() => cog.classList.remove('aura-pulse'), 2000);
     }
 };
+
+function showSettingsHint() {
+    const hint = document.getElementById('settings-hint');
+    if (!hint) return;
+    if (localStorage.getItem('cv-settings-hint') === 'true') return;
+    hint.classList.add('show');
+    positionSettingsHint();
+    localStorage.setItem('cv-settings-hint', 'true');
+    setTimeout(() => hideSettingsHint(), SETTINGS_HINT_TIMEOUT_MS);
+}
+
+window.hideSettingsHint = function() {
+    const hint = document.getElementById('settings-hint');
+    if (!hint) return;
+    hint.classList.remove('show');
+};
+
+window.clearDebugState = function() {
+    localStorage.removeItem('cv-visited');
+    localStorage.removeItem('cv-settings-hint');
+    localStorage.removeItem('cv-theme');
+    localStorage.removeItem('cv-accent');
+    localStorage.removeItem('cv-font-size');
+    localStorage.removeItem('cv-font-stack');
+    localStorage.removeItem('cv-tty');
+    window.location.reload();
+};
+
+function positionSettingsHint() {
+    const hint = document.getElementById('settings-hint');
+    const cog = document.getElementById('main-cog');
+    const panel = document.getElementById('settings-panel');
+    const arrow = hint ? hint.querySelector('.hint-arrow') : null;
+    if (!hint || !cog) return;
+    if (window.innerWidth <= 768) {
+        hint.style.top = '';
+        hint.style.left = '';
+        hint.style.right = '16px';
+        hint.style.bottom = '90px';
+        return;
+    }
+    const cogRect = cog.getBoundingClientRect();
+    const hintRect = hint.getBoundingClientRect();
+    const gap = 20;
+    const panelTop = panel ? parseFloat(window.getComputedStyle(panel).top) : null;
+    const maxTop = Number.isFinite(panelTop) ? panelTop - 8 : window.innerHeight;
+    const preferredTop = cogRect.top + (cogRect.height / 2) - (hintRect.height / 2);
+    const top = Math.max(16, Math.min(preferredTop, window.innerHeight - hintRect.height - 16, maxTop));
+    const left = Math.max(16, cogRect.left - hintRect.width - gap);
+    if (arrow) {
+        const target = cogRect.top + (cogRect.height / 2) - top - 8;
+        const clamped = Math.max(14, Math.min(target, hintRect.height - 24));
+        arrow.style.top = `${clamped}px`;
+    }
+    hint.style.top = `${top}px`;
+    hint.style.left = `${left}px`;
+    hint.style.right = 'auto';
+    hint.style.bottom = 'auto';
+}
 
 // TTY Mode
 function updateTTY(forceState = null) {
@@ -361,16 +425,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.opacity = '1';
                 modal.style.pointerEvents = 'auto';
                 
-                // 4. Start 15s Timer
+                // 4. Start auto-close timer
                 const bar = document.getElementById('w-timer-bar');
+                const line = document.getElementById('w-timer-bar-line');
                 if (bar) {
+                    bar.style.width = '0%';
                     // Force reflow
                     void bar.offsetWidth; 
-                    bar.style.width = '100%'; // Start animation CSS
+                    bar.style.width = '100%';
+                }
+                if (line) {
+                    line.style.width = '0%';
+                    // Force reflow
+                    void line.offsetWidth; 
+                    line.style.width = '100%';
                 }
                 welcomeTimer = setTimeout(() => {
                     closeWelcome();
-                }, 15000);
+                }, WELCOME_TIMEOUT_MS);
 
             }, 500);
         }
@@ -380,6 +452,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('mode-tty');
         const cb = document.getElementById('tty-checkbox');
         if (cb) cb.checked = true;
+    }
+});
+
+window.addEventListener('resize', () => {
+    const hint = document.getElementById('settings-hint');
+    if (hint && hint.classList.contains('show')) {
+        positionSettingsHint();
     }
 });
 
