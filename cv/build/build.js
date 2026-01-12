@@ -148,7 +148,7 @@ function assertOfflineAssets() {
 function syncAssetsToBuild() {
   const targetDir = path.join(__dirname, 'assets');
   fs.rmSync(targetDir, { recursive: true, force: true });
-  fs.mkdirSync(targetDir, { recursive: true });
+  // Do not create the targetDir here, let cpSync create it as a copy of ASSETS_DIR
   fs.cpSync(ASSETS_DIR, targetDir, { recursive: true });
 }
 
@@ -278,8 +278,15 @@ async function build() {
         // Ensure avatar is loaded
         await page.waitForFunction(() => {
           const img = document.querySelector('img[alt="Thomas Bourcey"]');
-          return img && img.complete && img.naturalHeight !== 0;
-        }).catch(() => console.warn("Avatar image did not load in time for PDF/Preview"));
+          if (!img) return false;
+          return img.complete && img.naturalHeight !== 0;
+        }, { timeout: 5000 }).catch(async () => {
+          const imgExists = await page.evaluate(() => {
+            const img = document.querySelector('img[alt="Thomas Bourcey"]');
+            return img ? { src: img.src, visible: img.offsetParent !== null, complete: img.complete, naturalHeight: img.naturalHeight } : null;
+          });
+          console.warn("⚠️ Avatar image issue:", imgExists);
+        });
 
         await page.waitForTimeout(500); 
         
