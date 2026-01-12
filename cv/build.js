@@ -130,9 +130,15 @@ function assertOfflineAssets() {
   }
 }
 
+const VALIDATE_ONLY = process.argv.includes('--validate-only');
+
 // --- MAIN BUILD PROCESS ---
 async function build() {
   validateData(data);
+  if (VALIDATE_ONLY) {
+    console.log('Validation OK: data.json structure is valid.');
+    return;
+  }
   assertOfflineAssets();
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);

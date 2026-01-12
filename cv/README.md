@@ -55,6 +55,7 @@ Requirements: Node.js 20+ and Playwright.
 ```bash
 cd cv
 npm install
+npm run validate
 npx playwright install --with-deps chromium
 node download-assets.js
 node build.js
@@ -80,4 +81,3 @@ On each push to `main`, the workflow:
 4. Publishes the `cv/` directory to GitHub Pages.
 
 Ensure GitHub Pages is configured to use GitHub Actions as the source.
-
