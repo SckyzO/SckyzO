@@ -1,4 +1,4 @@
-name: "🚀 Deploy CV to GitHub Pages"
+name: "🚀 Deploy CV"
 
 on:
   push:
@@ -50,10 +50,26 @@ jobs:
       - name: "🏗️ Build CV outputs"
         run: node build/build.js
 
+      - name: "📦 Prepare deploy artifact"
+        run: |
+          rm -rf out
+          mkdir -p out
+          cp build/index.html out/
+          shopt -s nullglob
+          for file in build/*.pdf build/*.png build/*.md build/*.txt; do
+            cp "$file" out/
+          done
+
       - name: "📤 Upload Pages artifact"
         uses: actions/upload-pages-artifact@v3
         with:
-          path: cv
+          path: cv/out
+
+      - name: "📤 Upload build artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: cv-build
+          path: cv/out
 
   deploy:
     runs-on: ubuntu-latest
@@ -65,3 +81,36 @@ jobs:
       - name: "🌍 Deploy to GitHub Pages"
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-sftp:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: "⬇️ Download build artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: cv-build
+          path: cv-out
+
+      - name: "🔐 Install lftp and ssh"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp openssh-client
+          /usr/bin/ssh -V
+
+      - name: "📤 Deploy build via lftp (SFTP mirror, delete remote)"
+        run: |
+          lftp -e "
+            set sftp:auto-confirm yes;
+            set net:max-retries 2;
+            set net:timeout 20;
+            open -u ${SFTP_USER},${SFTP_PASSWORD} sftp://${SFTP_HOST}:${SFTP_PORT};
+            mirror --delete --verbose cv-out ${SFTP_REMOTE_PATH};
+            bye
+          "
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USER: ${{ secrets.SFTP_USER }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          SFTP_REMOTE_PATH: ${{ secrets.SFTP_REMOTE_PATH }}

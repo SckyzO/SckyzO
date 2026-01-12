@@ -1,10 +1,6 @@
 name: "🧰 Generate and Deploy CV"
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'cv/**'
   workflow_dispatch:
 
 jobs:
