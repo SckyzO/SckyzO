@@ -73,11 +73,10 @@ async function build() {
             pdfName = theme === 'light' ? "Resume_Thomas_Bourcey_EN.pdf" : `Resume_Thomas_Bourcey_EN_${theme.charAt(0).toUpperCase() + theme.slice(1)}.pdf`;
         }
 
-            await page.pdf({
-              path: path.join(__dirname, pdfName), format: 'A4', printBackground: true,
-              scale: 0.65, margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
-            });        
-        if (theme === 'deep') { // On utilise le thème Deep pour la preview PNG
+                await page.pdf({
+                  path: path.join(__dirname, pdfName), format: 'A4', printBackground: true,
+                  scale: 0.65, margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
+                });        if (theme === 'deep') { // On utilise le thème Deep pour la preview PNG
              console.log(`  - Preview PNG...`);
              await page.setViewportSize({ width: 1200, height: 630 });
              await page.waitForTimeout(100); 

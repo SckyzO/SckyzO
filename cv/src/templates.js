@@ -58,7 +58,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const availableThemes = new Set(['light', 'deep', 'dark']);
   const availableFonts = new Set(['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy']);
   const theme = availableThemes.has(options.theme) ? options.theme : 'deep';
-          const fontStack = availableFonts.has(options.fontStack) ? options.fontStack : 'architect';  const defaultAccent = '#3b82f6';
+  const fontStack = availableFonts.has(options.fontStack) ? options.fontStack : 'architect';
+  const defaultAccent = '#3b82f6';
   const defaultAccentRgba = '59, 130, 246';
   const accent = normalizeHex(options.accent) || defaultAccent;
   const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
@@ -116,6 +117,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         .pdf-mode .flip-back, .pdf-mode .no-print, .pdf-mode #settings-panel, .pdf-mode #cmd-palette, .pdf-mode .cog-btn { display: none !important; }
         .pdf-mode .card { box-shadow: none !important; transform: none !important; }
         .pdf-mode .qr-code-container { display: flex !important; }
+        .pdf-mode { padding-top: 4rem !important; padding-bottom: 4rem !important; }
         
         /* Font Stacks */
         .font-hub { --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
@@ -245,6 +247,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             .no-print, .flip-back { display: none !important; } 
             .card { background: white !important; border: 1px solid #e4e4e7 !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
             strong, h1, h2, h3, p, span, li { color: black !important; font-weight: 800 !important; } 
+            .accent-text { color: black !important; border-bottom: 1px solid #ddd; } 
+            .accent-bg { background-color: #eee !important; color: black !important; } 
+            a { color: black !important; text-decoration: none !important; } 
             a[href^="http"]:after { content: " (" attr(href) ")"; font-size: 0.8em; font-weight: normal; opacity: 0.7; }
             .flip-card { transform: none !important; }
             .qr-code-container { display: flex !important; position: fixed; bottom: 20px; right: 20px; flex-direction: column; align-items: center; gap: 5px; z-index: 9999; }
@@ -330,21 +335,23 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left">
         ${flip(`
-        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break">
+        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
             <!-- Background Layer (Clipped) -->
             <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
                 <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
             </div>
-            
+
+            <!-- Left: Avatar Zone (Z-10) -->
             <div class="relative shrink-0 p-10 md:p-12 z-10">
-                <div class="p-1.5 border border-accent/20 rounded-full">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10">
+                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500">
                         <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
                     </div>
                 </div>
-                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg"></div>
+                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
             </div>
 
+            <!-- Right: Info Zone (Z-20 for Dropdown) -->
             <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
 
                 <!-- Top Badges -->
@@ -731,8 +738,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                     <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang].map(item => {
                                             const { title, text } = parseItem(item);
-                                            return `
-                                            <li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
                                                 <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
                                                 ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
                                                 <span class="text-left">${highlightMetrics(text)}</span>
@@ -747,19 +753,18 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
                     <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-en">
                         ${data.experiences.map((exp, idx) => {
-                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` + 
-                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` + 
-                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` + 
-                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` + 
-                            `<div class="space-y-6">` + 
+                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` +
+                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` +
+                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
+                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` +
+                            `<div class="space-y-6">` +
                             exp.domains.map(dom => `
                                 <div>
                                     <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
                                     <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang2].map(item => {
                                             const { title, text } = parseItem(item);
-                                            return `
-                                            <li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
                                                 <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
                                                 ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
                                                 <span class="text-left">${highlightMetrics(text)}</span>
@@ -767,7 +772,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                         }).join('')}
                                     </ul>
                                 </div>
-                            `).join('') + 
+                            `).join('') +
                             `</div></div>`}).join('')}</div>
                 </section>`, 'delay-400')}
             </div>

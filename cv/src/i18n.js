@@ -15,7 +15,8 @@ const i18n = {
     yearsExp: "Années Exp.",
     publicRepos: "Repos Publics",
     downloadPdf: "Télécharger PDF",
-    tooltipPdf: "Obtenir la version imprimable"
+    tooltipPdf: "Obtenir la version imprimable",
+    lastCommit: "Dernier commit"
   },
   en: {
     contact: "Contact",
@@ -32,7 +33,8 @@ const i18n = {
     yearsExp: "Years Exp.",
     publicRepos: "Public Repos",
     downloadPdf: "Download PDF",
-    tooltipPdf: "Get the printable version"
+    tooltipPdf: "Get the printable version",
+    lastCommit: "Last commit"
   }
 };
 

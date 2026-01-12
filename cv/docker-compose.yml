@@ -3,6 +3,7 @@ services:
   builder:
     image: mcr.microsoft.com/playwright:v1.57.0-jammy
     working_dir: /app
+    user: "${UID:-1000}:${GID:-1000}"
     volumes:
       - .:/app
       - /app/node_modules
@@ -11,6 +12,7 @@ services:
       sh -c "npm install && npx nodemon -L --watch build.js --watch data.json --watch src --watch client.js --exec 'node build.js'"
     environment:
       - CI=true
+      - HOME=/app
 
   # Service web pour visualiser le résultat
   preview:
