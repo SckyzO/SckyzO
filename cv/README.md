@@ -93,6 +93,27 @@ Example:
 PDF_THEME=deep PDF_ACCENT=#10b981 PDF_FONT_SIZE=18 node build/build.js
 ```
 
+## Contact Data (Required)
+
+The public repository does not store personal contact details. Provide them at build time:
+
+- `CV_CONTACT_EMAIL`
+- `CV_CONTACT_PHONE`
+
+Local build:
+
+1. Create `cv/.env` (ignored by git).
+2. Set the variables:
+
+```bash
+CV_CONTACT_EMAIL="your@email.tld"
+CV_CONTACT_PHONE="+33 6 00 00 00 00"
+```
+
+CI build:
+
+Set the same keys as GitHub Actions secrets.
+
 ## CI/CD (GitHub Pages)
 
 Workflow: `.github/workflows/deploy.yml`
@@ -115,5 +136,7 @@ Required GitHub Actions secrets:
 - `SFTP_USER`
 - `SFTP_PASSWORD` (SFTP account password)
 - `SFTP_REMOTE_PATH` (target directory, example: `www`)
+- `CV_CONTACT_EMAIL`
+- `CV_CONTACT_PHONE`
 
 The workflow builds the CV and syncs `cv/dist/` to the remote path using `lftp mirror --delete` over SFTP.

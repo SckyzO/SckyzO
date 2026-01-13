@@ -24,6 +24,9 @@ jobs:
     defaults:
       run:
         working-directory: cv
+    env:
+      CV_CONTACT_EMAIL: ${{ secrets.CV_CONTACT_EMAIL }}
+      CV_CONTACT_PHONE: ${{ secrets.CV_CONTACT_PHONE }}
     steps:
       - name: "🧾 Checkout"
         uses: actions/checkout@v4

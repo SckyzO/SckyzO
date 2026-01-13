@@ -5,7 +5,35 @@ const QRCode = require('qrcode');
 const { getGitHubActivity } = require('../src/utils');
 const { generateHTML, generateMarkdown, generatePlain } = require('../src/templates');
 
+const LOCAL_ENV_PATH = path.join(__dirname, '../.env');
+const CONTACT_EMAIL_ENV = 'CV_CONTACT_EMAIL';
+const CONTACT_PHONE_ENV = 'CV_CONTACT_PHONE';
+
+function loadLocalEnv() {
+  if (!fs.existsSync(LOCAL_ENV_PATH)) return;
+  const raw = fs.readFileSync(LOCAL_ENV_PATH, 'utf8');
+  raw.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) return;
+    const eqIndex = trimmed.indexOf('=');
+    if (eqIndex === -1) return;
+    const key = trimmed.slice(0, eqIndex).trim();
+    if (!key || process.env[key]) return;
+    let value = trimmed.slice(eqIndex + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
+  });
+}
+
+function getEnvValue(key) {
+  const value = process.env[key];
+  return value && value.trim().length > 0 ? value.trim() : null;
+}
+
 // Load content data.
+loadLocalEnv();
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/data.json'), 'utf8'));
 const ASSETS_DIR = path.join(__dirname, '../assets');
 const OUTPUT_DIR = path.join(__dirname, '../dist');
@@ -153,6 +181,45 @@ function syncAssetsToBuild() {
   fs.cpSync(ASSETS_DIR, targetDir, { recursive: true });
 }
 
+function writeRobotsAndHeaders() {
+  const robotsTxt = [
+    'User-agent: *',
+    'Disallow: /*.pdf$',
+    'Disallow: /*.PDF$',
+    'Disallow: /*.md$',
+    'Disallow: /*.MD$',
+    'Disallow: /*.txt$',
+    'Disallow: /*.TXT$'
+  ].join('\n');
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'robots.txt'), robotsTxt);
+
+  const htaccess = [
+    '<IfModule mod_headers.c>',
+    '  <FilesMatch "\\\\.(pdf|md|txt)$">',
+    '    Header set X-Robots-Tag "noindex, nofollow"',
+    '  </FilesMatch>',
+    '</IfModule>'
+  ].join('\n');
+  fs.writeFileSync(path.join(OUTPUT_DIR, '.htaccess'), htaccess);
+}
+
+function applyContactOverrides(payload) {
+  const emailEnv = getEnvValue(CONTACT_EMAIL_ENV);
+  if (emailEnv) {
+    payload.contact.email = emailEnv;
+  }
+  const phoneEnv = getEnvValue(CONTACT_PHONE_ENV);
+  if (phoneEnv) {
+    payload.contact.phone = phoneEnv;
+  }
+}
+
+function assertContactValue(value, label, envKey) {
+  if (!value || value.trim().length === 0) {
+    throw new Error(`Missing ${label}. Set ${envKey} in .env or GitHub Secrets.`);
+  }
+}
+
 function parseNumber(value) {
   if (!value) return null;
   const parsed = Number(value);
@@ -228,6 +295,9 @@ const VALIDATE_ONLY = process.argv.includes('--validate-only');
 
 // --- MAIN BUILD PROCESS ---
 async function build() {
+  applyContactOverrides(data);
+  assertContactValue(data.contact.email, 'contact.email', CONTACT_EMAIL_ENV);
+  assertContactValue(data.contact.phone, 'contact.phone', CONTACT_PHONE_ENV);
   validateData(data);
   if (VALIDATE_ONLY) {
     console.log('Validation OK: data/data.json structure is valid.');
@@ -237,6 +307,7 @@ async function build() {
   fs.rmSync(OUTPUT_DIR, { recursive: true, force: true });
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   syncAssetsToBuild();
+  writeRobotsAndHeaders();
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
   const clientScript = fs.readFileSync(path.join(__dirname, '../src/scripts/client.js'), 'utf8');
