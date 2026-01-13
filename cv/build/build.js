@@ -8,6 +8,7 @@ const { generateHTML, generateMarkdown, generatePlain } = require('../src/templa
 // Load content data.
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/data.json'), 'utf8'));
 const ASSETS_DIR = path.join(__dirname, '../assets');
+const OUTPUT_DIR = path.join(__dirname, '../dist');
 const REQUIRED_ASSETS = ['tailwind.js', 'lucide.js'];
 const PDF_THEMES = ['light', 'deep', 'dark'];
 const PDF_FONT_STACKS = ['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy'];
@@ -146,7 +147,7 @@ function assertOfflineAssets() {
 }
 
 function syncAssetsToBuild() {
-  const targetDir = path.join(__dirname, 'assets');
+  const targetDir = path.join(OUTPUT_DIR, 'assets');
   fs.rmSync(targetDir, { recursive: true, force: true });
   // Do not create the targetDir here, let cpSync create it as a copy of ASSETS_DIR
   fs.cpSync(ASSETS_DIR, targetDir, { recursive: true });
@@ -233,6 +234,8 @@ async function build() {
     return;
   }
   assertOfflineAssets();
+  fs.rmSync(OUTPUT_DIR, { recursive: true, force: true });
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   syncAssetsToBuild();
   const browser = await chromium.launch();
   const activity = await getGitHubActivity(data.contact.github);
@@ -243,7 +246,7 @@ async function build() {
   console.log("Generating interactive index (index.html)...");
   const qrDefault = await QRCode.toDataURL('https://tomzone.fr', { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
   const htmlInteractive = generateHTML(data, 'fr', activity, qrDefault, 'interactive', clientScript);
-  fs.writeFileSync(path.join(__dirname, "index.html"), htmlInteractive);
+  fs.writeFileSync(path.join(OUTPUT_DIR, "index.html"), htmlInteractive);
 
   // 2) Generate PDF-specific files (FR/EN).
   const themes = pdfAppearance.theme ? [pdfAppearance.theme] : PDF_THEMES;
@@ -257,7 +260,7 @@ async function build() {
 
     // Generate dedicated language HTML file (referenced in SEO/QR)
     const htmlLang = generateHTML(data, lang, activity, qrDataURI, 'interactive', clientScript);
-    fs.writeFileSync(path.join(__dirname, `index_${lang}.html`), htmlLang);
+    fs.writeFileSync(path.join(OUTPUT_DIR, `index_${lang}.html`), htmlLang);
 
     // Generate PDFs for each theme.
     for (const theme of themes) {
@@ -270,7 +273,7 @@ async function build() {
           accentRgba: pdfAppearance.accentRgba || null
         });
         // Write a temporary HTML file for Playwright.
-        const tempHtmlPath = path.join(__dirname, `temp_${lang}_${theme}.html`);
+        const tempHtmlPath = path.join(OUTPUT_DIR, `temp_${lang}_${theme}.html`);
         fs.writeFileSync(tempHtmlPath, htmlContent);
 
         const page = await browser.newPage();
@@ -304,7 +307,7 @@ async function build() {
         }
 
         await page.pdf({
-          path: path.join(__dirname, pdfName),
+          path: path.join(OUTPUT_DIR, pdfName),
           format: 'A4',
           printBackground: true,
           scale: 0.65,
@@ -315,7 +318,7 @@ async function build() {
           await page.setViewportSize({ width: 1200, height: 630 });
           // Final check for animations or fonts
           await page.waitForTimeout(2000);
-          await page.screenshot({ path: path.join(__dirname, `preview_${lang}.png`) });
+          await page.screenshot({ path: path.join(OUTPUT_DIR, `preview_${lang}.png`) });
         }
 
         await page.close();
@@ -325,11 +328,11 @@ async function build() {
     // Markdown & TXT (once per language).
     const mdContent = generateMarkdown(data, lang);
     const mdFileName = lang === 'fr' ? "CV_FR.md" : "Resume_EN.md";
-    fs.writeFileSync(path.join(__dirname, mdFileName), mdContent);
+    fs.writeFileSync(path.join(OUTPUT_DIR, mdFileName), mdContent);
     
     const txtContent = generatePlain(data, lang);
     const txtFileName = lang === 'fr' ? "CV_Thomas_Bourcey_FR.txt" : "Resume_Thomas_Bourcey_EN.txt";
-    fs.writeFileSync(path.join(__dirname, txtFileName), txtContent);
+    fs.writeFileSync(path.join(OUTPUT_DIR, txtFileName), txtContent);
   }
   await browser.close();
 }

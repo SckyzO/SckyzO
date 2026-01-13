@@ -31,10 +31,10 @@ jobs:
         with:
           name: cv-outputs
           path: |
-            cv/*.html
-            cv/*.pdf
-            cv/*.md
-            cv/*.png
+            cv/dist/*.html
+            cv/dist/*.pdf
+            cv/dist/*.md
+            cv/dist/*.png
 
 # TODO: Add the upload step to tomzone.fr here.
 # Example with rsync or FTP:

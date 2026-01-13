@@ -9,6 +9,7 @@ RUN npm install
 
 # Copie des sources
 COPY build/ ./build/
+COPY assets/ ./assets/
 COPY data/ ./data/
 COPY src/ ./src/
 
@@ -22,13 +23,7 @@ RUN node build/build.js
 FROM nginx:alpine
 
 # Copie des fichiers générés depuis le stage builder
-COPY --from=builder /app/index.html /usr/share/nginx/html/
-COPY --from=builder /app/*.html /usr/share/nginx/html/
-COPY --from=builder /app/*.pdf /usr/share/nginx/html/
-COPY --from=builder /app/*.md /usr/share/nginx/html/
-COPY --from=builder /app/*.txt /usr/share/nginx/html/
-COPY --from=builder /app/*.png /usr/share/nginx/html/
-COPY --from=builder /app/assets /usr/share/nginx/html/assets
+COPY --from=builder /app/dist/ /usr/share/nginx/html/
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

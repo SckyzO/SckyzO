@@ -32,18 +32,7 @@ cv/.pki/
 # Build outputs
 dist/
 coverage/
-cv/build/*
-!cv/build/*.js
-cv/*.html
-cv/*.pdf
-cv/*.md
-cv/*.txt
-cv/preview_*.png
-cv/assets/*
-!cv/assets/tom_avatar.png
-!cv/assets/tom_avatar.webp
-!cv/assets/favicon*
-!cv/assets/apple-touch-icon.png
+cv/dist/*
 !cv/README.md
 
 AGENTS.md

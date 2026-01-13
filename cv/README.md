@@ -28,6 +28,7 @@ cv/
 ├── build/              # Build tooling
 │   ├── build.js         # Build orchestrator (Node.js)
 │   └── download-assets.js  # Offline asset downloader
+├── dist/               # Build outputs (generated)
 ├── src/                # Core modules
 │   ├── templates/      # HTML/MD/TXT generators
 │   │   └── index.js    # Entry point
@@ -69,7 +70,7 @@ node build/build.js
 
 ## Outputs
 
-The build generates the following files in the `cv/` directory:
+The build generates the following files in the `cv/dist/` directory:
 - `index.html` interactive website.
 - `CV_Thomas_Bourcey_FR.pdf` print-optimized PDF.
 - `CV_Thomas_Bourcey_FR.txt` ATS-friendly text.
@@ -115,4 +116,4 @@ Required GitHub Actions secrets:
 - `SFTP_PASSWORD` (SFTP account password)
 - `SFTP_REMOTE_PATH` (target directory, example: `www`)
 
-The workflow builds the CV and syncs `cv/build/` to the remote path using `lftp mirror --delete` over SFTP.
+The workflow builds the CV and syncs `cv/dist/` to the remote path using `lftp mirror --delete` over SFTP.
