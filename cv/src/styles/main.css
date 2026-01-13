@@ -36,6 +36,15 @@
     box-shadow: 0 0 25px rgba(var(--accent-rgba), 0.3); backdrop-filter: blur(12px); text-transform: none; letter-spacing: 0;
 }
 .has-tooltip:hover .tooltip-content { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(-8px); }
+.contact-secure { display: flex; align-items: center; gap: 10px; }
+.contact-secure .contact-link { flex: 1; min-width: 0; }
+.contact-actions { display: flex; align-items: center; gap: 8px; }
+.contact-action { padding: 6px 10px; border-radius: 10px; background: var(--bg-page); border: 1px solid var(--border-card); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); transition: all 0.2s ease; }
+.contact-action--icon { width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; letter-spacing: 0; text-transform: none; }
+.contact-action--icon i { color: currentColor; }
+.contact-action:hover { color: var(--text-main); border-color: rgba(var(--accent-rgba), 0.5); box-shadow: 0 0 16px rgba(var(--accent-rgba), 0.25); }
+.contact-action:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+.contact-link.is-revealed .contact-value { color: var(--text-main); }
 .icon-tooltip { position: relative; }
 .icon-tooltip::after {
     content: attr(data-tooltip);

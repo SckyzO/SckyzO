@@ -20,6 +20,12 @@ const escapeHtml = (value) => String(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
+const encodeContact = (value) => Buffer.from(String(value), 'utf8')
+  .toString('base64')
+  .split('')
+  .reverse()
+  .join('');
+
 // Helper to parse "<strong>Title</strong> : Description".
 const parseItem = (htmlString) => {
   const match = htmlString.match(/<strong>(.*?)<\/strong>\s*[:\-]?\s*(.*)/);
@@ -82,6 +88,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const c = data.contact;
   const updateDate = new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' });
   const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
+  const emailEncoded = encodeContact(c.email);
+  const phoneEncoded = encodeContact(c.phone);
   const availableThemes = new Set(['light', 'deep', 'dark']);
   const availableFonts = new Set(['hub', 'geist', 'space', 'archivo', 'quantum', 'console', 'architect', 'oxy']);
   const theme = availableThemes.has(options.theme) ? options.theme : 'deep';
@@ -534,6 +542,26 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
                     <div class="card p-8 flex flex-col gap-6 !overflow-visible">
                         <div class="flex flex-col gap-2">
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                    </div>
+                                    <span class="tooltip-content">${t1.emailTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
                             <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
@@ -542,6 +570,27 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                                 <span class="tooltip-content">${t1.emailTooltip}</span>
                             </a>
+                            `}
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                    </div>
+                                    <span class="tooltip-content">${t1.phoneTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
                             <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
@@ -550,6 +599,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                                 <span class="tooltip-content">${t1.phoneTooltip}</span>
                             </a>
+                            `}
                             <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
@@ -588,6 +638,26 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
                     <div class="card p-8 flex flex-col gap-6 !overflow-visible">
                         <div class="flex flex-col gap-2">
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                    </div>
+                                    <span class="tooltip-content">${t2.emailTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
                             <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
@@ -596,6 +666,27 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                                 <span class="tooltip-content">${t2.emailTooltip}</span>
                             </a>
+                            `}
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                    </div>
+                                    <span class="tooltip-content">${t2.phoneTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
                             <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">
@@ -604,6 +695,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                 </div>
                                 <span class="tooltip-content">${t2.phoneTooltip}</span>
                             </a>
+                            `}
                             <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
                                 <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
                                 <div class="flex flex-col overflow-hidden">

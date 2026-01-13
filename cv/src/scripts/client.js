@@ -119,6 +119,111 @@ function setFontStack(f) {
     localStorage.setItem('cv-font-stack', f);
 }
 
+function decodeContactValue(encoded) {
+    if (!encoded) return '';
+    try {
+        return atob(encoded.split('').reverse().join(''));
+    } catch (error) {
+        return '';
+    }
+}
+
+function sanitizePhone(value) {
+    return value.replace(/[^+\d]/g, '');
+}
+
+function copyToClipboard(value) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(value);
+    }
+    const temp = document.createElement('textarea');
+    temp.value = value;
+    temp.setAttribute('readonly', '');
+    temp.style.position = 'absolute';
+    temp.style.left = '-9999px';
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand('copy');
+    document.body.removeChild(temp);
+    return Promise.resolve();
+}
+
+function setupContactSecurity() {
+    const items = document.querySelectorAll('[data-contact-encoded]');
+    items.forEach((item) => {
+        const encoded = item.dataset.contactEncoded;
+        const type = item.dataset.contactType;
+        const labelReveal = item.dataset.labelReveal || 'Reveal';
+        const labelCopy = item.dataset.labelCopy || 'Copy';
+        const labelCopied = item.dataset.labelCopied || 'Copied';
+        const link = item.querySelector('.contact-link');
+        const valueEl = item.querySelector('.contact-value');
+        const revealBtn = item.querySelector('[data-contact-action="reveal"]');
+        const copyBtn = item.querySelector('[data-contact-action="copy"]');
+        if (!link || !valueEl) return;
+
+        const revealValue = () => {
+            if (item.dataset.revealed === 'true') return '';
+            const value = decodeContactValue(encoded);
+            if (!value) return '';
+            valueEl.textContent = value;
+            item.dataset.revealed = 'true';
+            link.classList.add('is-revealed');
+            if (type === 'email') {
+                link.href = `mailto:${value}`;
+            } else {
+                link.href = `tel:${sanitizePhone(value)}`;
+            }
+            if (revealBtn) revealBtn.disabled = true;
+            if (copyBtn) copyBtn.disabled = false;
+            return value;
+        };
+
+        if (revealBtn) {
+            revealBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                revealValue();
+            });
+        }
+
+        if (link) {
+            link.addEventListener('click', (event) => {
+                if (item.dataset.revealed === 'true') return;
+                event.preventDefault();
+                revealValue();
+            });
+        }
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', (event) => {
+                event.preventDefault();
+                const value = item.dataset.revealed === 'true' ? valueEl.textContent : decodeContactValue(encoded);
+                if (!value) return;
+                copyToClipboard(value).then(() => {
+                    copyBtn.dataset.state = 'copied';
+                    copyBtn.setAttribute('title', labelCopied);
+                    copyBtn.setAttribute('aria-label', labelCopied);
+                    copyBtn.disabled = true;
+                    setTimeout(() => {
+                        copyBtn.dataset.state = 'ready';
+                        copyBtn.setAttribute('title', labelCopy);
+                        copyBtn.setAttribute('aria-label', labelCopy);
+                        copyBtn.disabled = false;
+                        if (item.dataset.revealed !== 'true') {
+                            copyBtn.disabled = true;
+                            if (revealBtn) {
+                                revealBtn.disabled = false;
+                                revealBtn.setAttribute('title', labelReveal);
+                                revealBtn.setAttribute('aria-label', labelReveal);
+                            }
+                        }
+                    }, 1500);
+                });
+            });
+        }
+    });
+}
+
 function setContrast(enabled) {
     const b = document.getElementById('body-root');
     b.classList.toggle('contrast-high', enabled);
@@ -464,6 +569,7 @@ document.addEventListener('mouseout', e => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded. Init settings...");
     try { lucide.createIcons(); } catch(e) { console.error("Lucide error", e); }
+    setupContactSecurity();
 
     const picker = document.getElementById('accent-picker');
     if (picker) {
