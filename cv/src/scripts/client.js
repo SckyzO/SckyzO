@@ -14,23 +14,28 @@ const defaultAccentRgba = '59, 130, 246';
 // Initialisation immédiate des icônes
 try { lucide.createIcons(); } catch(e) { console.error("Lucide init failed", e); }
 
-function toggleSettings() {
+let lastSettingsTrigger = null;
+function toggleSettings(event) {
+    if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
     const panel = document.getElementById('settings-panel');
-    const btn = document.getElementById('main-cog');
+    const triggers = document.querySelectorAll('.settings-trigger');
+    if (event && event.currentTarget) {
+        lastSettingsTrigger = event.currentTarget;
+    }
     const isOpen = panel.classList.toggle('open');
     
     // Accessibility & Scroll Lock
     if (isOpen) {
         document.body.style.overflow = 'hidden'; // Lock scroll
-        btn.setAttribute('aria-expanded', 'true');
+        triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'true'));
         
         // Focus Trap simple
         const focusableElements = panel.querySelectorAll('button, input, [href], select, textarea, [tabindex]:not([tabindex="-1"])');
         if (focusableElements.length) focusableElements[0].focus();
     } else {
         document.body.style.overflow = ''; // Unlock scroll
-        btn.setAttribute('aria-expanded', 'false');
-        btn.focus(); // Return focus to trigger button
+        triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+        if (lastSettingsTrigger) lastSettingsTrigger.focus();
     }
 }
 
@@ -65,13 +70,8 @@ function updateToggleUI(type, state) {
         const btnStd = document.getElementById('btn-std');
         const btnMatrix = document.getElementById('btn-matrix');
         if (btnStd && btnMatrix) {
-            if (state) {
-                btnMatrix.className = activeClass;
-                btnStd.className = inactiveClass;
-            } else {
-                btnStd.className = activeClass;
-                btnMatrix.className = inactiveClass;
-            }
+            btnStd.classList.toggle('active', !state);
+            btnMatrix.classList.toggle('active', state);
         }
     }
 }
@@ -86,6 +86,16 @@ function setTheme(t) {
     b.classList.remove('theme-light', 'theme-deep', 'theme-dark');
     b.classList.add('theme-' + t);
     localStorage.setItem('cv-theme', t);
+    const buttons = [
+        { id: 'btn-light', theme: 'light' },
+        { id: 'btn-deep', theme: 'deep' },
+        { id: 'btn-dark', theme: 'dark' }
+    ];
+    buttons.forEach(({ id, theme }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.classList.toggle('active', theme === t);
+    });
 }
 
 function setAccent(hex) {
@@ -109,10 +119,23 @@ function setFontStack(f) {
     localStorage.setItem('cv-font-stack', f);
 }
 
+function setContrast(enabled) {
+    const b = document.getElementById('body-root');
+    b.classList.toggle('contrast-high', enabled);
+    localStorage.setItem('cv-contrast', enabled ? 'true' : 'false');
+    const toggle = document.getElementById('toggle-contrast');
+    if (toggle) toggle.checked = enabled;
+}
+
 // Welcome Modal Logic
 let welcomeTimer = null;
 const WELCOME_TIMEOUT_MS = 15000;
 const SETTINGS_HINT_TIMEOUT_MS = 15000;
+
+function getActiveSettingsTrigger() {
+    const triggers = Array.from(document.querySelectorAll('.settings-trigger'));
+    return triggers.find((trigger) => trigger.offsetParent !== null) || triggers[0] || null;
+}
 
 window.resetWelcomeTimer = function() {
     if (welcomeTimer) {
@@ -168,10 +191,10 @@ window.closeWelcome = function() {
     showSettingsHint();
     
     // Pulse settings cog to show where it is
-    const cog = document.getElementById('main-cog');
-    if (cog) {
-        cog.classList.add('aura-pulse');
-        setTimeout(() => cog.classList.remove('aura-pulse'), 2000);
+    const trigger = getActiveSettingsTrigger();
+    if (trigger) {
+        trigger.classList.add('aura-pulse');
+        setTimeout(() => trigger.classList.remove('aura-pulse'), 2000);
     }
 };
 
@@ -181,6 +204,7 @@ function showSettingsHint() {
     if (localStorage.getItem('cv-settings-hint') === 'true') return;
     hint.classList.add('show');
     positionSettingsHint();
+    requestAnimationFrame(() => positionSettingsHint());
     localStorage.setItem('cv-settings-hint', 'true');
     setTimeout(() => hideSettingsHint(), SETTINGS_HINT_TIMEOUT_MS);
 }
@@ -199,12 +223,13 @@ window.clearDebugState = function() {
     localStorage.removeItem('cv-font-size');
     localStorage.removeItem('cv-font-stack');
     localStorage.removeItem('cv-tty');
+    localStorage.removeItem('cv-contrast');
     window.location.reload();
 };
 
 function positionSettingsHint() {
     const hint = document.getElementById('settings-hint');
-    const cog = document.getElementById('main-cog');
+    const cog = getActiveSettingsTrigger();
     const panel = document.getElementById('settings-panel');
     const arrow = hint ? hint.querySelector('.hint-arrow') : null;
     if (!hint || !cog) return;
@@ -217,15 +242,17 @@ function positionSettingsHint() {
     }
     const cogRect = cog.getBoundingClientRect();
     const hintRect = hint.getBoundingClientRect();
+    const hintWidth = hintRect.width || hint.offsetWidth;
+    const hintHeight = hintRect.height || hint.offsetHeight;
     const gap = 20;
     const panelTop = panel ? parseFloat(window.getComputedStyle(panel).top) : null;
     const maxTop = Number.isFinite(panelTop) ? panelTop - 8 : window.innerHeight;
-    const preferredTop = cogRect.top + (cogRect.height / 2) - (hintRect.height / 2);
-    const top = Math.max(16, Math.min(preferredTop, window.innerHeight - hintRect.height - 16, maxTop));
-    const left = Math.max(16, cogRect.left - hintRect.width - gap);
+    const preferredTop = cogRect.top + (cogRect.height / 2) - (hintHeight / 2);
+    const top = Math.max(16, Math.min(preferredTop, window.innerHeight - hintHeight - 16, maxTop));
+    const left = Math.min(window.innerWidth - hintWidth - 16, cogRect.right + gap);
     if (arrow) {
         const target = cogRect.top + (cogRect.height / 2) - top - 8;
-        const clamped = Math.max(14, Math.min(target, hintRect.height - 24));
+        const clamped = Math.max(14, Math.min(target, hintHeight - 24));
         arrow.style.top = `${clamped}px`;
     }
     hint.style.top = `${top}px`;
@@ -234,12 +261,73 @@ function positionSettingsHint() {
     hint.style.bottom = 'auto';
 }
 
+let matrixInterval = null;
+let matrixResizeHandler = null;
+let matrixCanvas = null;
+let matrixContext = null;
+let matrixDrops = [];
+const matrixAlphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const matrixFontSize = 16;
+
+function resizeMatrixCanvas() {
+    if (!matrixCanvas) return;
+    matrixCanvas.width = window.innerWidth;
+    matrixCanvas.height = window.innerHeight;
+    const columns = Math.floor(matrixCanvas.width / matrixFontSize);
+    matrixDrops = Array(columns).fill(1);
+}
+
+function startMatrixBackground() {
+    if (matrixInterval) return;
+    matrixCanvas = document.getElementById('matrix-canvas');
+    if (!matrixCanvas) return;
+    matrixContext = matrixCanvas.getContext('2d');
+    if (!matrixContext) return;
+    resizeMatrixCanvas();
+    matrixResizeHandler = () => resizeMatrixCanvas();
+    window.addEventListener('resize', matrixResizeHandler);
+    matrixInterval = setInterval(() => {
+        if (!matrixContext || !matrixCanvas) return;
+        matrixContext.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        matrixContext.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        matrixContext.fillStyle = 'rgba(15, 255, 0, 0.5)';
+        matrixContext.font = `${matrixFontSize}px monospace`;
+        for (let i = 0; i < matrixDrops.length; i++) {
+            const text = matrixAlphabet.charAt(Math.floor(Math.random() * matrixAlphabet.length));
+            matrixContext.fillText(text, i * matrixFontSize, matrixDrops[i] * matrixFontSize);
+            if (matrixDrops[i] * matrixFontSize > matrixCanvas.height && Math.random() > 0.975) {
+                matrixDrops[i] = 0;
+            }
+            matrixDrops[i]++;
+        }
+    }, 45);
+}
+
+function stopMatrixBackground() {
+    if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+    }
+    if (matrixResizeHandler) {
+        window.removeEventListener('resize', matrixResizeHandler);
+        matrixResizeHandler = null;
+    }
+    if (matrixContext && matrixCanvas) {
+        matrixContext.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    }
+}
+
 // TTY Mode
 function updateTTY(forceState = null) {
     const newState = (forceState !== null) ? forceState : !document.body.classList.contains('mode-tty');
     document.body.classList.toggle('mode-tty', newState);
     localStorage.setItem('cv-tty', newState);
     updateToggleUI('tty', newState);
+    if (newState) {
+        startMatrixBackground();
+    } else {
+        stopMatrixBackground();
+    }
 }
 window.toggleTTY = () => updateTTY();
 
@@ -396,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedAccent = localStorage.getItem('cv-accent') || '#3b82f6';
     const savedFontSize = localStorage.getItem('cv-font-size') || '14'; 
     const savedFontStack = localStorage.getItem('cv-font-stack') || 'architect';
-
     setTheme(savedTheme); 
     setAccent(savedAccent); 
     setFontSize(savedFontSize); 
@@ -453,10 +540,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (localStorage.getItem('cv-tty') === 'true') { 
+    const isTty = localStorage.getItem('cv-tty') === 'true';
+    if (isTty) {
         document.body.classList.add('mode-tty');
         const cb = document.getElementById('tty-checkbox');
         if (cb) cb.checked = true;
+    }
+    updateToggleUI('tty', isTty);
+    if (isTty) {
+        startMatrixBackground();
+    } else {
+        stopMatrixBackground();
+    }
+
+    const isContrast = localStorage.getItem('cv-contrast') === 'true';
+    setContrast(isContrast);
+
+    const trigger = getActiveSettingsTrigger();
+    if (trigger) {
+        trigger.classList.add('settings-pulse');
+        setTimeout(() => trigger.classList.remove('settings-pulse'), 10000);
     }
 });
 
@@ -468,9 +571,10 @@ window.addEventListener('resize', () => {
 });
 
 window.onclick = function(e) {
-    const p = document.getElementById('settings-panel'); 
-    const btn = document.querySelector('.cog-btn');
-    if (p.classList.contains('open') && !p.contains(e.target) && !btn.contains(e.target)) toggleSettings();
+    const panel = document.getElementById('settings-panel');
+    const triggers = document.querySelectorAll('.settings-trigger');
+    const clickedTrigger = Array.from(triggers).some((trigger) => trigger.contains(e.target));
+    if (panel.classList.contains('open') && !panel.contains(e.target) && !clickedTrigger) toggleSettings();
 }
 
 // Clock

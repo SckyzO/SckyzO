@@ -143,6 +143,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     </style>
 </head>
 <body class="p-4 md:p-8 lg:p-12 theme-${theme} font-architect ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
+    <canvas id="matrix-canvas" class="no-print" aria-hidden="true"></canvas>
+    <div class="matrix-dimmer no-print" aria-hidden="true"></div>
     
     <!-- Reading Progress Bar -->
     <div class="fixed top-0 left-0 w-full h-1 z-[9999] no-print">
@@ -205,8 +207,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </div>
     </div>
 
-    <button onclick="toggleSettings()" class="cog-btn no-print icon-tooltip" id="main-cog" aria-label="Open Settings" data-tooltip="${t1.settingsTooltip}"><span class="cog-icon"><i data-lucide="settings" style="width: 28px; height: 28px;"></i></span></button>
-
     <div id="settings-hint" class="no-print" aria-live="polite">
         <div class="hint-arrow"></div>
         <button class="hint-close" onclick="hideSettingsHint()" aria-label="Close settings hint"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -229,59 +229,82 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </div>
     </div>
 
-    ${isInteractive ? `
-    <button id="debug-clear" class="no-print icon-tooltip" onclick="clearDebugState()" aria-label="Clear debug storage" data-tooltip="${t1.debugTooltip}">
-        <i data-lucide="trash-2" class="w-4 h-4"></i>
-    </button>
-    ` : ''}
-
-    <div id="settings-panel" class="no-print" aria-label="Settings Panel">
+    <div id="settings-panel" class="no-print" aria-label="${t1.settingsPanelAria}">
+        <div class="panel-top">
+            <div class="panel-heading">
+                <span class="panel-kicker">${t1.settingsPanelKicker}</span>
+                <span class="panel-title">${t1.settingsPanelTitle}</span>
+            </div>
+            <button type="button" class="settings-close" data-settings-close="true" onclick="toggleSettings(event)" aria-label="${t1.settingsCloseTitle}" title="${t1.settingsCloseTitle}">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
         <div class="panel-handle md:hidden"></div>
         
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Language</label>
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelLanguage}</label>
         <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
             <button id="btn-lang-fr" onclick="if(!this.classList.contains('active-lang')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'fr' ? 'active-lang bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
-                <span class="text-base">🇫🇷</span> FR
+                <img src="assets/flags/fr.svg" alt="" class="flag-icon" aria-hidden="true"> ${t1.settingsLangFrench}
             </button>
             <button id="btn-lang-en" onclick="if(!this.classList.contains('active-lang')) toggleLanguage()" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === 'en' ? 'active-lang bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg' : 'opacity-50 hover:opacity-100'} flex items-center justify-center gap-2 cursor-pointer">
-                <span class="text-base">🇬🇧</span> EN
+                <img src="assets/flags/gb.svg" alt="" class="flag-icon" aria-hidden="true"> ${t1.settingsLangEnglish}
             </button>
         </div>
 
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Appearance</label>
-        <div class="grid grid-cols-3 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
-            <button onclick="setTheme('light')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-light">
-                <i data-lucide="sun" class="w-3 h-3"></i> Light
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelAppearance}</label>
+        <div class="appearance-grid mb-8">
+            <button onclick="setTheme('light')" class="appearance-option" id="btn-light" data-theme="light">
+                <i data-lucide="sun" class="w-4 h-4"></i>
+                <span>${t1.settingsThemeLight}</span>
             </button>
-            <button onclick="setTheme('deep')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-deep">
-                <i data-lucide="moon" class="w-3 h-3"></i> Deep
+            <button onclick="setTheme('deep')" class="appearance-option" id="btn-deep" data-theme="deep">
+                <i data-lucide="moon" class="w-4 h-4"></i>
+                <span>${t1.settingsThemeDeep}</span>
             </button>
-            <button onclick="setTheme('dark')" class="panel-btn py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2" id="btn-dark">
-                <i data-lucide="zap" class="w-3 h-3"></i> Dark
+            <button onclick="setTheme('dark')" class="appearance-option" id="btn-dark" data-theme="dark">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>${t1.settingsThemeDark}</span>
             </button>
         </div>
 
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Accent Color</label>
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelAccent}</label>
         <div class="accent-grid mb-8" id="accent-picker"></div>
 
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Data Scaling</label>
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelScale}</label>
         <div class="flex items-center gap-4 px-2 mb-8 text-white">
             <span style="font-size: 12px !important; color: inherit;" class="font-serif italic opacity-40">a</span>
             <input type="range" min="12" max="20" value="14" step="1" oninput="setFontSize(this.value)" class="flex-grow">
             <span style="font-size: 20px !important; color: inherit;" class="font-serif italic opacity-40">A</span>
         </div>
 
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">System Mode</label>
-        <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
-            <button onclick="updateTTY(false)" id="btn-std" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all bg-[var(--bg-card)] text-[var(--text-main)] shadow-lg flex items-center justify-center gap-2">
-                <i data-lucide="monitor" class="w-3 h-3"></i> Standard
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelSystem}</label>
+        <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1 system-toggle">
+            <button onclick="updateTTY(false)" id="btn-std" class="system-btn flex items-center justify-center gap-2">
+                <i data-lucide="monitor" class="w-3 h-3"></i> ${t1.settingsSystemStandard}
             </button>
-            <button onclick="updateTTY(true)" id="btn-matrix" class="py-2 rounded-lg text-[10px] font-bold uppercase transition-all opacity-50 hover:opacity-100 flex items-center justify-center gap-2">
-                <i data-lucide="terminal" class="w-3 h-3"></i> Matrix
+            <button onclick="updateTTY(true)" id="btn-matrix" class="system-btn flex items-center justify-center gap-2">
+                <i data-lucide="terminal" class="w-3 h-3"></i> ${t1.settingsSystemMatrix}
             </button>
         </div>
 
-        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">Font Stack</label>
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelAccessibility}</label>
+        <div class="accessibility-card mb-8">
+            <div class="flex items-center gap-3">
+                <div class="accessibility-icon">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <div class="text-[0.7rem] font-black uppercase tracking-[0.2em] text-[var(--text-main)]">${t1.settingsAccessibilityTitle}</div>
+                    <div class="text-[0.7rem] text-[var(--text-muted)] opacity-70">${t1.settingsAccessibilityDescription}</div>
+                </div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="toggle-contrast" onchange="setContrast(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelFontStack}</label>
         <div class="font-grid">
             <button onclick="setFontStack('architect')" class="panel-btn font-btn" id="f-architect">ARCHI</button>
             <button onclick="setFontStack('archivo')" class="panel-btn font-btn" id="f-archivo">ARCHIV</button>
@@ -292,11 +315,23 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             <button onclick="setFontStack('quantum')" class="panel-btn font-btn" id="f-quantum">QUANT</button>
             <button onclick="setFontStack('space')" class="panel-btn font-btn" id="f-space">SPACE</button>
         </div>
+
+        ${isInteractive ? `
+        <div class="settings-footer">
+            <button id="debug-clear" class="no-print" onclick="clearDebugState()" aria-label="Clear debug storage">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span class="text-[0.75rem] font-bold uppercase tracking-widest">${t1.settingsClearLabel}</span>
+            </button>
+        </div>
+        ` : ''}
     </div>
 
-    <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left">
+    <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left content-root">
         ${flip(`
         <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
+            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile" aria-label="${t1.settingsOpenAria}">
+                <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
+            </button>
             <!-- Background Layer (Clipped) -->
             <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
                 <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
@@ -304,7 +339,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
             <!-- Left: Avatar Zone (Z-10) -->
             <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
-                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
+                <div class="p-1.5 rounded-full avatar-ring">
                     <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
                         <picture>
                             <source srcset="assets/tom_avatar.webp" type="image/webp">
@@ -393,6 +428,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </header>`, 
         `
         <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
+            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile-en" aria-label="${t1.settingsOpenAria}">
+                <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
+            </button>
             <!-- Background Layer (Clipped) -->
             <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
                 <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
@@ -400,7 +438,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
             <!-- Left: Avatar Zone (Z-10) -->
             <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
-                <div class="p-1.5 border border-accent/20 rounded-full shadow-[0_0_20px_rgba(var(--accent-rgba),0.1)]">
+                <div class="p-1.5 rounded-full avatar-ring">
                     <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
                         <picture>
                             <source srcset="assets/tom_avatar.webp" type="image/webp">
