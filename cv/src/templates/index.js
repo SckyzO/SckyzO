@@ -102,6 +102,464 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
   
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
+  const proSkillsPrimary = data.skills.professional.slice(0, 6);
+  const proSkillsSecondary = data.skills.professional.slice(6);
+  const experiencesPage1 = data.experiences.slice(0, 1);
+  const experiencesPage2 = data.experiences.slice(1, 4);
+  const experiencesPage3 = data.experiences.slice(4);
+
+  const renderProSkillsSection = (skills, delay = '') => flip(`
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${skills.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${skills.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                </section>`, delay);
+
+  const renderExperienceSection = (experiences, delay = '') => flip(`
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.4s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
+                    <div class="flex flex-col gap-6">
+                        ${experiences.map((exp, idx) => {
+                            return `<div class="card p-10 relative overflow-hidden group text-left break-inside-avoid page-break-inside-avoid mb-6">` + 
+                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
+                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
+                            `<div class="space-y-6">` +
+                            exp.domains.map(dom => `
+                                <div>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
+                                        ${dom.items[lang].map(item => {
+                                            const { title, text } = parseItem(item);
+                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
+                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
+                                                <span class="text-left">${highlightMetrics(text)}</span>
+                                            </li>`;
+                                        }).join('')}
+                                    </ul>
+                                </div>
+                            `).join('') +
+                            `</div></div>`}).join('')}</div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
+                    <div class="card p-12 space-y-12 text-left relative overflow-hidden">
+                        ${experiences.map((exp, idx) => {
+                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` +
+                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` +
+                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
+                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` +
+                            `<div class="space-y-6">` +
+                            exp.domains.map(dom => `
+                                <div>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
+                                        ${dom.items[lang2].map(item => {
+                                            const { title, text } = parseItem(item);
+                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
+                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
+                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
+                                                <span class="text-left">${highlightMetrics(text)}</span>
+                                            </li>`;
+                                        }).join('')}
+                                    </ul>
+                                </div>
+                            `).join('') +
+                            `</div></div>`}).join('')}</div>
+                </section>`, delay);
+
+  const contactSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left no-break" style="animation-delay: 0.1s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
+                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
+                        <div class="flex flex-col gap-2">
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                    </div>
+                                    <span class="tooltip-content">${t1.emailTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                </div>
+                                <span class="tooltip-content">${t1.emailTooltip}</span>
+                            </a>
+                            `}
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                    </div>
+                                    <span class="tooltip-content">${t1.phoneTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="tel:${c.phone.replace(/\\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                </div>
+                                <span class="tooltip-content">${t1.phoneTooltip}</span>
+                            </a>
+                            `}
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
+                                </div>
+                                <span class="tooltip-content">${t1.websiteTooltip}</span>
+                            </a>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} ans <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('fr-FR')})</span></span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
+                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                                        <span class="font-mono text-xs accent-text no-print" id="local-time-fr">--:--</span>
+                                    </div>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t1.openGithub}</span></a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t1.openLinkedIn}</span></a>
+                        </div>
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
+                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
+                        <div class="flex flex-col gap-2">
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                    </div>
+                                    <span class="tooltip-content">${t2.emailTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                </div>
+                                <span class="tooltip-content">${t2.emailTooltip}</span>
+                            </a>
+                            `}
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                    </div>
+                                    <span class="tooltip-content">${t2.phoneTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="tel:${c.phone.replace(/\\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                </div>
+                                <span class="tooltip-content">${t2.phoneTooltip}</span>
+                            </a>
+                            `}
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
+                                </div>
+                                <span class="tooltip-content">${t2.websiteTooltip}</span>
+                            </a>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} years old <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('en-US')})</span></span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
+                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                                        <span class="font-mono text-xs accent-text no-print" id="local-time-en">--:--</span>
+                                    </div>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t2.openGithub}</span></a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t2.openLinkedIn}</span></a>
+                        </div>
+                    </div>
+                </section>`, 'delay-100');
+
+  const expertiseOverviewSection = isInteractive ? flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="card p-4 flex items-center justify-center h-64">
+                        ${generateRadarChart(data.skills.professional)}
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="card p-4 flex items-center justify-center h-64">
+                        ${generateRadarChart(data.skills.professional)}
+                    </div>
+                </section>`, 'delay-200') : '';
+
+  const languagesSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.3s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                </section>`, 'delay-300');
+
+  const personalSkillsSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.4s">
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
+                        ${data.skills.personal[lang].map(s => `
+                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
+                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                ${s.label}
+                                <span class="tooltip-content">${s.desc}</span>
+                            </span>
+                        `).join('')}
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
+                        ${data.skills.personal[lang2].map(s => `
+                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
+                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                ${s.label}
+                                <span class="tooltip-content">${s.desc}</span>
+                            </span>
+                        `).join('')}
+                    </div>
+                </section>`, 'delay-400');
+
+  const educationSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.5s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.education}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.education}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
+                </section>`, 'delay-500');
+
+  const certificationsSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.6s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
+                    <div class="card p-6 text-left flex flex-col gap-4">
+                        ${data.certifications.map(cert => `
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
+                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
+                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
+                    <div class="card p-6 text-left flex flex-col gap-4">
+                        ${data.certifications.map(cert => `
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
+                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
+                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>`, 'delay-600');
+
+  const qrSection = !isInteractive ? flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.7s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="qr-code" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.qrTitle}</h2></div>
+                    <div class="card p-6 flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <div class="text-sm font-bold uppercase tracking-widest text-[var(--text-main)]">${t1.qrTitle}</div>
+                            <div class="text-[0.75rem] opacity-70">${t1.qrText}</div>
+                        </div>
+                        <div class="qr-image-wrap">
+                            <img src="${qrDataURI}" alt="${t1.qrTitle}" class="qr-image">
+                        </div>
+                    </div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="qr-code" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.qrTitle}</h2></div>
+                    <div class="card p-6 flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <div class="text-sm font-bold uppercase tracking-widest text-[var(--text-main)]">${t2.qrTitle}</div>
+                            <div class="text-[0.75rem] opacity-70">${t2.qrText}</div>
+                        </div>
+                        <div class="qr-image-wrap">
+                            <img src="${qrDataURI}" alt="${t2.qrTitle}" class="qr-image">
+                        </div>
+                    </div>
+                </section>`, 'delay-700') : '';
+
+  const profileSection = flip(`
+                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
+                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
+                </section>`,
+                `<section class="flex flex-col gap-6 no-break text-left">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
+                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
+                </section>`, 'delay-200');
+
+  const mainContent = isInteractive ? `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+            <div class="lg:col-span-4 flex flex-col gap-8 text-left">
+                ${contactSection}
+                ${expertiseOverviewSection}
+                ${languagesSection}
+                ${personalSkillsSection}
+                ${educationSection}
+                ${certificationsSection}
+                ${qrSection}
+            </div>
+            <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                ${profileSection}
+                ${renderProSkillsSection(data.skills.professional, 'delay-300')}
+                ${renderExperienceSection(data.experiences, 'delay-400')}
+            </div>
+        </div>
+    ` : `
+        <div class="pdf-pages">
+            <div class="pdf-page">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+                    <div class="lg:col-span-4 flex flex-col gap-8 text-left">
+                        ${contactSection}
+                        ${languagesSection}
+                        ${educationSection}
+                    </div>
+                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                        ${profileSection}
+                        ${renderProSkillsSection(proSkillsPrimary)}
+                    </div>
+                </div>
+            </div>
+            <div class="pdf-page">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+                    <div class="lg:col-span-4 flex flex-col gap-8 text-left">
+                        ${personalSkillsSection}
+                        ${certificationsSection}
+                        ${qrSection}
+                    </div>
+                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                        ${proSkillsSecondary.length ? renderProSkillsSection(proSkillsSecondary) : ''}
+                        ${renderExperienceSection(experiencesPage1)}
+                    </div>
+                </div>
+            </div>
+            <div class="pdf-page">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+                    <div class="lg:col-span-4 flex flex-col gap-8 text-left"></div>
+                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                        ${renderExperienceSection(experiencesPage2)}
+                    </div>
+                </div>
+            </div>
+            ${experiencesPage3.length ? `
+            <div class="pdf-page">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+                    <div class="lg:col-span-4 flex flex-col gap-8 text-left"></div>
+                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                        ${renderExperienceSection(experiencesPage3)}
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
   
   return `<!DOCTYPE html>
 <html lang="${lang}" class="dark" id="html-root" style="${rootStyle}">
@@ -248,6 +706,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </button>
         </div>
         <div class="panel-handle md:hidden"></div>
+
+        <div class="settings-content">
         
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelLanguage}</label>
         <div class="grid grid-cols-2 p-1 bg-[var(--bg-page)] rounded-xl border border-[var(--border-card)] mb-8 relative gap-1">
@@ -323,6 +783,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             <button onclick="setFontStack('quantum')" class="panel-btn font-btn" id="f-quantum">QUANT</button>
             <button onclick="setFontStack('space')" class="panel-btn font-btn" id="f-space">SPACE</button>
         </div>
+        </div>
 
         ${isInteractive ? `
         <div class="settings-footer">
@@ -330,6 +791,24 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                 <span class="text-[0.75rem] font-bold uppercase tracking-widest">${t1.settingsClearLabel}</span>
             </button>
+            <div class="border-t border-[var(--border-card)] pt-4 mt-4 text-center no-print">
+                <div class="flex flex-col gap-3 items-center justify-center">
+                    <div class="flex items-center gap-2 text-[0.7rem] font-mono opacity-60">
+                        <span>${t1.developedWith}</span>
+                        <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500 fill-rose-500/20 animate-pulse"></i>
+                        <span>&</span>
+                        <i data-lucide="bot" class="w-3.5 h-3.5 text-[var(--accent)]"></i>
+                        <span>${t1.inYear} ${new Date().getFullYear()}</span>
+                    </div>
+                    <div class="text-[9px] uppercase tracking-widest opacity-40">
+                        ${t1.lastUpdate}: ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </div>
+                    <a href="https://github.com/SckyzO/SckyzO" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-[9px] font-bold uppercase tracking-widest group">
+                        <i data-lucide="github" class="w-3 h-3 group-hover:accent-text transition-colors"></i>
+                        <span class="group-hover:text-[var(--text-main)] transition-colors">${t1.sourceCode}</span>
+                    </a>
+                </div>
+            </div>
         </div>
         ` : ''}
     </div>
@@ -534,403 +1013,13 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
             </div>
         </header>`
         )}
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
-            <div class="lg:col-span-4 flex flex-col gap-8 text-left">
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left no-break" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
-                        <div class="flex flex-col gap-2">
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                    </div>
-                                    <span class="tooltip-content">${t1.emailTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                </div>
-                                <span class="tooltip-content">${t1.emailTooltip}</span>
-                            </a>
-                            `}
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                    </div>
-                                    <span class="tooltip-content">${t1.phoneTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                </div>
-                                <span class="tooltip-content">${t1.phoneTooltip}</span>
-                            </a>
-                            `}
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
-                                </div>
-                                <span class="tooltip-content">${t1.websiteTooltip}</span>
-                            </a>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} ans <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('fr-FR')})</span></span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
-                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                                        <span class="font-mono text-xs accent-text" id="local-time-fr">--:--</span>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t1.openGithub}</span></a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t1.openLinkedIn}</span></a>
-                        </div>
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
-                        <div class="flex flex-col gap-2">
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                    </div>
-                                    <span class="tooltip-content">${t2.emailTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                </div>
-                                <span class="tooltip-content">${t2.emailTooltip}</span>
-                            </a>
-                            `}
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                    </div>
-                                    <span class="tooltip-content">${t2.phoneTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="tel:${c.phone.replace(/\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                </div>
-                                <span class="tooltip-content">${t2.phoneTooltip}</span>
-                            </a>
-                            `}
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
-                                </div>
-                                <span class="tooltip-content">${t2.websiteTooltip}</span>
-                            </a>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} years old <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('en-US')})</span></span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
-                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                                        <span class="font-mono text-xs accent-text" id="local-time-en">--:--</span>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t2.openGithub}</span></a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t2.openLinkedIn}</span></a>
-                        </div>
-                    </div>
-                </section>`, 'delay-100')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
-                    <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional)}
-                    </div>
-                </section>`,`
-                <section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
-                    <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional)}
-                    </div>
-                </section>`, 'delay-200')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>`, 'delay-300')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
-                        ${data.skills.personal[lang].map(s => `
-                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
-                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
-                                ${s.label}
-                                <span class="tooltip-content">${s.desc}</span>
-                            </span>
-                        `).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
-                        ${data.skills.personal[lang2].map(s => `
-                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
-                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
-                                ${s.label}
-                                <span class="tooltip-content">${s.desc}</span>
-                            </span>
-                        `).join('')}
-                    </div>
-                </section>`, 'delay-400')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.5s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.education}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.education}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>`, 'delay-500')}
-                
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.6s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
-                    <div class="card p-6 text-left flex flex-col gap-4">
-                        ${data.certifications.map(cert => `
-                            <div class="flex items-center gap-4 group">
-                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
-                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
-                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
-                    <div class="card p-6 text-left flex flex-col gap-4">
-                        ${data.certifications.map(cert => `
-                            <div class="flex items-center gap-4 group">
-                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
-                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
-                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>`, 'delay-600')}
-            </div>
-            <div class="lg:col-span-8 flex flex-col gap-8 text-left">
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
-                </section>`, 'delay-200')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${data.skills.professional.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
-                </section>`, 'delay-300')}
-
-                ${flip(`
-                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
-                    <div class="flex flex-col gap-6" id="exp-container-fr">
-                        ${data.experiences.map((exp, idx) => {
-                            return `<div class="card p-10 relative overflow-hidden group text-left break-inside-avoid page-break-inside-avoid mb-6">` + 
-                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
-                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
-                            `<div class="space-y-6">` +
-                            exp.domains.map(dom => `
-                                <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
-                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
-                                        ${dom.items[lang].map(item => {
-                                            const { title, text } = parseItem(item);
-                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
-                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
-                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
-                                                <span class="text-left">${highlightMetrics(text)}</span>
-                                            </li>`;
-                                        }).join('')}
-                                    </ul>
-                                </div>
-                            `).join('') +
-                            `</div></div>`}).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="text-sm font-black uppercase tracking-[0.4em] accent-text opacity-90" style="font-family: var(--font-sans);">${t2.experience}</h2></div>
-                    <div class="card p-12 space-y-12 text-left relative overflow-hidden" id="exp-container-en">
-                        ${data.experiences.map((exp, idx) => {
-                            return `<div class="exp-card relative pl-10 border-l-2 timeline-border transition-colors duration-300 group text-left">` +
-                            `<div class="absolute -left-[11px] top-[0.4rem] w-5 h-5 rounded-full ${idx === 0 ? 'accent-bg shadow-[0_0_20px_var(--accent)]' : 'bg-slate-700'} border-[6px] border-[var(--bg-card)] transition-all duration-300 group-hover:scale-125 group-hover:bg-[var(--accent)] group-hover:shadow-[0_0_25px_var(--accent)] z-20"></div>` +
-                            `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
-                            `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` +
-                            `<div class="space-y-6">` +
-                            exp.domains.map(dom => `
-                                <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
-                                    <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
-                                        ${dom.items[lang2].map(item => {
-                                            const { title, text } = parseItem(item);
-                                            return `<li class="relative pl-6 pr-2 py-1.5 rounded-lg text-[0.95rem] opacity-70 hover:opacity-100 hover:bg-accent/5 leading-relaxed group/item text-left transition-all duration-200">
-                                                <span class="absolute left-0 top-[0.9rem] w-2 h-[1px] bg-accent/40 group-hover/item:w-4 group-hover/item:bg-accent group-hover:bg-accent transition-all"></span>
-                                                ${title ? `<span class="font-bold text-[var(--text-main)] opacity-90">${title} :</span>` : ''}
-                                                <span class="text-left">${highlightMetrics(text)}</span>
-                                            </li>`;
-                                        }).join('')}
-                                    </ul>
-                                </div>
-                            `).join('') +
-                            `</div></div>`}).join('')}</div>
-                </section>`, 'delay-400')}
-            </div>
-        </div>
-    </div>
-
-    <footer class="max-w-7xl mx-auto py-12 mt-12 border-t border-[var(--border-card)] text-center no-print">
-        <div class="flex flex-col gap-4 items-center justify-center">
-            <div class="flex items-center gap-2 text-sm font-mono opacity-60">
-                <span>${t1.developedWith}</span>
-                <i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500/20 animate-pulse"></i>
-                <span>&</span>
-                <i data-lucide="bot" class="w-4 h-4 text-[var(--accent)]"></i>
-                <span>${t1.inYear} ${new Date().getFullYear()}</span>
-            </div>
-            <div class="text-[10px] uppercase tracking-widest opacity-40">
-                ${t1.lastUpdate}: ${new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </div>
-            <a href="https://github.com/SckyzO/SckyzO" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-[10px] font-bold uppercase tracking-widest group">
-                <i data-lucide="github" class="w-3 h-3 group-hover:accent-text transition-colors"></i>
-                <span class="group-hover:text-[var(--text-main)] transition-colors">${t1.sourceCode}</span>
-            </a>
-        </div>
-    </footer>
+        ${mainContent}
 
     <div id="cmd-palette" onclick="toggleCmd(false)">
         <div class="cmd-box" onclick="event.stopPropagation()">
             <input type="text" class="cmd-input" id="cmd-input" placeholder="Type a command or search..." autocomplete="off">
             <div class="cmd-results" id="cmd-results"></div>
         </div>
-    </div>
-
-    <div class="qr-code-container no-screen hidden print:flex">
-        <img src="${qrDataURI}" alt="Scan for Live Version" style="width: 80px; height: 80px;">
-        <span style="font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Live Version</span>
     </div>
 
     ${isInteractive ? `
