@@ -31,7 +31,6 @@ function getEnvValue(key) {
   const value = process.env[key];
   return value && value.trim().length > 0 ? value.trim() : null;
 }
-
 // Load content data.
 loadLocalEnv();
 const data = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/data.json'), 'utf8'));
@@ -292,15 +291,19 @@ function getPdfAppearance() {
 }
 
 const VALIDATE_ONLY = process.argv.includes('--validate-only');
+const formatBuildStamp = (date) => date.toISOString().replace('T', ' ').replace('Z', ' UTC');
+const logStep = (emoji, message) => console.log(`${emoji} ${message}`);
 
 // --- MAIN BUILD PROCESS ---
 async function build() {
+  const buildStartedAt = new Date();
+  logStep('🛠️', `Build started — ${formatBuildStamp(buildStartedAt)}`);
   applyContactOverrides(data);
   assertContactValue(data.contact.email, 'contact.email', CONTACT_EMAIL_ENV);
   assertContactValue(data.contact.phone, 'contact.phone', CONTACT_PHONE_ENV);
   validateData(data);
   if (VALIDATE_ONLY) {
-    console.log('Validation OK: data/data.json structure is valid.');
+    logStep('✅', 'Validation OK — data/data.json structure is valid.');
     return;
   }
   assertOfflineAssets();
@@ -314,7 +317,7 @@ async function build() {
   const pdfAppearance = getPdfAppearance();
   
   // 1) Generate interactive index (default FR).
-  console.log("Generating interactive index (index.html)...");
+  logStep('🧩', 'Generating interactive index (index.html)...');
   const qrDefault = await QRCode.toDataURL('https://tomzone.fr', { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
   const htmlInteractive = generateHTML(data, 'fr', activity, qrDefault, 'interactive', clientScript);
   fs.writeFileSync(path.join(OUTPUT_DIR, "index.html"), htmlInteractive);
@@ -323,7 +326,7 @@ async function build() {
   const themes = pdfAppearance.theme ? [pdfAppearance.theme] : PDF_THEMES;
   
   for (const lang of ['fr', 'en']) {
-    console.log("Generating assets for " + lang.toUpperCase() + "...");
+    logStep('📦', `Generating assets for ${lang.toUpperCase()}...`);
     
     // Generate QR code.
     const qrTarget = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
@@ -335,7 +338,7 @@ async function build() {
 
     // Generate PDFs for each theme.
     for (const theme of themes) {
-        console.log(`  - PDF ${theme}...`);
+        logStep('📄', `PDF ${theme}...`);
         const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf', '', {
           theme: theme,
           fontSize: pdfAppearance.fontSize || 18,
@@ -381,11 +384,13 @@ async function build() {
           path: path.join(OUTPUT_DIR, pdfName),
           format: 'A4',
           printBackground: true,
-          scale: 0.65,
-          margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
+          preferCSSPageSize: true,
+          scale: 0.55,
+          margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
+          displayHeaderFooter: false
         });
         if (theme === 'deep') {
-          console.log(`  - Preview PNG...`);
+          logStep('🖼️', 'Preview PNG...');
           await page.setViewportSize({ width: 1200, height: 630 });
           // Final check for animations or fonts
           await page.waitForTimeout(2000);
