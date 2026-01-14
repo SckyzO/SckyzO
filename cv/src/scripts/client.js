@@ -105,6 +105,9 @@ function setAccent(hex) {
     document.documentElement.style.setProperty('--accent', accentHex);
     document.documentElement.style.setProperty('--accent-rgba', accentRgba);
     localStorage.setItem('cv-accent', accentHex);
+    document.querySelectorAll('.accent-dot').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-hex') === accentHex);
+    });
 }
 
 function setFontSize(s) {
@@ -117,6 +120,9 @@ function setFontStack(f) {
     b.classList.remove('font-hub', 'font-geist', 'font-space', 'font-archivo', 'font-quantum', 'font-console', 'font-architect', 'font-oxy');
     b.classList.add('font-' + f);
     localStorage.setItem('cv-font-stack', f);
+    document.querySelectorAll('.font-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.id === `f-${f}`);
+    });
 }
 
 function decodeContactValue(encoded) {
