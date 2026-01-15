@@ -240,6 +240,8 @@ function setContrast(enabled) {
 
 // Welcome Modal Logic
 let welcomeTimer = null;
+let welcomeBarAnimation = null;
+let welcomeLineAnimation = null;
 const WELCOME_TIMEOUT_MS = 15000;
 const SETTINGS_HINT_TIMEOUT_MS = 15000;
 
@@ -254,6 +256,14 @@ window.resetWelcomeTimer = function() {
         welcomeTimer = null;
         const bar = document.getElementById('w-timer-bar');
         const line = document.getElementById('w-timer-bar-line');
+        if (welcomeBarAnimation) {
+            welcomeBarAnimation.cancel();
+            welcomeBarAnimation = null;
+        }
+        if (welcomeLineAnimation) {
+            welcomeLineAnimation.cancel();
+            welcomeLineAnimation = null;
+        }
         if (bar) bar.style.width = '0%'; // Stop progress bar
         if (line) line.style.width = '0%'; // Stop progress line
     }
@@ -314,7 +324,6 @@ function showSettingsHint() {
     if (!hint) return;
     if (localStorage.getItem('cv-settings-hint') === 'true') return;
     hint.classList.add('show');
-    positionSettingsHint();
     requestAnimationFrame(() => positionSettingsHint());
     localStorage.setItem('cv-settings-hint', 'true');
     setTimeout(() => hideSettingsHint(), SETTINGS_HINT_TIMEOUT_MS);
@@ -633,15 +642,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const line = document.getElementById('w-timer-bar-line');
                 if (bar) {
                     bar.style.width = '0%';
-                    // Force reflow
-                    void bar.offsetWidth; 
-                    bar.style.width = '100%';
+                    welcomeBarAnimation = bar.animate(
+                        [{ width: '0%' }, { width: '100%' }],
+                        { duration: WELCOME_TIMEOUT_MS, easing: 'linear', fill: 'forwards' }
+                    );
                 }
                 if (line) {
                     line.style.width = '0%';
-                    // Force reflow
-                    void line.offsetWidth; 
-                    line.style.width = '100%';
+                    welcomeLineAnimation = line.animate(
+                        [{ width: '0%' }, { width: '100%' }],
+                        { duration: WELCOME_TIMEOUT_MS, easing: 'linear', fill: 'forwards' }
+                    );
                 }
                 welcomeTimer = setTimeout(() => {
                     closeWelcome();
