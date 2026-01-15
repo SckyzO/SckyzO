@@ -539,38 +539,6 @@ document.getElementById('cmd-input').addEventListener('keydown', (e) => {
 // Spotlight & Interactions
 // (Interaction logic preserved for future use)
 
-// CROSS HIGHLIGHTING & INTERACTIONS
-document.addEventListener('mouseover', e => {
-    // Experience Highlight (Uniquement si on est sur un tag)
-    const tag = e.target.closest('.skill-tag');
-    if (tag) {
-        // Allumer le point interne
-        const dot = tag.querySelector('.tool-dot');
-        if (dot) dot.style.opacity = '1';
-
-        const skill = tag.getAttribute('data-skill');
-        document.querySelectorAll('.exp-card').forEach(c => {
-            const skillsStr = c.getAttribute('data-skills');
-            if (skillsStr && skillsStr.includes(skill)) { 
-                c.classList.add('highlight'); 
-            } else { 
-                c.classList.add('dimmed'); 
-            }
-        });
-    }
-});
-
-document.addEventListener('mouseout', e => {
-    // Nettoyage Expériences
-    const tag = e.target.closest('.skill-tag');
-    if (tag) {
-        const dot = tag.querySelector('.tool-dot');
-        if (dot) dot.style.opacity = '0.3'; // Retour à l'opacité par défaut
-
-        document.querySelectorAll('.exp-card').forEach(c => c.classList.remove('highlight', 'dimmed'));
-    }
-});
-
 document.addEventListener('mouseover', e => {
     const card = e.target.closest('.skill-card');
     if (!card) return;
