@@ -278,7 +278,9 @@ const SETTINGS_HINT_TIMEOUT_MS = 15000;
 
 function getActiveSettingsTrigger() {
     const triggers = Array.from(document.querySelectorAll('.settings-trigger'));
-    return triggers.find((trigger) => trigger.offsetParent !== null) || triggers[0] || null;
+    const lang = document.documentElement.lang || 'fr';
+    const match = triggers.find((trigger) => trigger.getAttribute('data-lang') === lang);
+    return match || triggers[0] || null;
 }
 
 window.resetWelcomeTimer = function() {

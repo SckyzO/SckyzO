@@ -912,7 +912,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left content-root">
         ${flip(`
         <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
-            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile" aria-label="${t1.settingsOpenAria}">
+            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile" data-lang="fr" aria-label="${t1.settingsOpenAria}">
                 <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
             </button>
             <!-- Background Layer (Clipped) -->
@@ -1011,7 +1011,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         </header>`, 
         `
         <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
-            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile-en" aria-label="${t1.settingsOpenAria}">
+            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile-en" data-lang="en" aria-label="${t1.settingsOpenAria}">
                 <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
             </button>
             <!-- Background Layer (Clipped) -->
