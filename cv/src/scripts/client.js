@@ -571,6 +571,37 @@ document.addEventListener('mouseout', e => {
     }
 });
 
+document.addEventListener('mouseover', e => {
+    const card = e.target.closest('.skill-card');
+    if (!card) return;
+    const category = card.getAttribute('data-category');
+    if (!category) return;
+    document.querySelectorAll('.radar-point').forEach(point => {
+        point.classList.toggle('active', point.getAttribute('data-category') === category);
+    });
+});
+
+document.addEventListener('mouseout', e => {
+    const card = e.target.closest('.skill-card');
+    if (!card) return;
+    const related = e.relatedTarget;
+    if (related && related.closest && related.closest('.skill-card') === card) return;
+    document.querySelectorAll('.radar-point').forEach(point => point.classList.remove('active'));
+});
+
+document.addEventListener('click', (e) => {
+    const toggle = e.target.closest('[data-skill-toggle]');
+    if (!toggle) return;
+    const card = toggle.closest('.skill-card');
+    if (!card) return;
+    const isOpen = card.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    const count = toggle.getAttribute('data-count');
+    if (count) {
+        toggle.textContent = isOpen ? '–' : `+${count}`;
+    }
+});
+
 // Init Settings
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM Loaded. Init settings...");

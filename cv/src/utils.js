@@ -24,15 +24,24 @@ function generateRadarChart(skills) {
   const radius = size * 0.4;
   const angleStep = (Math.PI * 2) / skills.length;
   
-  const levelsMapping = { "Linux": 95, "HPC": 90, "Storage": 85, "DevOps": 88, "Observability": 92, "Cloud/Virt": 80, "Development": 85, "IoT/3D": 70 };
+  const levelsMapping = {
+    "Linux & Infrastructure": 95,
+    "HPC Systems": 90,
+    "Observability": 92,
+    "Storage & Data": 85,
+    "DevOps & Automation": 88,
+    "Development & Tooling": 84
+  };
 
-  const points = skills.map((s, i) => {
+  const pointPositions = skills.map((s, i) => {
     const val = s.level || levelsMapping[s.category] || 50;
     const level = val / 100;
     const x = center + Math.cos(i * angleStep - Math.PI / 2) * radius * level;
     const y = center + Math.sin(i * angleStep - Math.PI / 2) * radius * level;
-    return `${x},${y}`;
-  }).join(' ');
+    return { x, y, category: s.category };
+  });
+
+  const points = pointPositions.map((pos) => `${pos.x},${pos.y}`).join(' ');
 
   const gridLevels = [0.25, 0.5, 0.75, 1];
   const grids = gridLevels.map(l => {
@@ -50,7 +59,11 @@ function generateRadarChart(skills) {
     return `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" font-weight="900" fill="currentColor" opacity="0.4" class="uppercase tracking-tighter">${s.category}</text>`;
   }).join('');
 
-  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${labels}</svg>`;
+  const highlightPoints = pointPositions.map((pos) => {
+    return `<circle class="radar-point" cx="${pos.x}" cy="${pos.y}" r="3" data-category="${pos.category}" />`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${size} ${size}" class="w-full h-full opacity-80">${grids}<polygon points="${points}" fill="var(--accent)" fill-opacity="0.2" stroke="var(--accent)" stroke-width="2" />${highlightPoints}${labels}</svg>`;
 }
 
 const GITHUB_HOST = 'api.github.com';
