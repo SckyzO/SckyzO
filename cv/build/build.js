@@ -154,7 +154,15 @@ function validateData(payload) {
     const skillPath = `skills.professional[${skillIndex}]`;
     requireObject(skill, skillPath);
     requireString(skill.category, `${skillPath}.category`);
-    requireString(skill.tools, `${skillPath}.tools`);
+    requireString(skill.description, `${skillPath}.description`);
+    if (Array.isArray(skill.tools)) {
+      requireArray(skill.tools, `${skillPath}.tools`);
+      skill.tools.forEach((tool, toolIndex) => {
+        requireString(tool, `${skillPath}.tools[${toolIndex}]`);
+      });
+    } else {
+      requireString(skill.tools, `${skillPath}.tools`);
+    }
     requireString(skill.icon, `${skillPath}.icon`);
   });
 
@@ -293,6 +301,7 @@ function getPdfAppearance() {
 const VALIDATE_ONLY = process.argv.includes('--validate-only');
 const formatBuildStamp = (date) => date.toISOString().replace('T', ' ').replace('Z', ' UTC');
 const logStep = (emoji, message) => console.log(`${emoji} ${message}`);
+const logSubStep = (message) => console.log(`   ↳ ${message}`);
 
 // --- MAIN BUILD PROCESS ---
 async function build() {
@@ -329,16 +338,18 @@ async function build() {
     logStep('📦', `Generating assets for ${lang.toUpperCase()}...`);
     
     // Generate QR code.
+    logSubStep('Generate QR code');
     const qrTarget = lang === 'fr' ? 'https://tomzone.fr/index_fr.html' : 'https://tomzone.fr/index_en.html';
     const qrDataURI = await QRCode.toDataURL(qrTarget, { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
 
     // Generate dedicated language HTML file (referenced in SEO/QR)
+    logSubStep('Generate HTML');
     const htmlLang = generateHTML(data, lang, activity, qrDataURI, 'interactive', clientScript);
     fs.writeFileSync(path.join(OUTPUT_DIR, `index_${lang}.html`), htmlLang);
 
     // Generate PDFs for each theme.
     for (const theme of themes) {
-        logStep('📄', `PDF ${theme}...`);
+        logSubStep(`Generate PDF (${theme})`);
         const htmlContent = generateHTML(data, lang, activity, qrDataURI, 'pdf', '', {
           theme: theme,
           fontSize: pdfAppearance.fontSize || 18,

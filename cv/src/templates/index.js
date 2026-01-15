@@ -102,20 +102,83 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
   
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
-  const proSkillsPrimary = data.skills.professional.slice(0, 6);
-  const proSkillsSecondary = data.skills.professional.slice(6);
+  const proSkillsPrimary = data.skills.professional.slice(0, 4);
+  const proSkillsSecondary = data.skills.professional.slice(4);
   const experiencesPage1 = data.experiences.slice(0, 1);
   const experiencesPage2 = data.experiences.slice(1, 4);
   const experiencesPage3 = data.experiences.slice(4);
 
+  const normalizeTools = (tools) => {
+    if (Array.isArray(tools)) return tools.filter(Boolean);
+    if (typeof tools !== 'string') return [];
+    return tools.split(',').map((tool) => tool.trim()).filter(Boolean);
+  };
+
+  const renderSkillTags = (tools, category, skillId) => {
+    const list = normalizeTools(tools);
+    const primary = list.slice(0, 3);
+    const extra = list.slice(3);
+    const primaryHtml = primary.map(tool => `
+        <span class="skill-chip skill-tag tool-tag" data-skill="${tool.toLowerCase().trim()}" data-category="${category}">
+          ${tool}
+        </span>
+    `).join('');
+    const extraHtml = extra.map(tool => `
+        <span class="skill-chip skill-tag tool-tag" data-skill="${tool.toLowerCase().trim()}" data-category="${category}">
+          ${tool}
+        </span>
+    `).join('');
+    const moreHtml = extra.length > 0
+      ? `<button type="button" class="skill-chip skill-tag-more" data-skill-toggle data-count="${extra.length}" aria-expanded="false" aria-label="Show all tags">+${extra.length}</button>`
+      : '';
+    const extraBlock = extra.length > 0 ? `<div class="skill-extra">${extraHtml}</div>` : '';
+    return `<div class="skill-primary-row">${primaryHtml}${moreHtml}</div>${extraBlock}`;
+  };
+
   const renderProSkillsSection = (skills, delay = '') => flip(`
                 <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${skills.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                      ${skills.map((s, i) => {
+                        const skillId = `skill-${lang}-${i}`;
+                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}" data-skill-card="${skillId}">
+                          <div class="skill-card-header">
+                            <div class="skill-icon">
+                              <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
+                            </div>
+                            <div class="skill-meta">
+                              <div class="skill-title">${s.category}</div>
+                              <div class="skill-desc">${s.description || ''}</div>
+                            </div>
+                          </div>
+                          <div class="skill-chips" data-skill-tags="${skillId}">
+                            ${renderSkillTags(s.tools, s.category, skillId)}
+                          </div>
+                        </div>`;
+                      }).join('')}
+                    </div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">${skills.map((s, i) => `<div class="card p-8 flex flex-col gap-6 group hover:scale-[1.02] text-left" data-category="${s.category}"><div class="flex justify-between items-center text-left"><div class="flex items-center gap-4 text-left"><div class="p-2 surface-muted rounded-xl border border-white/10 group-hover:accent-border transition-colors"><i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i></div><span class="text-[1rem] font-black uppercase tracking-widest text-[var(--text-main)] group-hover:accent-text transition-colors">${s.category}</span></div></div><div class="flex flex-wrap gap-2.5 text-left">${s.tools.split(', ').map(tool => `<span class="skill-tag tool-tag px-3.5 py-1.5 surface-muted border border-white/5 rounded-xl text-[0.85rem] font-mono text-[var(--text-main)] hover:text-[var(--text-main)] hover:border-accent/30 transition-all flex items-center gap-2 cursor-default text-left" data-skill="${tool.toLowerCase().trim()}" data-category="${s.category}"><span class="tool-dot w-1.5 h-1.5 accent-bg opacity-30 rounded-full transition-all"></span>${tool}</span>`).join('')}</div></div>`).join('')}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                      ${skills.map((s, i) => {
+                        const skillId = `skill-${lang2}-${i}`;
+                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left" data-category="${s.category}" data-skill-card="${skillId}">
+                          <div class="skill-card-header">
+                            <div class="skill-icon">
+                              <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
+                            </div>
+                            <div class="skill-meta">
+                              <div class="skill-title">${s.category}</div>
+                              <div class="skill-desc">${s.description || ''}</div>
+                            </div>
+                          </div>
+                          <div class="skill-chips" data-skill-tags="${skillId}">
+                            ${renderSkillTags(s.tools, s.category, skillId)}
+                          </div>
+                        </div>`;
+                      }).join('')}
+                    </div>
                 </section>`, delay);
 
   const renderExperienceSection = (experiences, delay = '') => flip(`
@@ -1073,7 +1136,8 @@ function generatePlain(data, lang) {
   
   txt += `${t.proSkills.toUpperCase()}\n`;
   data.skills.professional.forEach(s => {
-    txt += `${s.category}: ${s.tools}\n`;
+    const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
+    txt += `${s.category}: ${tools}\n`;
   });
   
   txt += `\n${t.education.toUpperCase()}\n`;
@@ -1110,7 +1174,10 @@ function generateMarkdown(data, lang) {
     md += "\n";
   });
   md += "## " + t.proSkills + "\n";
-  data.skills.professional.forEach(s => { md += "- **" + s.category + "**: " + s.tools + "\n"; });
+  data.skills.professional.forEach(s => {
+    const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
+    md += "- **" + s.category + "**: " + tools + "\n";
+  });
   md += "\n## " + t.certifications + "\n"; data.certifications.forEach(cert => md += "- " + cert + "\n");
   md += "\n"; return md;
 }
