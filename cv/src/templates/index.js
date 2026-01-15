@@ -652,6 +652,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${c.name} - ${c.title[lang]}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap"></noscript>
     
     <!-- SEO & Canonical -->
     <link rel="canonical" href="https://tomzone.fr/index_${lang}.html" />
