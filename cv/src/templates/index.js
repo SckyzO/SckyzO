@@ -105,8 +105,9 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const proSkillsPrimary = data.skills.professional.slice(0, 4);
   const proSkillsSecondary = data.skills.professional.slice(4);
   const experiencesPage1 = data.experiences.slice(0, 1);
-  const experiencesPage2 = data.experiences.slice(1, 4);
-  const experiencesPage3 = data.experiences.slice(4);
+  const experiencesPage2Count = mode === 'pdf' ? 2 : 3;
+  const experiencesPage2 = data.experiences.slice(1, 1 + experiencesPage2Count);
+  const experiencesPage3 = data.experiences.slice(1 + experiencesPage2Count);
 
   const normalizeTools = (tools) => {
     if (Array.isArray(tools)) return tools.filter(Boolean);
