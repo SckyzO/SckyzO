@@ -109,6 +109,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
   const fontSize = Number.isFinite(options.fontSize) ? Math.max(12, Math.min(20, options.fontSize)) : 15;
   const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
+  const canonicalUrl = options.canonicalUrl || `https://tomzone.fr/index_${lang}.html`;
   const ogLocale = lang === 'fr' ? 'fr_FR' : 'en_US';
   const ogLocaleAlt = lang === 'fr' ? 'en_US' : 'fr_FR';
   
@@ -655,11 +656,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Archivo+Black&family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&family=Michroma&family=Fira+Code:wght@300..700&family=Montserrat:wght@100..900&family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap"></noscript>
     
     <!-- SEO & Canonical -->
-    <link rel="canonical" href="https://tomzone.fr/index_${lang}.html" />
+    <link rel="canonical" href="${canonicalUrl}" />
     <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
     <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
     <link rel="alternate" hreflang="x-default" href="https://tomzone.fr/" />
@@ -671,7 +672,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tomzone.fr/index_${lang}.html">
+    <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:title" content="${c.name} - ${c.title[lang]}">
     <meta property="og:description" content="${t1.ogDescription}">
     <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
@@ -681,7 +682,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://tomzone.fr/index_${lang}.html">
+    <meta property="twitter:url" content="${canonicalUrl}">
     <meta property="twitter:title" content="${c.name} - ${c.title[lang]}">
     <meta property="twitter:description" content="${t1.twitterDescription}">
     <meta property="twitter:image" content="https://tomzone.fr/preview_${lang}.png">
@@ -836,7 +837,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelScale}</label>
         <div class="flex items-center gap-4 px-2 mb-8 text-white">
             <span style="font-size: 12px !important; color: inherit;" class="font-serif italic opacity-40">a</span>
-            <input type="range" min="12" max="20" value="15" step="1" oninput="setFontSize(this.value)" class="flex-grow">
+            <input type="range" min="12" max="20" value="15" step="1" oninput="setFontSize(this.value)" class="flex-grow" aria-label="${t1.settingsLabelScale}">
             <span style="font-size: 20px !important; color: inherit;" class="font-serif italic opacity-40">A</span>
         </div>
 
@@ -861,10 +862,10 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="text-[0.7rem] text-[var(--text-muted)] opacity-70">${t1.settingsAccessibilityDescription}</div>
                 </div>
             </div>
-            <label class="switch">
-                <input type="checkbox" id="toggle-contrast" onchange="setContrast(this.checked)">
-                <span class="slider"></span>
-            </label>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-contrast" onchange="setContrast(this.checked)" aria-label="${t1.settingsAccessibilityTitle}">
+                    <span class="slider"></span>
+                </label>
         </div>
 
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelFontStack}</label>

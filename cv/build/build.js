@@ -329,7 +329,9 @@ async function build() {
   // 1) Generate interactive index (default FR).
   logStep('🧩', 'Generating interactive index (index.html)...');
   const qrDefault = await QRCode.toDataURL('https://tomzone.fr', { margin: 1, width: 100, color: { dark: '#000000', light: '#ffffff' } });
-  const htmlInteractive = generateHTML(data, 'fr', activity, qrDefault, 'interactive', clientScript);
+  const htmlInteractive = generateHTML(data, 'fr', activity, qrDefault, 'interactive', clientScript, {
+    canonicalUrl: 'https://tomzone.fr/'
+  });
   fs.writeFileSync(path.join(OUTPUT_DIR, "index.html"), htmlInteractive);
 
   // 2) Generate PDF-specific files (FR/EN).

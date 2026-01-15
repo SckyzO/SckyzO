@@ -10,11 +10,41 @@ const colors = [
 ];
 const defaultAccent = '#3b82f6';
 const defaultAccentRgba = '59, 130, 246';
+const fontStackUrls = {
+    hub: 'https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400..700&display=swap',
+    geist: 'https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap',
+    space: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=IBM+Plex+Mono:wght@300..700&display=swap',
+    archivo: 'https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400..700&display=swap',
+    quantum: 'https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300..900&display=swap',
+    console: 'https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap',
+    architect: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap',
+    oxy: 'https://fonts.googleapis.com/css2?family=Oxygen:wght@300..700&family=Oxygen+Mono&display=swap',
+    tty: 'https://fonts.googleapis.com/css2?family=VT323&display=swap'
+};
+const loadedFontStacks = new Set(['architect']);
+
+function ensureFontStackLoaded(stack) {
+    const href = fontStackUrls[stack];
+    if (!href || loadedFontStacks.has(stack)) return;
+    if (document.querySelector(`link[data-font-stack="${stack}"]`)) {
+        loadedFontStacks.add(stack);
+        return;
+    }
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.media = 'print';
+    link.onload = () => { link.media = 'all'; };
+    link.href = href;
+    link.setAttribute('data-font-stack', stack);
+    document.head.appendChild(link);
+    loadedFontStacks.add(stack);
+}
 
 // Initialisation immédiate des icônes
 try { lucide.createIcons(); } catch(e) { console.error("Lucide init failed", e); }
 
 let lastSettingsTrigger = null;
+let settingsHintSize = null;
 function toggleSettings(event) {
     if (event && typeof event.stopPropagation === 'function') event.stopPropagation();
     const panel = document.getElementById('settings-panel');
@@ -116,6 +146,7 @@ function setFontSize(s) {
 }
 
 function setFontStack(f) {
+    ensureFontStackLoaded(f);
     const b = document.getElementById('body-root');
     b.classList.remove('font-hub', 'font-geist', 'font-space', 'font-archivo', 'font-quantum', 'font-console', 'font-architect', 'font-oxy');
     b.classList.add('font-' + f);
@@ -324,6 +355,7 @@ function showSettingsHint() {
     if (!hint) return;
     if (localStorage.getItem('cv-settings-hint') === 'true') return;
     hint.classList.add('show');
+    settingsHintSize = null;
     requestAnimationFrame(() => positionSettingsHint());
     localStorage.setItem('cv-settings-hint', 'true');
     setTimeout(() => hideSettingsHint(), SETTINGS_HINT_TIMEOUT_MS);
@@ -361,11 +393,19 @@ function positionSettingsHint() {
         return;
     }
     const cogRect = cog.getBoundingClientRect();
-    const hintRect = hint.getBoundingClientRect();
-    const hintWidth = hintRect.width || hint.offsetWidth;
-    const hintHeight = hintRect.height || hint.offsetHeight;
+    if (!settingsHintSize) {
+        const hintRect = hint.getBoundingClientRect();
+        settingsHintSize = {
+            width: hintRect.width || hint.offsetWidth,
+            height: hintRect.height || hint.offsetHeight
+        };
+    }
+    const hintWidth = settingsHintSize.width;
+    const hintHeight = settingsHintSize.height;
     const gap = 20;
-    const panelTop = panel ? parseFloat(window.getComputedStyle(panel).top) : null;
+    const panelTop = panel && panel.classList.contains('open')
+        ? parseFloat(window.getComputedStyle(panel).top)
+        : null;
     const maxTop = Number.isFinite(panelTop) ? panelTop - 8 : window.innerHeight;
     const preferredTop = cogRect.top + (cogRect.height / 2) - (hintHeight / 2);
     const top = Math.max(16, Math.min(preferredTop, window.innerHeight - hintHeight - 16, maxTop));
@@ -443,6 +483,7 @@ function updateTTY(forceState = null) {
     document.body.classList.toggle('mode-tty', newState);
     localStorage.setItem('cv-tty', newState);
     updateToggleUI('tty', newState);
+    if (newState) ensureFontStackLoaded('tty');
     if (newState) {
         startMatrixBackground();
     } else {
@@ -604,6 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedAccent = localStorage.getItem('cv-accent') || '#3b82f6';
     const savedFontSize = localStorage.getItem('cv-font-size') || '15'; 
     const savedFontStack = localStorage.getItem('cv-font-stack') || 'architect';
+    ensureFontStackLoaded(savedFontStack);
     setTheme(savedTheme); 
     setAccent(savedAccent); 
     setFontSize(savedFontSize); 
@@ -687,6 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', () => {
     const hint = document.getElementById('settings-hint');
+    settingsHintSize = null;
     if (hint && hint.classList.contains('show')) {
         positionSettingsHint();
     }
