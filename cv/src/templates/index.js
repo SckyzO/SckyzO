@@ -951,20 +951,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </p>
 
                 <!-- Metrics Bar -->
-                <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
+                <div class="grid grid-cols-3 gap-4 border-t border-[var(--border-card)] pt-6 mt-2 md:flex md:justify-start md:gap-6">
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.yearsExp}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.yearsExp}</span>
                     </div>
-                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.certifications}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.certifications}</span>
                     </div>
-                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t1.publicRepos}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.publicRepos}</span>
                     </div>
                     
                     <div class="flex-grow"></div>
@@ -1050,20 +1050,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </p>
 
                 <!-- Metrics Bar -->
-                <div class="flex flex-wrap justify-center md:justify-start gap-6 border-t border-[var(--border-card)] pt-6 mt-2">
+                <div class="grid grid-cols-3 gap-4 border-t border-[var(--border-card)] pt-6 mt-2 md:flex md:justify-start md:gap-6">
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.yearsExp}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.yearsExp}</span>
                     </div>
-                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.certifications}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.certifications}</span>
                     </div>
-                    <div class="w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
                     <div class="flex flex-col items-center md:items-start gap-1">
                         <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50">${t2.publicRepos}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.publicRepos}</span>
                     </div>
                     
                     <div class="flex-grow"></div>
