@@ -44,7 +44,10 @@
     {
       "company": "Eviden (ex-Bull)",
       "period": "2020 – Present",
-      "role": { "fr": "Tech Lead Monitoring / Ingénieur Système", "en": "Monitoring Tech Lead / System Engineer" },
+      "role": {
+        "fr": "Tech Lead Monitoring / Ingénieur Système",
+        "en": "Monitoring Tech Lead / System Engineer"
+      },
       "summary": {
         "fr": "Spécialisé en HPC, stockage HPSS et Tech Lead Monitoring. Déploiement de systèmes à grande échelle dans le monde entier.",
         "en": "Specialized in HPC, HPSS storage, and Monitoring Tech Lead. Working on large-scale system deployments worldwide."
@@ -111,7 +114,10 @@
     {
       "company": "Gfi Informatique",
       "period": "2018 – 2020",
-      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "role": {
+        "fr": "Ingénieur Système",
+        "en": "System Engineer"
+      },
       "summary": {
         "fr": "Spécialisé en Linux, Stockage, Cloud et DevOps pour des environnements d'entreprise critiques.",
         "en": "Specialized in Linux, Storage, Cloud, and DevOps for large-scale enterprise environments."
@@ -163,7 +169,10 @@
     {
       "company": "D-Fi Services",
       "period": "2010 – 2018",
-      "role": { "fr": "Ingénieur Système", "en": "System Engineer" },
+      "role": {
+        "fr": "Ingénieur Système",
+        "en": "System Engineer"
+      },
       "summary": {
         "fr": "Expert en Linux, Stockage, Virtualisation et HPC pour l'aéronautique.",
         "en": "Expert in Linux, Storage, Virtualization, and HPC for the aeronautics industry."
@@ -200,7 +209,10 @@
     {
       "company": "APX (Axians)",
       "period": "2006 – 2010",
-      "role": { "fr": "Administrateur Systèmes & Réseaux", "en": "System & Network Administrator" },
+      "role": {
+        "fr": "Administrateur Systèmes & Réseaux",
+        "en": "System & Network Administrator"
+      },
       "summary": {
         "fr": "Mise en place de solutions PCA/PRA et administration stockage/sauvegarde.",
         "en": "Implementation of BCP/DR solutions and storage/backup administration."
@@ -209,8 +221,14 @@
         {
           "title": "Infrastructure & Backup",
           "items": {
-            "fr": ["<strong>PCA/PRA</strong> : NetApp & VMware pour grands comptes (Airbus, CNES).", "<strong>Sauvegarde</strong> : Time Navigator (Atempo), NAS NetApp."],
-            "en": ["<strong>BCP/DR</strong>: NetApp & VMware for major accounts.", "<strong>Backup</strong>: Time Navigator (Atempo), NetApp NAS."]
+            "fr": [
+              "<strong>PCA/PRA</strong> : NetApp & VMware pour grands comptes (Airbus, CNES).",
+              "<strong>Sauvegarde</strong> : Time Navigator (Atempo), NAS NetApp."
+            ],
+            "en": [
+              "<strong>BCP/DR</strong>: NetApp & VMware for major accounts.",
+              "<strong>Backup</strong>: Time Navigator (Atempo), NetApp NAS."
+            ]
           }
         }
       ]
@@ -218,7 +236,10 @@
     {
       "company": "Scasicomp",
       "period": "2004 – 2006",
-      "role": { "fr": "Administrateur Systèmes & Réseaux", "en": "System & Network Administrator" },
+      "role": {
+        "fr": "Administrateur Systèmes & Réseaux",
+        "en": "System & Network Administrator"
+      },
       "summary": {
         "fr": "Support et administration stockage/sauvegarde en environnement industriel.",
         "en": "Support and administration of storage/backup in industrial environments."
@@ -227,8 +248,16 @@
         {
           "title": "Storage & Systems",
           "items": {
-            "fr": ["<strong>Stockage NetApp</strong> : Installation NAS.", "<strong>Sauvegarde</strong> : Robotiques (STK, Quantum), NetBackup.", "<strong>Systèmes</strong> : Admin Windows/Linux."],
-            "en": ["<strong>NetApp Storage</strong>: NAS Installation.", "<strong>Backup</strong>: Robotics (STK, Quantum), NetBackup.", "<strong>Systems</strong>: Windows/Linux Admin."]
+            "fr": [
+              "<strong>Stockage NetApp</strong> : Installation NAS.",
+              "<strong>Sauvegarde</strong> : Robotiques (STK, Quantum), NetBackup.",
+              "<strong>Systèmes</strong> : Admin Windows/Linux."
+            ],
+            "en": [
+              "<strong>NetApp Storage</strong>: NAS Installation.",
+              "<strong>Backup</strong>: Robotics (STK, Quantum), NetBackup.",
+              "<strong>Systems</strong>: Windows/Linux Admin."
+            ]
           }
         }
       ]
@@ -236,24 +265,65 @@
   ],
   "education": [
     {
-      "degree": { "fr": "BTS Informatique de Gestion", "en": "Associate Degree in IT Management" },
+      "degree": {
+        "fr": "BTS Informatique de Gestion",
+        "en": "Associate Degree in IT Management"
+      },
       "school": "Toulouse, FR",
       "year": "2006"
     },
     {
-      "degree": { "fr": "Baccalauréat STT Gestion & Compta (Arts Plastiques)", "en": "High School Diploma - Management & Accounting (Arts Option)" },
+      "degree": {
+        "fr": "Baccalauréat STT Gestion & Compta (Arts Plastiques)",
+        "en": "High School Diploma - Management & Accounting (Arts Option)"
+      },
       "school": "Montauban, FR",
       "year": "2003"
     }
   ],
   "certifications": [
-    { "name": "AWS Architect Associate", "issuer": "Amazon Web Services", "year": "2020", "icon": "cloud" },
-    { "name": "Kubernetes Les fondamentaux", "issuer": "GFI", "year": "2019", "icon": "box" },
-    { "name": "RHCSA Linux RedHat 7", "issuer": "RedHat", "year": "2017", "icon": "terminal" },
-    { "name": "RHCSA, Satellite", "issuer": "RedHat • Paris", "year": "2014", "icon": "server" },
-    { "name": "NetApp Cluster CDOT", "issuer": "NetApp • Paris", "year": "2013", "icon": "database" },
-    { "name": "VMware vSphere 5.1", "issuer": "VMware • Paris", "year": "2013", "icon": "monitor" },
-    { "name": "NDCA NetApp Advanced", "issuer": "NetApp • Paris", "year": "2011", "icon": "database" }
+    {
+      "name": "AWS Architect Associate",
+      "issuer": "Amazon Web Services",
+      "year": "2020",
+      "icon": "cloud"
+    },
+    {
+      "name": "Kubernetes Les fondamentaux",
+      "issuer": "GFI",
+      "year": "2019",
+      "icon": "box"
+    },
+    {
+      "name": "RHCSA Linux RedHat 7",
+      "issuer": "RedHat",
+      "year": "2017",
+      "icon": "terminal"
+    },
+    {
+      "name": "RHCSA, Satellite",
+      "issuer": "RedHat • Paris",
+      "year": "2014",
+      "icon": "server"
+    },
+    {
+      "name": "NetApp Cluster CDOT",
+      "issuer": "NetApp • Paris",
+      "year": "2013",
+      "icon": "database"
+    },
+    {
+      "name": "VMware vSphere 5.1",
+      "issuer": "VMware • Paris",
+      "year": "2013",
+      "icon": "monitor"
+    },
+    {
+      "name": "NDCA NetApp Advanced",
+      "issuer": "NetApp • Paris",
+      "year": "2011",
+      "icon": "database"
+    }
   ],
   "projects": [
     {
@@ -263,7 +333,11 @@
         "en": "Unified observability portal for hybrid infrastructures. Aggregating Prometheus metrics and Grafana dashboards."
       },
       "github": "SckyzO/Monitoring-Hub",
-      "tools": ["Next.js", "Prometheus", "Tailwind"],
+      "tools": [
+        "Next.js",
+        "Prometheus",
+        "Tailwind"
+      ],
       "icon": "layout-dashboard"
     },
     {
@@ -273,7 +347,11 @@
         "en": "Full smart home automation via MQTT, ESP32, and local Kubernetes integration."
       },
       "github": "SckyzO/home-ops",
-      "tools": ["MQTT", "ESP32", "Docker"],
+      "tools": [
+        "MQTT",
+        "ESP32",
+        "Docker"
+      ],
       "icon": "home"
     },
     {
@@ -283,57 +361,250 @@
         "en": "Data-driven CV engine generating HTML, PDF, and Markdown via an automated CI/CD pipeline."
       },
       "github": "SckyzO/SckyzO",
-      "tools": ["Node.js", "Playwright", "Docker"],
+      "tools": [
+        "Node.js",
+        "Playwright",
+        "Docker"
+      ],
       "icon": "file-code"
     }
   ],
   "languages": {
     "fr": [
-      { "name": "Français", "level": "Maternel" },
-      { "name": "Anglais", "level": "Technique" }
+      {
+        "name": "Français",
+        "level": "Maternel"
+      },
+      {
+        "name": "Anglais",
+        "level": "Technique"
+      }
     ],
     "en": [
-      { "name": "French", "level": "Native" },
-      { "name": "English", "level": "Professional / Technical" }
+      {
+        "name": "French",
+        "level": "Native"
+      },
+      {
+        "name": "English",
+        "level": "Professional / Technical"
+      }
     ]
   },
   "skills": {
     "professional": [
-      { "category": "Linux", "tools": "RedHat, Rocky, Debian", "icon": "server", "level": 95 },
-      { "category": "HPC", "tools": "Slurm, Infiniband, ESS", "icon": "cpu", "level": 90 },
-      { "category": "Storage", "tools": "NetApp, HPSS, Ceph", "icon": "database", "level": 85 },
-      { "category": "DevOps", "tools": "Ansible, Terraform, CI/CD", "icon": "git-branch", "level": 88 },
-      { "category": "Observability", "tools": "Prometheus, Grafana, ELK", "icon": "activity", "level": 92 },
-      { "category": "Cloud/Virt", "tools": "AWS, GCP, VMware", "icon": "cloud", "level": 80 },
-      { "category": "Development", "tools": "Bash, Python, APIs", "icon": "code-2", "level": 85 },
-      { "category": "IoT/3D", "tools": "MQTT, ESP32, Fusion 360", "icon": "radio", "level": 75 }
+      {
+        "category": "Linux & Infrastructure",
+        "description": "System administration",
+        "icon": "server",
+        "tools": [
+          "RHEL",
+          "Rocky Linux",
+          "Debian",
+          "Ubuntu",
+          "Systemd",
+          "Networking",
+          "Security",
+          "Bare metal",
+          "HA",
+          "Production environments",
+          "Hardening",
+          "Performance tuning"
+        ]
+      },
+      {
+        "category": "HPC Systems",
+        "description": "High-performance computing",
+        "icon": "cpu",
+        "tools": [
+          "Cluster",
+          "Slurm",
+          "InfiniBand",
+          "Large-scale clusters",
+          "Deployment",
+          "CPU / GPU environments",
+          "Job scheduling",
+          "Resource management"
+        ]
+      },
+      {
+        "category": "Observability",
+        "description": "Monitoring & logs",
+        "icon": "activity",
+        "tools": [
+          "Prometheus",
+          "Grafana",
+          "Loki",
+          "Thanos",
+          "Alertmanager",
+          "ELK",
+          "Custom exporters",
+          "Dashboards",
+          "Alerting"
+        ]
+      },
+      {
+        "category": "Storage & Data",
+        "description": "Enterprise storage",
+        "icon": "database",
+        "tools": [
+          "NetApp",
+          "Ceph",
+          "HPSS",
+          "GPFS",
+          "NFS",
+          "iSCSI",
+          "Object storage",
+          "Backup",
+          "Replication",
+          "Lustre"
+        ]
+      },
+      {
+        "category": "DevOps & Automation",
+        "description": "CI/CD, automation, infrastructure",
+        "icon": "git-branch",
+        "tools": [
+          "Ansible",
+          "Terraform",
+          "Git",
+          "CI/CD",
+          "Git workflows",
+          "Infrastructure as Code",
+          "Automation",
+          "Tower"
+        ]
+      },
+      {
+        "category": "Development & Tooling",
+        "description": "Scripting & tooling",
+        "icon": "code",
+        "tools": [
+          "Bash",
+          "Python",
+          "Go",
+          "REST APIs",
+          "CLI tools",
+          "Custom Exporters",
+          "Custom tooling",
+          "Automation scripts"
+        ]
+      }
     ],
     "personal": {
       "fr": [
-        { "label": "Adaptable", "desc": "S'adapte à divers environnements & projets", "icon": "refresh-cw" },
-        { "label": "Minutieux", "desc": "Précision dans les configurations & déploiements", "icon": "search" },
-        { "label": "Autonome", "desc": "Prise d'initiative et amélioration des processus", "icon": "rocket" },
-        { "label": "Communiquant", "desc": "Explication claire de concepts complexes", "icon": "message-circle" },
-        { "label": "Passionné", "desc": "Investi dans la culture Tech & IT", "icon": "code-2" },
-        { "label": "Pragmatique", "desc": "Équilibre entre théorie et réalité terrain", "icon": "hammer" },
-        { "label": "Esprit d'équipe", "desc": "Travail efficace avec collègues & clients", "icon": "users" },
-        { "label": "Curieux", "desc": "Veille technologique constante", "icon": "lightbulb" },
-        { "label": "Créatif", "desc": "Solutions innovantes aux problèmes", "icon": "palette" },
-        { "label": "Fiable", "desc": "Travail de qualité dans les délais", "icon": "shield-check" },
-        { "label": "Analytique", "desc": "Résolution de défis techniques complexes", "icon": "bar-chart-2" }
+        {
+          "label": "Adaptable",
+          "desc": "S'adapte à divers environnements & projets",
+          "icon": "refresh-cw"
+        },
+        {
+          "label": "Minutieux",
+          "desc": "Précision dans les configurations & déploiements",
+          "icon": "search"
+        },
+        {
+          "label": "Autonome",
+          "desc": "Prise d'initiative et amélioration des processus",
+          "icon": "rocket"
+        },
+        {
+          "label": "Communiquant",
+          "desc": "Explication claire de concepts complexes",
+          "icon": "message-circle"
+        },
+        {
+          "label": "Passionné",
+          "desc": "Investi dans la culture Tech & IT",
+          "icon": "code-2"
+        },
+        {
+          "label": "Pragmatique",
+          "desc": "Équilibre entre théorie et réalité terrain",
+          "icon": "hammer"
+        },
+        {
+          "label": "Esprit d'équipe",
+          "desc": "Travail efficace avec collègues & clients",
+          "icon": "users"
+        },
+        {
+          "label": "Curieux",
+          "desc": "Veille technologique constante",
+          "icon": "lightbulb"
+        },
+        {
+          "label": "Créatif",
+          "desc": "Solutions innovantes aux problèmes",
+          "icon": "palette"
+        },
+        {
+          "label": "Fiable",
+          "desc": "Travail de qualité dans les délais",
+          "icon": "shield-check"
+        },
+        {
+          "label": "Analytique",
+          "desc": "Résolution de défis techniques complexes",
+          "icon": "bar-chart-2"
+        }
       ],
       "en": [
-        { "label": "Adaptable", "desc": "Handling diverse environments & projects", "icon": "refresh-cw" },
-        { "label": "Detail-Oriented", "desc": "Ensuring precision in configurations & deployments", "icon": "search" },
-        { "label": "Autonomous", "desc": "Taking initiative and improving processes", "icon": "rocket" },
-        { "label": "Good Communicator", "desc": "Explaining complex concepts clearly", "icon": "message-circle" },
-        { "label": "Geek & Passionate", "desc": "Deeply invested in technology and IT culture", "icon": "code-2" },
-        { "label": "Hands-On", "desc": "Balancing theory with real-world application", "icon": "hammer" },
-        { "label": "Team Player", "desc": "Working efficiently with colleagues & clients", "icon": "users" },
-        { "label": "Curious", "desc": "Staying up-to-date with tech trends", "icon": "lightbulb" },
-        { "label": "Creative", "desc": "Finding innovative solutions to problems", "icon": "palette" },
-        { "label": "Reliable", "desc": "Delivering high-quality work on time", "icon": "shield-check" },
-        { "label": "Analytical", "desc": "Solving complex technical challenges", "icon": "bar-chart-2" }
+        {
+          "label": "Adaptable",
+          "desc": "Handling diverse environments & projects",
+          "icon": "refresh-cw"
+        },
+        {
+          "label": "Detail-Oriented",
+          "desc": "Ensuring precision in configurations & deployments",
+          "icon": "search"
+        },
+        {
+          "label": "Autonomous",
+          "desc": "Taking initiative and improving processes",
+          "icon": "rocket"
+        },
+        {
+          "label": "Good Communicator",
+          "desc": "Explaining complex concepts clearly",
+          "icon": "message-circle"
+        },
+        {
+          "label": "Geek & Passionate",
+          "desc": "Deeply invested in technology and IT culture",
+          "icon": "code-2"
+        },
+        {
+          "label": "Hands-On",
+          "desc": "Balancing theory with real-world application",
+          "icon": "hammer"
+        },
+        {
+          "label": "Team Player",
+          "desc": "Working efficiently with colleagues & clients",
+          "icon": "users"
+        },
+        {
+          "label": "Curious",
+          "desc": "Staying up-to-date with tech trends",
+          "icon": "lightbulb"
+        },
+        {
+          "label": "Creative",
+          "desc": "Finding innovative solutions to problems",
+          "icon": "palette"
+        },
+        {
+          "label": "Reliable",
+          "desc": "Delivering high-quality work on time",
+          "icon": "shield-check"
+        },
+        {
+          "label": "Analytical",
+          "desc": "Solving complex technical challenges",
+          "icon": "bar-chart-2"
+        }
       ]
     }
   }
