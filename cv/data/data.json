@@ -60,13 +60,13 @@
           },
           "items": {
             "fr": [
-              "<strong>Architecte</strong> : Architecture de plateformes d’observabilité : conception de stacks de monitoring complètes (Prometheus, Grafana, Thanos), adaptées à des environnements distribués et à grande échelle.",
+              "<strong>Architecte</strong> : Architecture de plateformes d’observabilité : conception de stacks de monitoring complètes (Prometheus, Grafana, Thanos), adaptées à des environnements distribués et à grande échelle (Météo-France, EDF, IDRIS GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
               "<strong>Tech Lead</strong> : Référent technique et garant des bonnes pratiques pour les équipes de livraison.",
               "<strong>Expertise Prometheus & Grafana</strong> : Conception de dashboards, alerting et stacks d'observabilité.",
               "<strong>Développement</strong> : Création d'exporters sur-mesure et contributions Open Source."
             ],
             "en": [
-              "<strong>Architect</strong>: Observability platform architecture: design of complete monitoring stacks (Prometheus, Grafana, Thanos), tailored for large-scale, distributed environments.",
+              "<strong>Architect</strong>: Observability platform architecture: design of complete monitoring stacks (Prometheus, Grafana, Thanos), tailored for large-scale, distributed environments (Météo-France, EDF, IDRIS GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
               "<strong>Tech Lead</strong>: Lead expert ensuring best practices and deployment strategies.",
               "<strong>Prometheus & Grafana Expert</strong>: Designing custom dashboards, alerting systems, and observability stacks.",
               "<strong>Development</strong>: Creating custom exporters and contributing to Open Source."
@@ -80,13 +80,13 @@
           },
           "items": {
             "fr": [
-              "<strong>Déploiement HPC</strong> : Installation, configuration et optimisation de clusters HPC chez des clients internationaux, de quelques dizaines à plus de 2000 nœuds.",
+              "<strong>Déploiement HPC</strong> : Installation, configuration et optimisation de clusters HPC chez des clients internationaux, de quelques dizaines à plus de 2000 nœuds (EDF, Thales, CALMIP, CERFACS, CNES).",
               "<strong>Stacks de déploiement</strong> : Mise en place et intégration de stacks HPC complètes (nœuds de management, login, compute, visualisation), avec automatisation des déploiements.",
               "<strong>Technologies</strong> : Slurm, InfiniBand, environnements CPU/GPU, MPI, BlueBanquise, GPFS, Lustre.",
               "<strong>Administration & exploitation</strong> : Administration de clusters HPC en production, gestion du scheduling et optimisation des performances."
             ],
             "en": [
-              "<strong>HPC delivery</strong>: Installation, configuration and optimization of HPC clusters for international customers, ranging from a few dozen to over 2000 nodes.",
+              "<strong>HPC delivery</strong>: Installation, configuration and optimization of HPC clusters for international customers, ranging from a few dozen to over 2000 nodes (EDF, Thales, CALMIP, CERFACS, CNES).",
               "<strong>Deployment stacks</strong>: Design and integration of complete HPC stacks (management, login, compute and visualization nodes), with automated deployments.",
               "<strong>Technologies</strong>: Slurm, InfiniBand, CPU/GPU environments, MPI, BlueBanquise, GPFS, Lustre.",
               "<strong>Administration & operations</strong>: Administration of production HPC clusters, scheduling management and performance optimization."
@@ -148,11 +148,11 @@
           },
           "items": {
             "fr": [
-              "<strong>Cloud Infrastructure</strong> : AWS, GCP, OpenShift, architectures hybrides on-premise / cloud, Kubernetes / Rancher.",
+              "<strong>Cloud Infrastructure</strong> : AWS, GCP, OpenShift, architectures hybrides on-premise / cloud, Kubernetes / Rancher (Thales Alenia Space, Leroy Merlin).",
               "<strong>Virtualisation</strong> : Administration KVM, VMware, Red Hat, Debian."
             ],
             "en": [
-              "<strong>Cloud Infrastructure</strong>: AWS, GCP, OpenShift, hybrid on-premise/cloud architectures, Kubernetes / Rancher.",
+              "<strong>Cloud Infrastructure</strong>: AWS, GCP, OpenShift, hybrid on-premise/cloud architectures, Kubernetes / Rancher (Thales Alenia Space, Leroy Merlin).",
               "<strong>Virtualization</strong>: Administering KVM, VMware, Red Hat, Debian environments."
             ]
           }
@@ -212,12 +212,12 @@
           },
           "items": {
             "fr": [
-              "<strong>Linux</strong> : Administration et support Linux en production, rôle de référent Linux/Unix, puis évolution vers un rôle d’architecte de l’infrastructure Linux (Red Hat, IdM/LDAP, Satellite).",
-              "<strong>HPC</strong> : Intégration et exploitation de plateformes de calcul industrielles (PBS, RHEL, Nastran, Samcef, Abaqus)."
+              "<strong>Linux</strong> : Administration et support Linux en production, rôle de référent Linux/Unix, puis évolution vers un rôle d’architecte de l’infrastructure Linux (Red Hat, IdM/LDAP, Satellite) (Safran, Cémoi, Thales, Air France).",
+              "<strong>HPC</strong> : Intégration et exploitation de plateformes de calcul industrielles (PBS, RHEL, Nastran, Samcef, Abaqus) (Safran)."
             ],
             "en": [
-              "<strong>Linux</strong>: Production Linux administration and support, Linux/Unix technical lead, then evolution to Linux infrastructure architect (Red Hat, IdM/LDAP, Satellite).",
-              "<strong>HPC</strong>: Integration and operations of industrial compute platforms (PBS, RHEL, Nastran, Samcef, Abaqus)."
+              "<strong>Linux</strong>: Production Linux administration and support, Linux/Unix technical lead, then evolution to Linux infrastructure architect (Red Hat, IdM/LDAP, Satellite) (Safran, Cémoi, Thales, Air France).",
+              "<strong>HPC</strong>: Integration and operations of industrial compute platforms (PBS, RHEL, Nastran, Samcef, Abaqus) (Safran)."
             ]
           }
         },
@@ -452,14 +452,13 @@
           "Rocky Linux",
           "Debian",
           "Ubuntu",
-          "Systemd",
           "Networking",
           "Security",
           "Bare metal",
           "HA",
+          "Performance tuning",
           "Production environments",
-          "Hardening",
-          "Performance tuning"
+          "Hardening"
         ]
       },
       {
@@ -502,7 +501,7 @@
           "Thanos",
           "Alertmanager",
           "ELK",
-          "Custom exporters",
+          "Exporters",
           "Dashboards",
           "Alerting"
         ]
@@ -523,12 +522,12 @@
           "Ceph",
           "HPSS",
           "GPFS",
+          "Lustre",
           "NFS",
-          "iSCSI",
+          "PRA/PCA",
           "Object storage",
           "Backup",
-          "Replication",
-          "Lustre"
+          "Replication"
         ]
       },
       {
@@ -548,9 +547,9 @@
           "Git",
           "CI/CD",
           "Git workflows",
+          "AWX",
           "Infrastructure as Code",
-          "Automation",
-          "Tower"
+          "Automation"
         ]
       },
       {
