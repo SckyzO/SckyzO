@@ -551,11 +551,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const profileSection = flip(`
                 <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
+                    <div class="card p-12 text-left text-[1.05rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.15rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
+                    <div class="card p-12 text-left text-[1.05rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
                 </section>`, 'delay-200');
 
   const mainContent = isInteractive ? `

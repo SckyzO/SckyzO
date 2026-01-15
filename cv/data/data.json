@@ -17,25 +17,25 @@
   "summary": {
     "fr": [
       {
-        "title": "Ingénieur Système passionné",
-        "text": "Avec 20 ans d'expérience dans l'IT, j'ai exploré de nombreux domaines, mais mon expertise s'est forgée sur Linux, le HPC et l'Automatisation. Aujourd'hui, mon focus est l'Observabilité : en tant que Tech Lead, je conçois des architectures de monitoring avancées et je développe mes propres outils, comme des exporters Prometheus, pour répondre aux défis techniques les plus complexes.",
+        "title": "Ingénieur Système Senior Passionné",
+        "text": "Ingénieur Systèmes et HPC avec plus de 20 ans d’expérience, j’ai construit mon expertise autour de Linux, des environnements HPC et de l’automatisation. Au fil des années, je me suis spécialisé dans l’observabilité : conception d’architectures de monitoring à grande échelle, mise en place de stacks Prometheus/Grafana, et développement d’outils sur mesure lorsque les solutions existantes ne suffisent pas. Aujourd’hui Tech Lead, j’interviens aussi bien sur l’architecture, que sur le terrain, avec une approche pragmatique orientée fiabilité, exploitation et besoins réels des équipes.",
         "icon": "briefcase"
       },
       {
         "title": "Tech Geek & Maker",
-        "text": "Au-delà du pro, je suis un pur Geek et Gamer. J'adore expérimenter avec le hardware (IoT, ESP...), concevoir des systèmes domotiques intelligents et utiliser l'impression 3D pour concrétiser mes projets. Curieux par nature, je cherche toujours à apprendre et à repousser les limites de ce qui est possible.",
+        "text": "En dehors du travail, je suis un geek assumé : jeux vidéo, impression 3D, CAO, domotique et homelabs font partie de mes terrains d’exploration. Je pratique également le sport, le jardinage et j’aime voyager, des activités qui m’apportent équilibre et ouverture. Curieux par nature, je cherche toujours à apprendre et à repousser les limites de ce qui est possible.",
         "icon": "cpu"
       }
     ],
     "en": [
       {
-        "title": "Passionate System Engineer",
-        "text": "With 20 years of IT experience, I’ve worked across many domains, but my core expertise lies in Linux, HPC, and Automation. Currently, my focus is Observability: as a Tech Lead, I architect advanced monitoring solutions and develop custom Prometheus exporters to tackle the most complex technical challenges.",
+        "title": "Systems and HPC Engineer",
+        "text": "Systems and HPC Engineer with over 20 years of experience, I have built my expertise around Linux, HPC environments, and automation. Over the years, I have specialized in observability: designing large-scale monitoring architectures, deploying Prometheus/Grafana stacks, and developing custom tools when off-the-shelf solutions are not sufficient. Today, as a Tech Lead, I work both on architecture and hands-on operations, with a pragmatic approach focused on reliability, day-to-day operations, and real team needs.",
         "icon": "briefcase"
       },
       {
         "title": "Tech Geek & Maker",
-        "text": "Beyond work, I am a true Tech Geek and Gamer. I love experimenting with hardware (IoT, ESP...), building smart home systems, and using 3D printing to bring ideas to life. Always curious, I constantly strive to learn new things and push the limits of technology.",
+        "text": "Outside of work, I am a self-proclaimed tech geek: video games, 3D printing, CAD, home automation, and homelabs are part of my playgrounds for learning and experimentation. I also enjoy sports, gardening, and traveling, which help me maintain balance and broaden my perspective. Curious by nature, I am always eager to learn and to push the boundaries of what is possible.",
         "icon": "cpu"
       }
     ]
@@ -57,14 +57,16 @@
           "title": "Monitoring & Observability (Tech Lead)",
           "items": {
             "fr": [
+              "<strong>Architecte</strong> : Architecture de plateformes d’observabilité : conception de stacks de monitoring complètes (Prometheus, Grafana, Thanos), adaptées à des environnements distribués et à grande échelle.",
+              "<strong>Tech Lead</strong> : Référent technique et garant des bonnes pratiques pour les équipes de livraison.",
               "<strong>Expertise Prometheus & Grafana</strong> : Conception de dashboards, alerting et stacks d'observabilité.",
-              "<strong>Développement</strong> : Création d'exporters sur-mesure et contributions Open Source.",
-              "<strong>Tech Lead</strong> : Référent technique et garant des bonnes pratiques pour les équipes de livraison."
+              "<strong>Développement</strong> : Création d'exporters sur-mesure et contributions Open Source."
             ],
             "en": [
+              "<strong>Architect</strong>: Observability platform architecture: design of complete monitoring stacks (Prometheus, Grafana, Thanos), tailored for large-scale, distributed environments.",
+              "<strong>Tech Lead</strong>: Lead expert ensuring best practices and deployment strategies.",
               "<strong>Prometheus & Grafana Expert</strong>: Designing custom dashboards, alerting systems, and observability stacks.",
-              "<strong>Development</strong>: Creating custom exporters and contributing to Open Source.",
-              "<strong>Technical Lead</strong>: Lead expert ensuring best practices and deployment strategies."
+              "<strong>Development</strong>: Creating custom exporters and contributing to Open Source."
             ]
           }
         },
@@ -72,14 +74,16 @@
           "title": "HPC (High-Performance Computing)",
           "items": {
             "fr": [
-              "<strong>Déploiement</strong> : Installation et optimisation de clusters mondiaux (10 à 2000+ nœuds).",
-              "<strong>Technologies</strong> : Slurm, Infiniband, Mellanox, GPU acceleration, MPI.",
-              "<strong>Administration</strong> : Gestion de clusters, scheduling et tuning de performance."
+              "<strong>Déploiement HPC</strong> : Installation, configuration et optimisation de clusters HPC chez des clients internationaux, de quelques dizaines à plus de 2000 nœuds.",
+              "<strong>Stacks de déploiement</strong> : Mise en place et intégration de stacks HPC complètes (nœuds de management, login, compute, visualisation), avec automatisation des déploiements.",
+              "<strong>Technologies</strong> : Slurm, InfiniBand, environnements CPU/GPU, MPI, BlueBanquise, GPFS, Lustre.",
+              "<strong>Administration & exploitation</strong> : Administration de clusters HPC en production, gestion du scheduling et optimisation des performances."
             ],
             "en": [
-              "<strong>Deployment</strong>: Installing and optimizing large-scale HPC systems worldwide (10-2000+ nodes).",
-              "<strong>Technologies</strong>: Slurm, Infiniband, Mellanox, GPU acceleration, MPI.",
-              "<strong>Administration</strong>: Managing compute clusters, scheduling systems, and performance tuning."
+              "<strong>HPC delivery</strong>: Installation, configuration and optimization of HPC clusters for international customers, ranging from a few dozen to over 2000 nodes.",
+              "<strong>Deployment stacks</strong>: Design and integration of complete HPC stacks (management, login, compute and visualization nodes), with automated deployments.",
+              "<strong>Technologies</strong>: Slurm, InfiniBand, CPU/GPU environments, MPI, BlueBanquise, GPFS, Lustre.",
+              "<strong>Administration & operations</strong>: Administration of production HPC clusters, scheduling management and performance optimization."
             ]
           }
         },
@@ -87,12 +91,14 @@
           "title": "HPSS (High-Performance Storage System)",
           "items": {
             "fr": [
-              "<strong>Administration</strong> : Implémentation et maintenance d'infrastructures de stockage critiques.",
-              "<strong>Technologies</strong> : IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries."
+              "<strong>Déploiement HPSS</strong> : Système de stockage d’environ 1,2 Exa basé sur HPSS, déployé et exploité chez Météo-France.",
+              "<strong>Administration HPSS</strong> : Installation, configuration et maintien en conditions opérationnelles d’une infrastructure HPSS.",
+              "<strong>Technologies</strong> : IBM HPSS, NetApp, Tape Libraries, Brocade FC switches, Cumulus switches."
             ],
             "en": [
-              "<strong>Administration</strong>: Implementing and maintaining HPSS storage infrastructures.",
-              "<strong>Technologies</strong>: IBM HPSS, NetApp, DDN, IBM ESS, Tape Libraries."
+              "<strong>HPSS deployment</strong>: Approximately 1.2 Exa HPSS-based storage system deployed and operated at Météo-France.",
+              "<strong>HPSS administration</strong>: Installation, configuration and operational maintenance of an HPSS infrastructure.",
+              "<strong>Technologies</strong>: IBM HPSS, NetApp, Tape Libraries, Brocade FC switches, Cumulus switches."
             ]
           }
         },
@@ -100,12 +106,12 @@
           "title": "Development & Automation",
           "items": {
             "fr": [
-              "<strong>Scripting</strong> : Bash & Python avancé pour l'automatisation et le tooling.",
-              "<strong>Infrastructure as Code</strong> : Ansible (Stack Bluebanquise), gestion de configuration et CI."
+              "<strong>Scripting</strong> : Bash, Python et Go pour l’automatisation et le développement d’outils internes.",
+              "<strong>Infrastructure as Code</strong> : Ansible (stack BlueBanquise) pour le déploiement et la configuration des infrastructures, avec intégration CI et workflows Git."
             ],
             "en": [
-              "<strong>Scripting</strong>: Advanced Bash & Python for automation and tooling.",
-              "<strong>Infrastructure as Code</strong>: Ansible (Bluebanquise Stack), configuration management, and CI."
+              "<strong>Scripting</strong>: Bash, Python and Go for automation and internal tool development.",
+              "<strong>Infrastructure as Code</strong>: Ansible (BlueBanquise stack) for infrastructure deployment and configuration, with CI integration and Git workflows."
             ]
           }
         }
@@ -119,19 +125,19 @@
         "en": "System Engineer"
       },
       "summary": {
-        "fr": "Spécialisé en Linux, Stockage, Cloud et DevOps pour des environnements d'entreprise critiques.",
-        "en": "Specialized in Linux, Storage, Cloud, and DevOps for large-scale enterprise environments."
+        "fr": "Expert Linux, stockage, cloud et DevOps pour des clients grands comptes, sur des environnements on-premise et cloud.",
+        "en": "Linux, storage, cloud and DevOps expert for large enterprise customers, across on-premise and cloud environments."
       },
       "domains": [
         {
           "title": "Cloud & Virtualization",
           "items": {
             "fr": [
-              "<strong>Cloud Infrastructure</strong> : AWS, GCP, OpenShift et architectures hybrides.",
+              "<strong>Cloud Infrastructure</strong> : AWS, GCP, OpenShift, architectures hybrides on-premise / cloud, Kubernetes / Rancher.",
               "<strong>Virtualisation</strong> : Administration KVM, VMware, Red Hat, Debian."
             ],
             "en": [
-              "<strong>Cloud Infrastructure</strong>: Managing deployments in AWS, GCP, OpenShift, and hybrid clouds.",
+              "<strong>Cloud Infrastructure</strong>: AWS, GCP, OpenShift, hybrid on-premise/cloud architectures, Kubernetes / Rancher.",
               "<strong>Virtualization</strong>: Administering KVM, VMware, Red Hat, Debian environments."
             ]
           }
@@ -140,14 +146,14 @@
           "title": "DevOps & Automation",
           "items": {
             "fr": [
-              "<strong>CI/CD</strong> : Pipelines Jenkins, Gitlab CI.",
-              "<strong>IaC</strong> : Déploiements automatisés via Ansible.",
-              "<strong>Sécurité</strong> : Hardening système et politiques de sécurité cloud."
+              "<strong>CI/CD</strong> : Pipelines Jenkins, Gitlab CI, Artifactory, VMware vRealize.",
+              "<strong>IaC</strong> : Déploiements automatisés via Ansible, AWX et Terraform.",
+              "<strong>Sécurité</strong> : Hardening système, docker et politiques de sécurité cloud."
             ],
             "en": [
-              "<strong>CI/CD</strong>: Jenkins, Gitlab CI pipelines.",
-              "<strong>IaC</strong>: Automated deployments using Ansible.",
-              "<strong>Security</strong>: System hardening and cloud security policies."
+              "<strong>CI/CD</strong>: Jenkins and Gitlab CI pipelines, Artifactory, VMware vRealize.",
+              "<strong>IaC</strong>: Automated deployments using Ansible, AWX and Terraform.",
+              "<strong>Security</strong>: System and Docker hardening, cloud security policies."
             ]
           }
         },
@@ -156,11 +162,11 @@
           "items": {
             "fr": [
               "<strong>Stockage</strong> : NetApp, Ceph, Object Storage.",
-              "<strong>Logs & Monitoring</strong> : Stack ELK (Elasticsearch, Logstash, Kibana), Prometheus."
+              "<strong>Logs & Monitoring</strong> : Monitoring : Prometheus, Grafana, InfluxDB, ELK, Nagios."
             ],
             "en": [
               "<strong>Storage</strong>: NetApp, Ceph, Object Storage.",
-              "<strong>Logs & Monitoring</strong>: ELK Stack, Prometheus."
+              "<strong>Logs & Monitoring</strong>: Monitoring: Prometheus, Grafana, InfluxDB, ELK, Nagios."
             ]
           }
         }
@@ -174,20 +180,20 @@
         "en": "System Engineer"
       },
       "summary": {
-        "fr": "Expert en Linux, Stockage, Virtualisation et HPC pour l'aéronautique.",
-        "en": "Expert in Linux, Storage, Virtualization, and HPC for the aeronautics industry."
+        "fr": "Ingénieur système Linux, référent Linux/Unix pour des clients internationaux, delivery de plateformes NetApp, VMware et Linux.",
+        "en": "Linux system engineer, Linux/Unix technical reference for international customers, delivering NetApp, VMware and Linux platforms."
       },
       "domains": [
         {
-          "title": "HPC & Systems",
+          "title": "Systems & HPC",
           "items": {
             "fr": [
-              "<strong>HPC</strong> : Architecture supercalculateurs (Nastran, Abaqus, Samcef, PBS).",
-              "<strong>Linux</strong> : Déploiement Red Hat, IdM (LDAP), Satellite."
+              "<strong>Linux</strong> : Administration et support Linux en production, rôle de référent Linux/Unix, puis évolution vers un rôle d’architecte de l’infrastructure Linux (Red Hat, IdM/LDAP, Satellite).",
+              "<strong>HPC</strong> : Intégration et exploitation de plateformes de calcul industrielles (PBS, RHEL, Nastran, Samcef, Abaqus)."
             ],
             "en": [
-              "<strong>HPC</strong>: Supercomputer architecture (Nastran, Abaqus, Samcef, PBS).",
-              "<strong>Linux</strong>: Red Hat deployment, IdM (LDAP), Satellite."
+              "<strong>Linux</strong>: Production Linux administration and support, Linux/Unix technical lead, then evolution to Linux infrastructure architect (Red Hat, IdM/LDAP, Satellite).",
+              "<strong>HPC</strong>: Integration and operations of industrial compute platforms (PBS, RHEL, Nastran, Samcef, Abaqus)."
             ]
           }
         },
@@ -214,20 +220,24 @@
         "en": "System & Network Administrator"
       },
       "summary": {
-        "fr": "Mise en place de solutions PCA/PRA et administration stockage/sauvegarde.",
-        "en": "Implementation of BCP/DR solutions and storage/backup administration."
+        "fr": "Déploiement et mise en production d’infrastructures NetApp et de plateformes de virtualisation VMware.",
+        "en": "Deployment and production rollout of NetApp infrastructures and VMware virtualization platforms."
       },
       "domains": [
         {
-          "title": "Infrastructure & Backup",
+          "title": "Infrastructure, Système & Backup",
           "items": {
             "fr": [
-              "<strong>PCA/PRA</strong> : NetApp & VMware pour grands comptes (Airbus, CNES).",
-              "<strong>Sauvegarde</strong> : Time Navigator (Atempo), NAS NetApp."
+              "<strong>Systèmes</strong> : MCO et support des environnements Linux, NetApp et VMware.",
+              "<strong>Stockage & sauvegarde</strong> : Administration et exploitation de solutions de stockage et de sauvegarde (NAS NetApp, Time Navigator / Atempo).",
+              "<strong>Virtualisation</strong> : Déploiement d’infrastructures de stockage NetApp et de plateformes de virtualisation VMware.",
+              "<strong>PCA / PRA</strong> : Mise en place de solutions de Plan de Continuité et de Reprise d’Activité."
             ],
             "en": [
-              "<strong>BCP/DR</strong>: NetApp & VMware for major accounts.",
-              "<strong>Backup</strong>: Time Navigator (Atempo), NetApp NAS."
+              "<strong>Systems</strong>: Operations and support for Linux, NetApp, and VMware environments.",
+              "<strong>Storage & backup</strong>: Administration and operations of storage and backup solutions (NetApp NAS, Time Navigator / Atempo).",
+              "<strong>Virtualization</strong>: Deployment of NetApp storage infrastructures and VMware virtualization platforms.",
+              "<strong>BCP / DR</strong>: Implementation of Business Continuity and Disaster Recovery solutions."
             ]
           }
         }
@@ -249,12 +259,12 @@
           "title": "Storage & Systems",
           "items": {
             "fr": [
-              "<strong>Stockage NetApp</strong> : Installation NAS.",
+              "<strong>Stockage NetApp</strong> : Installation et configuration de baies Netapp.",
               "<strong>Sauvegarde</strong> : Robotiques (STK, Quantum), NetBackup.",
               "<strong>Systèmes</strong> : Admin Windows/Linux."
             ],
             "en": [
-              "<strong>NetApp Storage</strong>: NAS Installation.",
+              "<strong>NetApp Storage</strong>: NetApp array installation and configuration.",
               "<strong>Backup</strong>: Robotics (STK, Quantum), NetBackup.",
               "<strong>Systems</strong>: Windows/Linux Admin."
             ]
