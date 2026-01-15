@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const savedTheme = localStorage.getItem('cv-theme') || 'deep'; 
     const savedAccent = localStorage.getItem('cv-accent') || '#3b82f6';
-    const savedFontSize = localStorage.getItem('cv-font-size') || '14'; 
+    const savedFontSize = localStorage.getItem('cv-font-size') || '15'; 
     const savedFontStack = localStorage.getItem('cv-font-stack') || 'architect';
     setTheme(savedTheme); 
     setAccent(savedAccent); 

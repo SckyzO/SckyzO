@@ -107,7 +107,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const defaultAccentRgba = '59, 130, 246';
   const accent = normalizeHex(options.accent) || defaultAccent;
   const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
-  const fontSize = Number.isFinite(options.fontSize) ? Math.max(12, Math.min(20, options.fontSize)) : 14;
+  const fontSize = Number.isFinite(options.fontSize) ? Math.max(12, Math.min(20, options.fontSize)) : 15;
   const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
   
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
@@ -824,7 +824,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         <label class="text-[10px] font-black uppercase tracking-widest opacity-50 mb-3 block text-center">${t1.settingsLabelScale}</label>
         <div class="flex items-center gap-4 px-2 mb-8 text-white">
             <span style="font-size: 12px !important; color: inherit;" class="font-serif italic opacity-40">a</span>
-            <input type="range" min="12" max="20" value="14" step="1" oninput="setFontSize(this.value)" class="flex-grow">
+            <input type="range" min="12" max="20" value="15" step="1" oninput="setFontSize(this.value)" class="flex-grow">
             <span style="font-size: 20px !important; color: inherit;" class="font-serif italic opacity-40">A</span>
         </div>
 
