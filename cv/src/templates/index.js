@@ -109,6 +109,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const accentRgba = typeof options.accentRgba === 'string' ? options.accentRgba : (hexToRgb(accent) || defaultAccentRgba);
   const fontSize = Number.isFinite(options.fontSize) ? Math.max(12, Math.min(20, options.fontSize)) : 15;
   const rootStyle = `font-size: ${fontSize}px; --accent: ${accent}; --accent-rgba: ${accentRgba};`;
+  const ogLocale = lang === 'fr' ? 'fr_FR' : 'en_US';
+  const ogLocaleAlt = lang === 'fr' ? 'en_US' : 'fr_FR';
   
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
   const proSkillsPrimary = data.skills.professional.slice(0, 4);
@@ -655,9 +657,12 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <link rel="canonical" href="https://tomzone.fr/index_${lang}.html" />
     <link rel="alternate" hreflang="${lang}" href="https://tomzone.fr/index_${lang}.html" />
     <link rel="alternate" hreflang="${lang2}" href="https://tomzone.fr/index_${lang2}.html" />
+    <link rel="alternate" hreflang="x-default" href="https://tomzone.fr/" />
     <meta name="description" content="${t1.seoDescription}">
     <meta name="keywords" content="${t1.seoKeywords}">
     <meta name="author" content="${c.name}">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="${accent}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -666,6 +671,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     <meta property="og:description" content="${t1.ogDescription}">
     <meta property="og:image" content="https://tomzone.fr/preview_${lang}.png">
     <meta property="og:site_name" content="${c.name} Portfolio">
+    <meta property="og:locale" content="${ogLocale}">
+    <meta property="og:locale:alternate" content="${ogLocaleAlt}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -917,7 +924,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         </picture>
                     </div>
                 </div>
-                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+                <div class="absolute bottom-8 right-8 md:bottom-16 md:right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
             </div>
 
             <!-- Right: Info Zone (Z-20 for Dropdown) -->
@@ -1016,7 +1023,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                         </picture>
                     </div>
                 </div>
-                <div class="absolute bottom-16 right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+                <div class="absolute bottom-8 right-8 md:bottom-16 md:right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
             </div>
 
             <!-- Right: Info Zone (Z-20 for Dropdown) -->
