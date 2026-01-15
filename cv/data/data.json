@@ -54,7 +54,10 @@
       },
       "domains": [
         {
-          "title": "Monitoring & Observability (Tech Lead)",
+          "title": {
+            "fr": "Monitoring & Observabilité (Tech Lead)",
+            "en": "Monitoring & Observability (Tech Lead)"
+          },
           "items": {
             "fr": [
               "<strong>Architecte</strong> : Architecture de plateformes d’observabilité : conception de stacks de monitoring complètes (Prometheus, Grafana, Thanos), adaptées à des environnements distribués et à grande échelle.",
@@ -71,7 +74,10 @@
           }
         },
         {
-          "title": "HPC (High-Performance Computing)",
+          "title": {
+            "fr": "HPC (Calcul haute performance)",
+            "en": "HPC (High-Performance Computing)"
+          },
           "items": {
             "fr": [
               "<strong>Déploiement HPC</strong> : Installation, configuration et optimisation de clusters HPC chez des clients internationaux, de quelques dizaines à plus de 2000 nœuds.",
@@ -88,7 +94,10 @@
           }
         },
         {
-          "title": "HPSS (High-Performance Storage System)",
+          "title": {
+            "fr": "HPSS (High-Performance Storage System)",
+            "en": "HPSS (High-Performance Storage System)"
+          },
           "items": {
             "fr": [
               "<strong>Déploiement HPSS</strong> : Système de stockage d’environ 1,2 Exa basé sur HPSS, déployé et exploité chez Météo-France.",
@@ -103,7 +112,10 @@
           }
         },
         {
-          "title": "Development & Automation",
+          "title": {
+            "fr": "Développement & Automatisation",
+            "en": "Development & Automation"
+          },
           "items": {
             "fr": [
               "<strong>Scripting</strong> : Bash, Python et Go pour l’automatisation et le développement d’outils internes.",
@@ -130,7 +142,10 @@
       },
       "domains": [
         {
-          "title": "Cloud & Virtualization",
+          "title": {
+            "fr": "Cloud & Virtualisation",
+            "en": "Cloud & Virtualization"
+          },
           "items": {
             "fr": [
               "<strong>Cloud Infrastructure</strong> : AWS, GCP, OpenShift, architectures hybrides on-premise / cloud, Kubernetes / Rancher.",
@@ -143,7 +158,10 @@
           }
         },
         {
-          "title": "DevOps & Automation",
+          "title": {
+            "fr": "DevOps & Automatisation",
+            "en": "DevOps & Automation"
+          },
           "items": {
             "fr": [
               "<strong>CI/CD</strong> : Pipelines Jenkins, Gitlab CI, Artifactory, VMware vRealize.",
@@ -158,7 +176,10 @@
           }
         },
         {
-          "title": "Storage & Observability",
+          "title": {
+            "fr": "Stockage & Observabilité",
+            "en": "Storage & Observability"
+          },
           "items": {
             "fr": [
               "<strong>Stockage</strong> : NetApp, Ceph, Object Storage.",
@@ -185,7 +206,10 @@
       },
       "domains": [
         {
-          "title": "Systems & HPC",
+          "title": {
+            "fr": "Systèmes & HPC",
+            "en": "Systems & HPC"
+          },
           "items": {
             "fr": [
               "<strong>Linux</strong> : Administration et support Linux en production, rôle de référent Linux/Unix, puis évolution vers un rôle d’architecte de l’infrastructure Linux (Red Hat, IdM/LDAP, Satellite).",
@@ -198,7 +222,10 @@
           }
         },
         {
-          "title": "Storage & Virtualization",
+          "title": {
+            "fr": "Stockage & Virtualisation",
+            "en": "Storage & Virtualization"
+          },
           "items": {
             "fr": [
               "<strong>Stockage</strong> : NetApp MetroCluster, SnapMirror, Commvault, Veeam.",
@@ -225,7 +252,10 @@
       },
       "domains": [
         {
-          "title": "Infrastructure, Système & Backup",
+          "title": {
+            "fr": "Infrastructure, Système & Backup",
+            "en": "Infrastructure, Systems & Backup"
+          },
           "items": {
             "fr": [
               "<strong>Systèmes</strong> : MCO et support des environnements Linux, NetApp et VMware.",
@@ -256,7 +286,10 @@
       },
       "domains": [
         {
-          "title": "Storage & Systems",
+          "title": {
+            "fr": "Stockage & Systèmes",
+            "en": "Storage & Systems"
+          },
           "items": {
             "fr": [
               "<strong>Stockage NetApp</strong> : Installation et configuration de baies Netapp.",
@@ -404,8 +437,15 @@
   "skills": {
     "professional": [
       {
-        "category": "Linux & Infrastructure",
-        "description": "System administration",
+        "key": "linux-infra",
+        "category": {
+          "fr": "Linux & Infrastructure",
+          "en": "Linux & Infrastructure"
+        },
+        "description": {
+          "fr": "Administration systèmes",
+          "en": "System administration"
+        },
         "icon": "server",
         "tools": [
           "RHEL",
@@ -423,8 +463,15 @@
         ]
       },
       {
-        "category": "HPC Systems",
-        "description": "High-performance computing",
+        "key": "hpc-systems",
+        "category": {
+          "fr": "Systèmes HPC",
+          "en": "HPC Systems"
+        },
+        "description": {
+          "fr": "Calcul haute performance",
+          "en": "High-performance computing"
+        },
         "icon": "cpu",
         "tools": [
           "Cluster",
@@ -438,8 +485,15 @@
         ]
       },
       {
-        "category": "Observability",
-        "description": "Monitoring & logs",
+        "key": "observability",
+        "category": {
+          "fr": "Observabilité",
+          "en": "Observability"
+        },
+        "description": {
+          "fr": "Monitoring & logs",
+          "en": "Monitoring & logs"
+        },
         "icon": "activity",
         "tools": [
           "Prometheus",
@@ -454,8 +508,15 @@
         ]
       },
       {
-        "category": "Storage & Data",
-        "description": "Enterprise storage",
+        "key": "storage-data",
+        "category": {
+          "fr": "Stockage & Données",
+          "en": "Storage & Data"
+        },
+        "description": {
+          "fr": "Stockage d'entreprise",
+          "en": "Enterprise storage"
+        },
         "icon": "database",
         "tools": [
           "NetApp",
@@ -471,8 +532,15 @@
         ]
       },
       {
-        "category": "DevOps & Automation",
-        "description": "CI/CD, automation, infrastructure",
+        "key": "devops-automation",
+        "category": {
+          "fr": "DevOps & Automatisation",
+          "en": "DevOps & Automation"
+        },
+        "description": {
+          "fr": "CI/CD, automatisation, infrastructure",
+          "en": "CI/CD, automation, infrastructure"
+        },
         "icon": "git-branch",
         "tools": [
           "Ansible",
@@ -486,8 +554,15 @@
         ]
       },
       {
-        "category": "Development & Tooling",
-        "description": "Scripting & tooling",
+        "key": "dev-tooling",
+        "category": {
+          "fr": "Développement & Tooling",
+          "en": "Development & Tooling"
+        },
+        "description": {
+          "fr": "Scripting & outillage",
+          "en": "Scripting & tooling"
+        },
         "icon": "code",
         "tools": [
           "Bash",

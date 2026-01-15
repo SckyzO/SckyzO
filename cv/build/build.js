@@ -107,7 +107,7 @@ function validateData(payload) {
     exp.domains.forEach((domain, domainIndex) => {
       const domPath = `${expPath}.domains[${domainIndex}]`;
       requireObject(domain, domPath);
-      requireString(domain.title, `${domPath}.title`);
+      requireLangObject(domain.title, `${domPath}.title`);
       requireObject(domain.items, `${domPath}.items`);
       requireArray(domain.items.fr, `${domPath}.items.fr`);
       requireArray(domain.items.en, `${domPath}.items.en`);
@@ -153,8 +153,9 @@ function validateData(payload) {
   payload.skills.professional.forEach((skill, skillIndex) => {
     const skillPath = `skills.professional[${skillIndex}]`;
     requireObject(skill, skillPath);
-    requireString(skill.category, `${skillPath}.category`);
-    requireString(skill.description, `${skillPath}.description`);
+    requireString(skill.key, `${skillPath}.key`);
+    requireLangObject(skill.category, `${skillPath}.category`);
+    requireLangObject(skill.description, `${skillPath}.description`);
     if (Array.isArray(skill.tools)) {
       requireArray(skill.tools, `${skillPath}.tools`);
       skill.tools.forEach((tool, toolIndex) => {

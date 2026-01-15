@@ -20,6 +20,15 @@ const escapeHtml = (value) => String(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
+const getLocalizedValue = (value, lang) => {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (value[lang]) return value[lang];
+  if (value.en) return value.en;
+  if (value.fr) return value.fr;
+  return '';
+};
+
 const encodeContact = (value) => Buffer.from(String(value), 'utf8')
   .toString('base64')
   .split('')
@@ -142,18 +151,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                       ${skills.map((s, i) => {
                         const skillId = `skill-${lang}-${i}`;
-                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${s.category}" data-skill-card="${skillId}">
+                        const categoryLabel = getLocalizedValue(s.category, lang);
+                        const descriptionLabel = getLocalizedValue(s.description, lang);
+                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${categoryLabel}" data-skill-card="${skillId}">
                           <div class="skill-card-header">
                             <div class="skill-icon">
                               <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
                             </div>
                             <div class="skill-meta">
-                              <div class="skill-title">${s.category}</div>
-                              <div class="skill-desc">${s.description || ''}</div>
+                              <div class="skill-title">${categoryLabel}</div>
+                              <div class="skill-desc">${descriptionLabel}</div>
                             </div>
                           </div>
                           <div class="skill-chips" data-skill-tags="${skillId}">
-                            ${renderSkillTags(s.tools, s.category, skillId)}
+                            ${renderSkillTags(s.tools, categoryLabel, skillId)}
                           </div>
                         </div>`;
                       }).join('')}
@@ -164,18 +175,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
                       ${skills.map((s, i) => {
                         const skillId = `skill-${lang2}-${i}`;
-                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left" data-category="${s.category}" data-skill-card="${skillId}">
+                        const categoryLabel = getLocalizedValue(s.category, lang2);
+                        const descriptionLabel = getLocalizedValue(s.description, lang2);
+                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left" data-category="${categoryLabel}" data-skill-card="${skillId}">
                           <div class="skill-card-header">
                             <div class="skill-icon">
                               <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
                             </div>
                             <div class="skill-meta">
-                              <div class="skill-title">${s.category}</div>
-                              <div class="skill-desc">${s.description || ''}</div>
+                              <div class="skill-title">${categoryLabel}</div>
+                              <div class="skill-desc">${descriptionLabel}</div>
                             </div>
                           </div>
                           <div class="skill-chips" data-skill-tags="${skillId}">
-                            ${renderSkillTags(s.tools, s.category, skillId)}
+                            ${renderSkillTags(s.tools, categoryLabel, skillId)}
                           </div>
                         </div>`;
                       }).join('')}
@@ -191,9 +204,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
                             `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
                             `<div class="space-y-6">` +
-                            exp.domains.map(dom => `
+                            exp.domains.map(dom => {
+                                const domTitle = getLocalizedValue(dom.title, lang);
+                                return `
                                 <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${domTitle}</h4>
                                     <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang].map(item => {
                                             const { title, text } = parseItem(item);
@@ -205,7 +220,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                         }).join('')}
                                     </ul>
                                 </div>
-                            `).join('') +
+                            `;
+                            }).join('') +
                             `</div></div>`}).join('')}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
@@ -217,9 +233,11 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang2]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
                             `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang2]}</p>` +
                             `<div class="space-y-6">` +
-                            exp.domains.map(dom => `
+                            exp.domains.map(dom => {
+                                const domTitle = getLocalizedValue(dom.title, lang2);
+                                return `
                                 <div>
-                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${dom.title}</h4>
+                                    <h4 class="font-bold text-sm text-[var(--text-main)] mb-3 flex items-center gap-3"><span class="w-1.5 h-1.5 accent-bg rounded-full opacity-50 group-hover:opacity-100 group-hover:shadow-[0_0_10px_var(--accent)] transition-all"></span>${domTitle}</h4>
                                     <ul class="space-y-1 pl-2 border-l border-[var(--border-card)] group-hover:border-accent/30 ml-1 transition-colors duration-500">
                                         ${dom.items[lang2].map(item => {
                                             const { title, text } = parseItem(item);
@@ -231,7 +249,8 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                                         }).join('')}
                                     </ul>
                                 </div>
-                            `).join('') +
+                            `;
+                            }).join('') +
                             `</div></div>`}).join('')}</div>
                 </section>`, delay);
 
@@ -431,15 +450,15 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
   const expertiseOverviewSection = isInteractive ? flip(`
                 <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.expertiseOverview}</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional)}
+                        ${generateRadarChart(data.skills.professional, lang)}
                     </div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">Expertise Overview</h2></div>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.expertiseOverview}</h2></div>
                     <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional)}
+                        ${generateRadarChart(data.skills.professional, lang2)}
                     </div>
                 </section>`, 'delay-200') : '';
 
@@ -1126,7 +1145,8 @@ function generatePlain(data, lang) {
     txt += `${stripHtml(exp.summary[lang])}\n`; // Add summary text
     
     exp.domains.forEach(dom => {
-        txt += `\n* ${dom.title}\n`;
+        const domTitle = getLocalizedValue(dom.title, lang);
+        txt += `\n* ${domTitle}\n`;
         dom.items[lang].forEach(item => {
              const { title, text } = parseItem(item);
              txt += `- ${title ? title + ': ' : ''}${stripHtml(text)}\n`;
@@ -1137,8 +1157,9 @@ function generatePlain(data, lang) {
   
   txt += `${t.proSkills.toUpperCase()}\n`;
   data.skills.professional.forEach(s => {
+    const categoryLabel = getLocalizedValue(s.category, lang);
     const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
-    txt += `${s.category}: ${tools}\n`;
+    txt += `${categoryLabel}: ${tools}\n`;
   });
   
   txt += `\n${t.education.toUpperCase()}\n`;
@@ -1165,7 +1186,8 @@ function generateMarkdown(data, lang) {
     md += "> " + stripHtml(exp.summary[lang]) + "\n\n"; // Add summary
     
     exp.domains.forEach(dom => {
-        md += "**" + dom.title + "**\n";
+        const domTitle = getLocalizedValue(dom.title, lang);
+        md += "**" + domTitle + "**\n";
         dom.items[lang].forEach(item => {
              const { title, text } = parseItem(item);
              md += "- " + (title ? "**" + title + "**: " : "") + stripHtml(text) + "\n";
@@ -1176,8 +1198,9 @@ function generateMarkdown(data, lang) {
   });
   md += "## " + t.proSkills + "\n";
   data.skills.professional.forEach(s => {
+    const categoryLabel = getLocalizedValue(s.category, lang);
     const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
-    md += "- **" + s.category + "**: " + tools + "\n";
+    md += "- **" + categoryLabel + "**: " + tools + "\n";
   });
   md += "\n## " + t.certifications + "\n"; data.certifications.forEach(cert => md += "- " + cert + "\n");
   md += "\n"; return md;

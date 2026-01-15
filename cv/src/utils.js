@@ -18,27 +18,36 @@ function getAge(dateString) {
   return age;
 }
 
-function generateRadarChart(skills) {
+function getLocalizedValue(value, lang) {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  if (value[lang]) return value[lang];
+  if (value.en) return value.en;
+  if (value.fr) return value.fr;
+  return '';
+}
+
+function generateRadarChart(skills, lang = 'en') {
   const size = 200;
   const center = size / 2;
   const radius = size * 0.4;
   const angleStep = (Math.PI * 2) / skills.length;
   
   const levelsMapping = {
-    "Linux & Infrastructure": 95,
-    "HPC Systems": 90,
-    "Observability": 92,
-    "Storage & Data": 85,
-    "DevOps & Automation": 88,
-    "Development & Tooling": 84
+    "linux-infra": 95,
+    "hpc-systems": 90,
+    "observability": 92,
+    "storage-data": 85,
+    "devops-automation": 88,
+    "dev-tooling": 84
   };
 
   const pointPositions = skills.map((s, i) => {
-    const val = s.level || levelsMapping[s.category] || 50;
+    const val = s.level || levelsMapping[s.key] || 50;
     const level = val / 100;
     const x = center + Math.cos(i * angleStep - Math.PI / 2) * radius * level;
     const y = center + Math.sin(i * angleStep - Math.PI / 2) * radius * level;
-    return { x, y, category: s.category };
+    return { x, y, category: getLocalizedValue(s.category, lang) };
   });
 
   const points = pointPositions.map((pos) => `${pos.x},${pos.y}`).join(' ');
@@ -54,9 +63,10 @@ function generateRadarChart(skills) {
   }).join('');
 
   const labels = skills.map((s, i) => {
+    const label = getLocalizedValue(s.category, lang);
     const x = center + Math.cos(i * angleStep - Math.PI / 2) * (radius + 25);
     const y = center + Math.sin(i * angleStep - Math.PI / 2) * (radius + 10);
-    return `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" font-weight="900" fill="currentColor" opacity="0.4" class="uppercase tracking-tighter">${s.category}</text>`;
+    return `<text x="${x}" y="${y}" text-anchor="middle" font-size="8" font-weight="900" fill="currentColor" opacity="0.4" class="uppercase tracking-tighter">${label}</text>`;
   }).join('');
 
   const highlightPoints = pointPositions.map((pos) => {
