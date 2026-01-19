@@ -988,7 +988,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <div class="relative group/dl z-20 hidden md:block no-print">
+                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
                         <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
                             <a href="${pdfFilename}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
                                 <i data-lucide="download" class="w-4 h-4 accent-text"></i>
@@ -1087,7 +1087,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <div class="relative group/dl z-20 hidden md:block no-print">
+                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
                         <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
                             <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
                                 <i data-lucide="download" class="w-4 h-4 accent-text"></i>
