@@ -322,6 +322,7 @@ input:focus + .slider { box-shadow: 0 0 1px var(--accent); }
     body { background-color: var(--bg-page) !important; background-image: none !important; color: var(--text-main) !important; padding: 0 !important; font-family: 'Inter', sans-serif !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
     .no-print, .flip-back { display: none !important; } 
     .pdf-page { break-after: page; page-break-after: always; padding: 10mm 0; min-height: 297mm; box-sizing: border-box; }
+    .pdf-page:nth-child(n+2) > div { padding-top: 30mm !important; }
     .pdf-page:last-child { break-after: auto; page-break-after: auto; }
     .card { background: var(--bg-card) !important; border: 1px solid var(--border-card) !important; box-shadow: none !important; border-radius: 0.75rem !important; break-inside: avoid; } 
     strong, h1, h2, h3, p, span, li { color: var(--text-main) !important; font-weight: 800 !important; } 
