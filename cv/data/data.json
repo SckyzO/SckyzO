@@ -60,13 +60,13 @@
           },
           "items": {
             "fr": [
-              "<strong>Architecte</strong> : Architecture de plateformes d’observabilité : conception de stacks de monitoring complètes (Prometheus, Grafana, Thanos), adaptées à des environnements distribués et à grande échelle (Météo-France, EDF, IDRIS GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
+              "<strong>Architecture</strong> : Conception et déploiement de stacks d'observabilité (Prometheus, Grafana, Thanos, etc) pour des environnements distribués et HPC (Météo-France, EDF, IDRIS/GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
               "<strong>Tech Lead</strong> : Référent technique et garant des bonnes pratiques pour les équipes de livraison.",
               "<strong>Expertise Prometheus & Grafana</strong> : Conception de dashboards, alerting et stacks d'observabilité.",
               "<strong>Développement</strong> : Création d'exporters sur-mesure et contributions Open Source."
             ],
             "en": [
-              "<strong>Architect</strong>: Observability platform architecture: design of complete monitoring stacks (Prometheus, Grafana, Thanos), tailored for large-scale, distributed environments (Météo-France, EDF, IDRIS GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
+              "<strong>Architecture</strong>: Design and deployment of observability stacks (Prometheus, Grafana, Thanos, etc.) for distributed and HPC environments (Météo-France, EDF, IDRIS/GENCI, CNES, CALMIP, CERFACS, BMKG, Thales).",
               "<strong>Tech Lead</strong>: Lead expert ensuring best practices and deployment strategies.",
               "<strong>Prometheus & Grafana Expert</strong>: Designing custom dashboards, alerting systems, and observability stacks.",
               "<strong>Development</strong>: Creating custom exporters and contributing to Open Source."
@@ -567,9 +567,8 @@
           "Bash",
           "Python",
           "Go",
-          "REST APIs",
           "CLI tools",
-          "Custom Exporters",
+          "Prometheus Exporters",
           "Custom tooling",
           "Automation scripts"
         ]

@@ -116,10 +116,24 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
   const proSkillsPrimary = data.skills.professional.slice(0, 4);
   const proSkillsSecondary = data.skills.professional.slice(4);
-  const experiencesPage1 = data.experiences.slice(0, 1);
-  const experiencesPage2Count = mode === 'pdf' ? 2 : 3;
-  const experiencesPage2 = data.experiences.slice(1, 1 + experiencesPage2Count);
-  const experiencesPage3 = data.experiences.slice(1 + experiencesPage2Count);
+  // --- PDF PAGINATION LOGIC ---
+  // Page 1: Profile + Primary Pro Skills (No experiences)
+  // Page 2: Secondary Pro Skills + Experience [0] (Eviden)
+  // Page 3+: Remaining experiences dynamically paginated
+  
+  const experiencesForPage2 = data.experiences.slice(0, 1); // Eviden
+  const remainingExperiences = data.experiences.slice(1);   // Gfi, D-Fi, etc.
+  const additionalExperiencePages = [];
+
+  if (mode === 'pdf') {
+      const perPage = 2; // Limit to 2 experiences per subsequent page to ensure good readability
+      for (let i = 0; i < remainingExperiences.length; i += perPage) {
+          additionalExperiencePages.push(remainingExperiences.slice(i, i + perPage));
+      }
+  } else {
+     // Interactive mode doesn't use these page-specific slices, 
+     // but we define them to avoid reference errors if they were used (though they shouldn't be).
+  }
 
   const normalizeTools = (tools) => {
     if (Array.isArray(tools)) return tools.filter(Boolean);
@@ -622,28 +636,20 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     </div>
                     <div class="lg:col-span-8 flex flex-col gap-8 text-left">
                         ${proSkillsSecondary.length ? renderProSkillsSection(proSkillsSecondary) : ''}
-                        ${renderExperienceSection(experiencesPage1)}
+                        ${renderExperienceSection(experiencesForPage2)}
                     </div>
                 </div>
             </div>
+            ${additionalExperiencePages.map(pageExps => `
             <div class="pdf-page">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
                     <div class="lg:col-span-4 flex flex-col gap-8 text-left"></div>
                     <div class="lg:col-span-8 flex flex-col gap-8 text-left">
-                        ${renderExperienceSection(experiencesPage2)}
+                        ${renderExperienceSection(pageExps)}
                     </div>
                 </div>
             </div>
-            ${experiencesPage3.length ? `
-            <div class="pdf-page">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
-                    <div class="lg:col-span-4 flex flex-col gap-8 text-left"></div>
-                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
-                        ${renderExperienceSection(experiencesPage3)}
-                    </div>
-                </div>
-            </div>
-            ` : ''}
+            `).join('')}
         </div>
     `;
   
