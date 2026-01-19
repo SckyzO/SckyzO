@@ -62,6 +62,8 @@ jobs:
           for file in dist/*.html dist/*.pdf dist/*.png dist/*.md dist/*.txt; do
             cp "$file" out/
           done
+          cp dist/.htaccess out/
+          cp dist/robots.txt out/
 
       - name: "📤 Upload Pages artifact"
         uses: actions/upload-pages-artifact@v3

@@ -202,6 +202,10 @@ function writeRobotsAndHeaders() {
   fs.writeFileSync(path.join(OUTPUT_DIR, 'robots.txt'), robotsTxt);
 
   const htaccess = [
+    'RewriteEngine On',
+    'RewriteCond %{HTTPS} off',
+    'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]',
+    '',
     '<IfModule mod_headers.c>',
     '  <FilesMatch "\\\\.(pdf|md|txt)$">',
     '    Header set X-Robots-Tag "noindex, nofollow"',
