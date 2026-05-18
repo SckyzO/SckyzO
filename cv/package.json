@@ -9,7 +9,7 @@
     "serve": "npx serve ."
   },
   "dependencies": {
-    "playwright": "^1.59.1",
+    "playwright": "^1.60.0",
     "qrcode": "^1.5.3"
   }
 }
