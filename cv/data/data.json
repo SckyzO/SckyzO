@@ -416,21 +416,25 @@
     "fr": [
       {
         "name": "Français",
-        "level": "Maternel"
+        "level": "Maternel",
+        "percent": 100
       },
       {
         "name": "Anglais",
-        "level": "Technique"
+        "level": "Technique",
+        "percent": 75
       }
     ],
     "en": [
       {
         "name": "French",
-        "level": "Native"
+        "level": "Native",
+        "percent": 100
       },
       {
         "name": "English",
-        "level": "Professional / Technical"
+        "level": "Professional / Technical",
+        "percent": 75
       }
     ]
   },
@@ -438,6 +442,7 @@
     "professional": [
       {
         "key": "linux-infra",
+        "level": 95,
         "category": {
           "fr": "Linux & Infrastructure",
           "en": "Linux & Infrastructure"
@@ -463,6 +468,7 @@
       },
       {
         "key": "hpc-systems",
+        "level": 90,
         "category": {
           "fr": "Systèmes HPC",
           "en": "HPC Systems"
@@ -485,6 +491,7 @@
       },
       {
         "key": "observability",
+        "level": 92,
         "category": {
           "fr": "Observabilité",
           "en": "Observability"
@@ -508,6 +515,7 @@
       },
       {
         "key": "storage-data",
+        "level": 85,
         "category": {
           "fr": "Stockage & Données",
           "en": "Storage & Data"
@@ -532,6 +540,7 @@
       },
       {
         "key": "devops-automation",
+        "level": 88,
         "category": {
           "fr": "DevOps & Automatisation",
           "en": "DevOps & Automation"
@@ -554,6 +563,7 @@
       },
       {
         "key": "dev-tooling",
+        "level": 84,
         "category": {
           "fr": "Développement & Tooling",
           "en": "Development & Tooling"

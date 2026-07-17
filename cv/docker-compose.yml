@@ -1,7 +1,7 @@
 services:
   # Service de surveillance et de build automatique
   builder:
-    image: mcr.microsoft.com/playwright:v1.57.0-jammy
+    image: mcr.microsoft.com/playwright:v1.61.1-jammy
     working_dir: /app
     user: "${UID:-1000}:${GID:-1000}"
     volumes:

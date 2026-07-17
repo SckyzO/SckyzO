@@ -5,6 +5,7 @@ const QRCode = require('qrcode');
 const { getGitHubActivity } = require('../src/utils');
 const { generateHTML, generateMarkdown, generatePlain } = require('../src/templates');
 const { generateRobotsTxt, generateHtaccess } = require('../src/artifacts');
+const { normalizeHex, validateRgb } = require('../src/color');
 
 const LOCAL_ENV_PATH = path.join(__dirname, '../.env');
 const CONTACT_EMAIL_ENV = 'CV_CONTACT_EMAIL';
@@ -146,8 +147,18 @@ function validateData(payload) {
   });
 
   requireObject(payload.languages, 'languages');
-  requireArray(payload.languages.fr, 'languages.fr');
-  requireArray(payload.languages.en, 'languages.en');
+  ['fr', 'en'].forEach((lng) => {
+    requireArray(payload.languages[lng], `languages.${lng}`);
+    payload.languages[lng].forEach((item, index) => {
+      const itemPath = `languages.${lng}[${index}]`;
+      requireObject(item, itemPath);
+      requireString(item.name, `${itemPath}.name`);
+      requireString(item.level, `${itemPath}.level`);
+      if (typeof item.percent !== 'number' || item.percent < 0 || item.percent > 100) {
+        failValidation(`${itemPath}.percent must be a number between 0 and 100`);
+      }
+    });
+  });
 
   requireObject(payload.skills, 'skills');
   requireArray(payload.skills.professional, 'skills.professional');
@@ -155,6 +166,9 @@ function validateData(payload) {
     const skillPath = `skills.professional[${skillIndex}]`;
     requireObject(skill, skillPath);
     requireString(skill.key, `${skillPath}.key`);
+    if (typeof skill.level !== 'number' || skill.level < 0 || skill.level > 100) {
+      failValidation(`${skillPath}.level must be a number between 0 and 100`);
+    }
     requireLangObject(skill.category, `${skillPath}.category`);
     requireLangObject(skill.description, `${skillPath}.description`);
     if (Array.isArray(skill.tools)) {
@@ -216,34 +230,6 @@ function parseNumber(value) {
   if (!value) return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
-}
-
-function normalizeHex(value) {
-  if (typeof value !== 'string') return null;
-  const trimmed = value.trim();
-  if (!trimmed.startsWith('#')) return null;
-  if (trimmed.length === 4) {
-    return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`.toLowerCase();
-  }
-  if (trimmed.length === 7) {
-    return trimmed.toLowerCase();
-  }
-  return null;
-}
-
-function validateRgb(value, label) {
-  if (typeof value !== 'string') {
-    throw new Error(`${label} must be an RGB string like "59, 130, 246".`);
-  }
-  const match = value.match(/^\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*$/);
-  if (!match) {
-    throw new Error(`${label} must be an RGB string like "59, 130, 246".`);
-  }
-  const parts = match.slice(1).map((part) => Number(part));
-  if (parts.some((part) => part < 0 || part > 255)) {
-    throw new Error(`${label} values must be in the 0-255 range.`);
-  }
-  return parts.join(', ');
 }
 
 function getPdfAppearance() {

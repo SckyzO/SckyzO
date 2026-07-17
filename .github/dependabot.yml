@@ -18,3 +18,15 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+
+  # Keeps the Playwright container image (Dockerfile + docker-compose.yml) in
+  # sync with the npm playwright bumps; without this the image drifted behind.
+  - package-ecosystem: "docker"
+    directory: "/cv"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
