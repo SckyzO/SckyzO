@@ -33,17 +33,8 @@ function generateRadarChart(skills, lang = 'en') {
   const radius = size * 0.4;
   const angleStep = (Math.PI * 2) / skills.length;
   
-  const levelsMapping = {
-    "linux-infra": 95,
-    "hpc-systems": 90,
-    "observability": 92,
-    "storage-data": 85,
-    "devops-automation": 88,
-    "dev-tooling": 84
-  };
-
   const pointPositions = skills.map((s, i) => {
-    const val = s.level || levelsMapping[s.key] || 50;
+    const val = s.level || 50;
     const level = val / 100;
     const x = center + Math.cos(i * angleStep - Math.PI / 2) * radius * level;
     const y = center + Math.sin(i * angleStep - Math.PI / 2) * radius * level;
@@ -144,4 +135,4 @@ async function getGitHubActivity(username) {
   }
 }
 
-module.exports = { highlightMetrics, getAge, generateRadarChart, getGitHubActivity };
+module.exports = { highlightMetrics, getAge, generateRadarChart, getGitHubActivity, getLocalizedValue };

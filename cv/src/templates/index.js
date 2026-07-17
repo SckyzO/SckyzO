@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { i18n } = require('../i18n');
-const { highlightMetrics, getAge, generateRadarChart } = require('../utils');
+const { highlightMetrics, getAge, generateRadarChart, getLocalizedValue } = require('../utils');
+const { normalizeHex, hexToRgb } = require('../color');
 
 // Internal helpers.
 const flip = (c1, c2, delay='') => `
@@ -20,15 +21,6 @@ const escapeHtml = (value) => String(value)
   .replace(/"/g, '&quot;')
   .replace(/'/g, '&#39;');
 
-const getLocalizedValue = (value, lang) => {
-  if (!value) return '';
-  if (typeof value === 'string') return value;
-  if (value[lang]) return value[lang];
-  if (value.en) return value.en;
-  if (value.fr) return value.fr;
-  return '';
-};
-
 const encodeContact = (value) => Buffer.from(String(value), 'utf8')
   .toString('base64')
   .split('')
@@ -44,28 +36,6 @@ const parseItem = (htmlString) => {
   return { title: '', text: htmlString }; 
 };
 
-const normalizeHex = (hex) => {
-  if (typeof hex !== 'string') return null;
-  const trimmed = hex.trim();
-  if (!trimmed.startsWith('#')) return null;
-  if (trimmed.length === 4) {
-    return `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`.toLowerCase();
-  }
-  if (trimmed.length === 7) {
-    return trimmed.toLowerCase();
-  }
-  return null;
-};
-const hexToRgb = (hex) => {
-  const normalized = normalizeHex(hex);
-  if (!normalized) return null;
-  const value = normalized.slice(1);
-  const r = parseInt(value.slice(0, 2), 16);
-  const g = parseInt(value.slice(2, 4), 16);
-  const b = parseInt(value.slice(4, 6), 16);
-  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return null;
-  return `${r}, ${g}, ${b}`;
-};
 
 const stylesPath = path.join(__dirname, '../styles/main.css');
 const baseStyles = fs.readFileSync(stylesPath, 'utf8');
@@ -95,7 +65,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const t1 = i18n[lang];
   const t2 = i18n[lang2];
   const c = data.contact;
-  const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
   const emailEncoded = encodeContact(c.email);
   const phoneEncoded = encodeContact(c.phone);
   const availableThemes = new Set(['light', 'deep', 'dark']);
@@ -356,7 +325,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
 
   const renderLanguages = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.3s"' : ''}>
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[l].map(lng => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${lng.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${lng.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${lng.name.includes('rançais') || lng.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[l].map(lng => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${lng.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${lng.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${lng.percent}%"></div></div></div>`).join('')}</div>
                 </section>`;
   const languagesSection = flip(`
                 ${renderLanguages(lang, true)}`, renderLanguages(lang2, false), 'delay-300');
@@ -450,6 +419,112 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.projects}</h2></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${renderProjectCards(lang2)}</div>
                 </section>`, 'delay-500');
+
+  // Header recto/verso differ only by language and by position-scoped ids
+  // (cog id / data-lang) and the download link, which points at the PDF of the
+  // rendered language. `reveal` selects recto (true) vs verso (false).
+  const renderHeader = (l, reveal) => {
+    const pdf = l === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
+    return `
+        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
+            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile${reveal ? '' : '-en'}" data-lang="${reveal ? 'fr' : 'en'}" aria-label="${i18n[l].settingsOpenAria}">
+                <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
+            </button>
+            <!-- Background Layer (Clipped) -->
+            <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
+                <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
+            </div>
+
+            <!-- Left: Avatar Zone (Z-10) -->
+            <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
+                <div class="p-1.5 rounded-full avatar-ring">
+                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
+                        <picture>
+                            <source srcset="assets/tom_avatar.webp" type="image/webp">
+                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
+                        </picture>
+                    </div>
+                </div>
+                <div class="absolute bottom-8 right-8 md:bottom-16 md:right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
+            </div>
+
+            <!-- Right: Info Zone (Z-20 for Dropdown) -->
+            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
+
+                <!-- Top Badges -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
+                    </span>
+                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
+                    </span>
+                    ${activity && activity.repo ? `
+                    <a href="https://github.com/${c.github}/${encodeURIComponent(activity.repo)}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
+                        <div class="relative flex items-center justify-center">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
+                            <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
+                        </div>
+                        <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${i18n[l].lastCommit} :</span>${escapeHtml(activity.repo)}</span>
+                        <span class="tooltip-content">${i18n[l].goToRepo} ${escapeHtml(activity.repo)}</span>
+                    </a>` : ''}
+                </div>
+
+                <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
+                    THOMAS <span class="accent-text">BOURCEY</span>
+                </h1>
+
+                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.2em] mb-8 opacity-90">
+                    ${c.title[l]}
+                </p>
+
+                <!-- Metrics Bar -->
+                <div class="grid grid-cols-3 gap-4 border-t border-[var(--border-card)] pt-6 mt-2 md:flex md:justify-start md:gap-6">
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${i18n[l].yearsExp}</span>
+                    </div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${i18n[l].certifications}</span>
+                    </div>
+                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
+                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${i18n[l].publicRepos}</span>
+                    </div>
+
+                    <div class="flex-grow"></div>
+
+                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
+                        <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
+                            <a href="${pdf}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
+                                <i data-lucide="download" class="w-4 h-4 accent-text"></i>
+                                <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">${i18n[l].downloadPdf}</span>
+                            </a>
+                            <div class="w-px bg-[var(--border-card)]"></div>
+                            <button class="px-2 hover:bg-accent/5 transition-all rounded-r-xl cursor-default">
+                                <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+                            </button>
+                        </div>
+
+                        <div class="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-2xl opacity-0 invisible group-hover/dl:opacity-100 group-hover/dl:visible transition-all transform translate-y-2 group-hover/dl:translate-y-0 flex flex-col overflow-hidden backdrop-blur-md">
+                            <a href="${pdf}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#f4f4f5] border border-slate-300"></span> Light (Default)
+                            </a>
+                            <a href="${pdf.replace('.pdf', '_Deep.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-[#18181b] border border-white/20"></span> Deep
+                            </a>
+                            <a href="${pdf.replace('.pdf', '_Dark.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
+                                <span class="w-3 h-3 rounded-full bg-black border border-white/20"></span> Dark
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>`;
+  };
 
   const mainContent = isInteractive ? `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
@@ -781,205 +856,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     </div>
 
     <div class="max-w-7xl mx-auto flex flex-col gap-12 text-left content-root">
-        ${flip(`
-        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
-            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile" data-lang="fr" aria-label="${t1.settingsOpenAria}">
-                <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
-            </button>
-            <!-- Background Layer (Clipped) -->
-            <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
-                <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
-            </div>
-
-            <!-- Left: Avatar Zone (Z-10) -->
-            <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
-                <div class="p-1.5 rounded-full avatar-ring">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
-                        <picture>
-                            <source srcset="assets/tom_avatar.webp" type="image/webp">
-                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
-                        </picture>
-                    </div>
-                </div>
-                <div class="absolute bottom-8 right-8 md:bottom-16 md:right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
-            </div>
-
-            <!-- Right: Info Zone (Z-20 for Dropdown) -->
-            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
-
-                <!-- Top Badges -->
-                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
-                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
-                        <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
-                    </span>
-                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
-                    </span>
-                    ${activity && activity.repo ? `
-                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
-                        <div class="relative flex items-center justify-center">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
-                            <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
-                        </div>
-                        <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t1.lastCommit} :</span>${activity.repo}</span>
-                        <span class="tooltip-content">${t1.goToRepo} ${activity.repo}</span>
-                    </a>` : ''}
-                </div>
-
-                <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
-                    THOMAS <span class="accent-text">BOURCEY</span>
-                </h1>
-                
-                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.2em] mb-8 opacity-90">
-                    ${c.title[lang]}
-                </p>
-
-                <!-- Metrics Bar -->
-                <div class="grid grid-cols-3 gap-4 border-t border-[var(--border-card)] pt-6 mt-2 md:flex md:justify-start md:gap-6">
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.yearsExp}</span>
-                    </div>
-                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.certifications}</span>
-                    </div>
-                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t1.publicRepos}</span>
-                    </div>
-                    
-                    <div class="flex-grow"></div>
-                    
-                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
-                        <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
-                            <a href="${pdfFilename}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
-                                <i data-lucide="download" class="w-4 h-4 accent-text"></i>
-                                <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">${t1.downloadPdf}</span>
-                            </a>
-                            <div class="w-px bg-[var(--border-card)]"></div>
-                            <button class="px-2 hover:bg-accent/5 transition-all rounded-r-xl cursor-default">
-                                <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-2xl opacity-0 invisible group-hover/dl:opacity-100 group-hover/dl:visible transition-all transform translate-y-2 group-hover/dl:translate-y-0 flex flex-col overflow-hidden backdrop-blur-md">
-                            <a href="${pdfFilename}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-[#f4f4f5] border border-slate-300"></span> Light (Default)
-                            </a>
-                            <a href="${pdfFilename.replace('.pdf', '_Deep.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-[#18181b] border border-white/20"></span> Deep
-                            </a>
-                            <a href="${pdfFilename.replace('.pdf', '_Dark.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-black border border-white/20"></span> Dark
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>`, 
-        `
-        <header class="card p-0 relative group min-h-[280px] flex flex-col md:flex-row items-center !overflow-visible no-break" style="animation-delay: 0s">
-            <button onclick="toggleSettings(event)" class="cog-btn-inline no-print settings-trigger" id="main-cog-mobile-en" data-lang="en" aria-label="${t1.settingsOpenAria}">
-                <span class="cog-icon"><i data-lucide="settings" style="width: 22px; height: 22px;"></i></span>
-            </button>
-            <!-- Background Layer (Clipped) -->
-            <div class="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none z-0">
-                <div class="absolute -top-24 -right-24 p-12 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity rotate-12"><i data-lucide="server" style="width: 300px; height: 300px;"></i></div>
-            </div>
-
-            <!-- Left: Avatar Zone (Z-10) -->
-            <div class="relative shrink-0 p-10 md:p-12 z-10 header-zone">
-                <div class="p-1.5 rounded-full avatar-ring">
-                    <div class="w-52 h-52 rounded-full surface-muted border-4 border-[var(--bg-card)] shadow-2xl overflow-hidden relative z-10 group-hover:scale-[1.02] transition-transform duration-500 header-avatar">
-                        <picture>
-                            <source srcset="assets/tom_avatar.webp" type="image/webp">
-                            <img src="assets/tom_avatar.png" alt="Thomas Bourcey" class="w-full h-full object-cover">
-                        </picture>
-                    </div>
-                </div>
-                <div class="absolute bottom-8 right-8 md:bottom-16 md:right-16 w-7 h-7 bg-emerald-500 border-4 border-[var(--bg-card)] rounded-full z-20 shadow-lg" title="Open to opportunities"></div>
-            </div>
-
-            <!-- Right: Info Zone (Z-20 for Dropdown) -->
-            <div class="flex flex-col justify-center text-center md:text-left flex-grow relative z-20 p-10 md:p-12">
-
-                <!-- Top Badges -->
-                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6 no-print">
-                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
-                        <i data-lucide="medal" class="w-3 h-3 accent-text"></i> Senior Engineer
-                    </span>
-                    <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
-                        <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
-                    </span>
-                    ${activity && activity.repo ? `
-                    <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
-                        <div class="relative flex items-center justify-center">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
-                            <i data-lucide="github" class="w-3 h-3 accent-text relative"></i>
-                        </div>
-                        <span class="group-hover/repo:text-[var(--text-main)] transition-colors"><span class="opacity-50 font-normal mr-1">${t2.lastCommit} :</span>${activity.repo}</span>
-                        <span class="tooltip-content">${t2.goToRepo} ${activity.repo}</span>
-                    </a>` : ''}
-                </div>
-
-                <h1 class="text-5xl md:text-7xl font-black tracking-tighter uppercase italic mb-3 leading-none text-[var(--text-main)]" style="font-family: var(--font-sans);">
-                    THOMAS <span class="accent-text">BOURCEY</span>
-                </h1>
-                
-                <p class="accent-text font-mono text-lg font-bold uppercase tracking-[0.2em] mb-8 opacity-90">
-                    ${c.title[lang2]}
-                </p>
-
-                <!-- Metrics Bar -->
-                <div class="grid grid-cols-3 gap-4 border-t border-[var(--border-card)] pt-6 mt-2 md:flex md:justify-start md:gap-6">
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">20+</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.yearsExp}</span>
-                    </div>
-                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${data.certifications.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.certifications}</span>
-                    </div>
-                    <div class="hidden md:block w-px h-10 bg-[var(--border-card)]"></div>
-                    <div class="flex flex-col items-center md:items-start gap-1">
-                        <span class="text-2xl font-black text-[var(--text-main)] leading-none">${activity ? activity.public_repos : data.projects.length}</span>
-                        <span class="text-[0.6rem] uppercase tracking-widest opacity-50 whitespace-nowrap">${t2.publicRepos}</span>
-                    </div>
-                    
-                    <div class="flex-grow"></div>
-                    
-                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
-                        <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
-                            <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
-                                <i data-lucide="download" class="w-4 h-4 accent-text"></i>
-                                <span class="text-xs font-bold uppercase tracking-wide text-[var(--text-main)]">${t2.downloadPdf}</span>
-                            </a>
-                            <div class="w-px bg-[var(--border-card)]"></div>
-                            <button class="px-2 hover:bg-accent/5 transition-all rounded-r-xl cursor-default">
-                                <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-card)] border border-[var(--border-card)] rounded-xl shadow-2xl opacity-0 invisible group-hover/dl:opacity-100 group-hover/dl:visible transition-all transform translate-y-2 group-hover/dl:translate-y-0 flex flex-col overflow-hidden backdrop-blur-md">
-                            <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-[#f4f4f5] border border-slate-300"></span> Light (Default)
-                            </a>
-                            <a href="${(lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf').replace('.pdf', '_Deep.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-[#18181b] border border-white/20"></span> Deep
-                            </a>
-                            <a href="${(lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf').replace('.pdf', '_Dark.pdf')}" download class="px-4 py-3 hover:bg-accent/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[var(--text-main)] transition-colors">
-                                <span class="w-3 h-3 rounded-full bg-black border border-white/20"></span> Dark
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>`
-        )}
+        ${flip(renderHeader(lang, true), renderHeader(lang2, false))}
         ${mainContent}
 
     <div id="cmd-palette" onclick="toggleCmd(false)">
