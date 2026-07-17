@@ -338,7 +338,7 @@ async function build() {
         await page.emulateMedia({ media: 'screen' });
         await page.setViewportSize({ width: 1400, height: 1200 });
         
-        await page.goto(`file://${tempHtmlPath}`, { waitUntil: 'networkidle' });
+        await page.goto(`file://${tempHtmlPath}`, { waitUntil: 'load' });
         
         // Ensure avatar is loaded
         await page.waitForFunction(() => {
@@ -353,8 +353,10 @@ async function build() {
           console.warn("⚠️ Avatar image issue:", imgExists);
         });
 
-        await page.waitForTimeout(500); 
-        
+        // Fonts are self-hosted, so wait for them deterministically instead of
+        // a fixed delay.
+        await page.evaluate(() => document.fonts.ready);
+
         // Default file is Light: CV_Thomas_Bourcey_FR.pdf, Resume_Thomas_Bourcey_EN.pdf.
         
         let pdfName;
@@ -376,9 +378,11 @@ async function build() {
         if (theme === 'deep') {
           logStep('🖼️', 'Preview PNG...');
           await page.setViewportSize({ width: 1200, height: 630 });
-          // Final check for animations or fonts
-          await page.waitForTimeout(2000);
-          await page.screenshot({ path: path.join(OUTPUT_DIR, `preview_${lang}.png`) });
+          await page.evaluate(() => document.fonts.ready);
+          // The preview PNG (og:image) is non-critical; never let it fail the
+          // whole build (headless screenshots can hang in some environments).
+          await page.screenshot({ path: path.join(OUTPUT_DIR, `preview_${lang}.png`), timeout: 15000 })
+            .catch((e) => console.warn(`⚠️ Preview PNG skipped for ${lang}: ${e.message}`));
         }
 
         await page.close();
