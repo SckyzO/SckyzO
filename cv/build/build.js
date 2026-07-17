@@ -87,7 +87,8 @@ function validateData(payload) {
   requireString(payload.contact.name, 'contact.name');
   requireLangObject(payload.contact.title, 'contact.title');
   requireString(payload.contact.location, 'contact.location');
-  requireString(payload.contact.email, 'contact.email');
+  // contact.email/phone are injected from secrets at build time (empty in
+  // data.json), so they are not part of the schema check.
   requireString(payload.contact.birthDate, 'contact.birthDate');
   requireString(payload.contact.website, 'contact.website');
   requireString(payload.contact.github, 'contact.github');
@@ -279,13 +280,16 @@ async function build() {
   const buildStartedAt = new Date();
   logStep('🛠️', `Build started — ${formatBuildStamp(buildStartedAt)}`);
   applyContactOverrides(data);
-  assertContactValue(data.contact.email, 'contact.email', CONTACT_EMAIL_ENV);
-  assertContactValue(data.contact.phone, 'contact.phone', CONTACT_PHONE_ENV);
   validateData(data);
   if (VALIDATE_ONLY) {
     logStep('✅', 'Validation OK — data/data.json structure is valid.');
     return;
   }
+  // Contact email/phone come from secrets/env at build time, not from
+  // data.json, so they are only required for a real build (not schema
+  // validation, which must pass on PRs without secrets, e.g. Dependabot).
+  assertContactValue(data.contact.email, 'contact.email', CONTACT_EMAIL_ENV);
+  assertContactValue(data.contact.phone, 'contact.phone', CONTACT_PHONE_ENV);
   assertOfflineAssets();
   fs.rmSync(OUTPUT_DIR, { recursive: true, force: true });
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
