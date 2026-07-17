@@ -5,9 +5,11 @@ const https = require('https');
 const ASSETS_DIR = path.join(__dirname, '../assets');
 if (!fs.existsSync(ASSETS_DIR)) fs.mkdirSync(ASSETS_DIR);
 
+// Pin exact versions so offline assets are reproducible. Bumping these is an
+// explicit, reviewable change (the previous "@latest" silently drifted).
 const assets = [
-  { name: 'tailwind.js', url: 'https://cdn.tailwindcss.com' },
-  { name: 'lucide.js', url: 'https://unpkg.com/lucide@latest' }
+  { name: 'tailwind.js', url: 'https://cdn.tailwindcss.com/3.4.17' },
+  { name: 'lucide.js', url: 'https://unpkg.com/lucide@1.25.0/dist/umd/lucide.min.js' }
 ];
 
 async function download(url, dest) {
