@@ -4,8 +4,9 @@ FROM mcr.microsoft.com/playwright:v1.57.0-jammy AS builder
 WORKDIR /app
 
 # Copie des fichiers de dépendances et installation
-COPY package.json package-lock.json* ./
-RUN npm install
+# npm ci: reproducible install from the committed lockfile (matches CI).
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Copie des sources
 COPY build/ ./build/
