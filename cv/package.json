@@ -6,10 +6,17 @@
   "scripts": {
     "build": "node build/build.js",
     "validate": "node build/build.js --validate-only",
+    "lint": "eslint .",
+    "test": "node --test",
     "serve": "npx serve ."
   },
   "dependencies": {
     "playwright": "^1.61.1",
     "qrcode": "^1.5.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
+    "globals": "^17.7.0"
   }
 }

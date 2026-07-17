@@ -4,6 +4,7 @@ const { chromium } = require('playwright');
 const QRCode = require('qrcode');
 const { getGitHubActivity } = require('../src/utils');
 const { generateHTML, generateMarkdown, generatePlain } = require('../src/templates');
+const { generateRobotsTxt, generateHtaccess } = require('../src/artifacts');
 
 const LOCAL_ENV_PATH = path.join(__dirname, '../.env');
 const CONTACT_EMAIL_ENV = 'CV_CONTACT_EMAIL';
@@ -190,29 +191,8 @@ function syncAssetsToBuild() {
 }
 
 function writeRobotsAndHeaders() {
-  const robotsTxt = [
-    'User-agent: *',
-    'Disallow: /*.pdf$',
-    'Disallow: /*.PDF$',
-    'Disallow: /*.md$',
-    'Disallow: /*.MD$',
-    'Disallow: /*.txt$',
-    'Disallow: /*.TXT$'
-  ].join('\n');
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'robots.txt'), robotsTxt);
-
-  const htaccess = [
-    'RewriteEngine On',
-    'RewriteCond %{HTTPS} off',
-    'RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]',
-    '',
-    '<IfModule mod_headers.c>',
-    '  <FilesMatch "\\\\.(pdf|md|txt)$">',
-    '    Header set X-Robots-Tag "noindex, nofollow"',
-    '  </FilesMatch>',
-    '</IfModule>'
-  ].join('\n');
-  fs.writeFileSync(path.join(OUTPUT_DIR, '.htaccess'), htaccess);
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'robots.txt'), generateRobotsTxt());
+  fs.writeFileSync(path.join(OUTPUT_DIR, '.htaccess'), generateHtaccess());
 }
 
 function applyContactOverrides(payload) {
@@ -391,7 +371,7 @@ async function build() {
         
         // Default file is Light: CV_Thomas_Bourcey_FR.pdf, Resume_Thomas_Bourcey_EN.pdf.
         
-        let pdfName = "";
+        let pdfName;
         if (lang === 'fr') {
             pdfName = theme === 'light' ? "CV_Thomas_Bourcey_FR.pdf" : `CV_Thomas_Bourcey_FR_${theme.charAt(0).toUpperCase() + theme.slice(1)}.pdf`;
         } else {

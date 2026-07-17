@@ -37,7 +37,7 @@ const encodeContact = (value) => Buffer.from(String(value), 'utf8')
 
 // Helper to parse "<strong>Title</strong> : Description".
 const parseItem = (htmlString) => {
-  const match = htmlString.match(/<strong>(.*?)<\/strong>\s*[:\-]?\s*(.*)/);
+  const match = htmlString.match(/<strong>(.*?)<\/strong>\s*[:-]?\s*(.*)/);
   if (match) {
     return { title: match[1], text: match[2] };
   }
@@ -95,7 +95,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const t1 = i18n[lang];
   const t2 = i18n[lang2];
   const c = data.contact;
-  const updateDate = new Date().toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' });
   const pdfFilename = lang === 'fr' ? 'CV_Thomas_Bourcey_FR.pdf' : 'Resume_Thomas_Bourcey_EN.pdf';
   const emailEncoded = encodeContact(c.email);
   const phoneEncoded = encodeContact(c.phone);
@@ -113,7 +112,6 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
   const ogLocale = lang === 'fr' ? 'fr_FR' : 'en_US';
   const ogLocaleAlt = lang === 'fr' ? 'en_US' : 'fr_FR';
   
-  const activityHtml = activity ? `<div class="flex items-center justify-end gap-3 text-emerald-500/80 font-bold mb-1"><div class="status-pulse"></div><span class="text-[10px]">LATEST FOCUS: <span class="text-emerald-400 underline decoration-emerald-500/30">${activity.repo}</span></span></div>` : '';
   const proSkillsPrimary = data.skills.professional.slice(0, 4);
   const proSkillsSecondary = data.skills.professional.slice(4);
   // --- PDF PAGINATION LOGIC ---
@@ -141,7 +139,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     return tools.split(',').map((tool) => tool.trim()).filter(Boolean);
   };
 
-  const renderSkillTags = (tools, category, skillId) => {
+  const renderSkillTags = (tools, category) => {
     const list = normalizeTools(tools);
     const primary = list.slice(0, 3);
     const extra = list.slice(3);
@@ -162,62 +160,39 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
     return `<div class="skill-primary-row">${primaryHtml}${moreHtml}</div>${extraBlock}`;
   };
 
+  const renderProSkills = (skills, l, reveal) => `<section class="flex flex-col gap-6 no-break text-left${reveal ? ' reveal' : ''}"${reveal ? ' style="animation-delay: 0.2s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].proSkills}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                      ${skills.map((s, i) => {
+                        const skillId = `skill-${l}-${i}`;
+                        const categoryLabel = getLocalizedValue(s.category, l);
+                        const descriptionLabel = getLocalizedValue(s.description, l);
+                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left${reveal ? ' reveal' : ''}"${reveal ? ` style="animation-delay: ${0.2 + (i * 0.05)}s"` : ''} data-category="${categoryLabel}" data-skill-card="${skillId}">
+                          <div class="skill-card-header">
+                            <div class="skill-icon">
+                              <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
+                            </div>
+                            <div class="skill-meta">
+                              <div class="skill-title">${categoryLabel}</div>
+                              <div class="skill-desc">${descriptionLabel}</div>
+                            </div>
+                          </div>
+                          <div class="skill-chips" data-skill-tags="${skillId}">
+                            ${renderSkillTags(s.tools, categoryLabel)}
+                          </div>
+                        </div>`;
+                      }).join('')}
+                    </div>
+                </section>`;
   const renderProSkillsSection = (skills, delay = '') => flip(`
-                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                      ${skills.map((s, i) => {
-                        const skillId = `skill-${lang}-${i}`;
-                        const categoryLabel = getLocalizedValue(s.category, lang);
-                        const descriptionLabel = getLocalizedValue(s.description, lang);
-                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left reveal" style="animation-delay: ${0.2 + (i * 0.05)}s" data-category="${categoryLabel}" data-skill-card="${skillId}">
-                          <div class="skill-card-header">
-                            <div class="skill-icon">
-                              <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
-                            </div>
-                            <div class="skill-meta">
-                              <div class="skill-title">${categoryLabel}</div>
-                              <div class="skill-desc">${descriptionLabel}</div>
-                            </div>
-                          </div>
-                          <div class="skill-chips" data-skill-tags="${skillId}">
-                            ${renderSkillTags(s.tools, categoryLabel, skillId)}
-                          </div>
-                        </div>`;
-                      }).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="cpu" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.proSkills}</h2></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                      ${skills.map((s, i) => {
-                        const skillId = `skill-${lang2}-${i}`;
-                        const categoryLabel = getLocalizedValue(s.category, lang2);
-                        const descriptionLabel = getLocalizedValue(s.description, lang2);
-                        return `<div class="card skill-card p-8 flex flex-col gap-6 group text-left" data-category="${categoryLabel}" data-skill-card="${skillId}">
-                          <div class="skill-card-header">
-                            <div class="skill-icon">
-                              <i data-lucide="${s.icon || 'cpu'}" class="w-5 h-5 accent-text"></i>
-                            </div>
-                            <div class="skill-meta">
-                              <div class="skill-title">${categoryLabel}</div>
-                              <div class="skill-desc">${descriptionLabel}</div>
-                            </div>
-                          </div>
-                          <div class="skill-chips" data-skill-tags="${skillId}">
-                            ${renderSkillTags(s.tools, categoryLabel, skillId)}
-                          </div>
-                        </div>`;
-                      }).join('')}
-                    </div>
-                </section>`, delay);
+                ${renderProSkills(skills, lang, true)}`, renderProSkills(skills, lang2, false), delay);
 
   const renderExperienceSection = (experiences, delay = '') => flip(`
                 <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.4s">
                     <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="activity" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.experience}</h2></div>
                     <div class="flex flex-col gap-6">
-                        ${experiences.map((exp, idx) => {
-                            return `<div class="card p-10 relative overflow-hidden group text-left break-inside-avoid page-break-inside-avoid mb-6">` + 
+                        ${experiences.map((exp) => {
+                            return `<div class="card p-10 relative overflow-hidden group text-left break-inside-avoid page-break-inside-avoid mb-6">` +
                             `<div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6 gap-6 text-left"><div><h3 class="text-[1.6rem] font-black text-[var(--text-main)] mb-2 tracking-tight leading-none text-left">${exp.role[lang]}</h3><div class="accent-text font-extrabold text-[1.1rem] flex items-center gap-3 opacity-90 tracking-wide uppercase text-left"><i data-lucide="building-2" class="w-5 h-5 opacity-50"></i> ${exp.company}</div></div><span class="font-mono text-[0.75rem] font-black px-5 py-2 bg-slate-800/50 rounded-xl border border-white/5 opacity-60 group-hover:opacity-100 group-hover:border-accent/30 group-hover:shadow-[0_0_15px_rgba(var(--accent-rgba),0.2)] transition-all duration-300 uppercase tracking-widest shrink-0">${exp.period}</span></div>` +
                             `<p class="text-sm opacity-60 italic mb-8 border-l-2 border-accent/20 pl-4 py-1">${exp.summary[lang]}</p>` +
                             `<div class="space-y-6">` +
@@ -271,329 +246,210 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                             `</div></div>`}).join('')}</div>
                 </section>`, delay);
 
+  const renderContact = (l, reveal) => `<section class="${reveal ? 'flex flex-col gap-6 no-break reveal text-left no-break' : 'flex flex-col gap-6 no-break text-left'}"${reveal ? ' style="animation-delay: 0.1s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].contact}</h2></div>
+                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
+                        <div class="flex flex-col gap-2">
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${i18n[l].contactReveal}" data-label-copy="${i18n[l].contactCopy}" data-label-copied="${i18n[l].contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${i18n[l].contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                    </div>
+                                    <span class="tooltip-content">${i18n[l].emailTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${i18n[l].contactReveal}" title="${i18n[l].contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${i18n[l].contactCopy}" title="${i18n[l].contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
+                                </div>
+                                <span class="tooltip-content">${i18n[l].emailTooltip}</span>
+                            </a>
+                            `}
+                            ${isInteractive ? `
+                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${i18n[l].contactReveal}" data-label-copy="${i18n[l].contactCopy}" data-label-copied="${i18n[l].contactCopied}">
+                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
+                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                    <div class="flex flex-col overflow-hidden">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${i18n[l].contactHidden}</span>
+                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                    </div>
+                                    <span class="tooltip-content">${i18n[l].phoneTooltip}</span>
+                                </a>
+                                <div class="contact-actions">
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${i18n[l].contactReveal}" title="${i18n[l].contactReveal}">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${i18n[l].contactCopy}" title="${i18n[l].contactCopy}" disabled>
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ` : `
+                            <a href="tel:${c.phone.replace(/\\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
+                                </div>
+                                <span class="tooltip-content">${i18n[l].phoneTooltip}</span>
+                            </a>
+                            `}
+                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col overflow-hidden">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
+                                </div>
+                                <span class="tooltip-content">${i18n[l].websiteTooltip}</span>
+                            </a>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} ${i18n[l].ageSuffix} <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString(l === 'fr' ? 'fr-FR' : 'en-US')})</span></span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
+                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
+                                <div class="flex flex-col">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
+                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+                                        <span class="font-mono text-xs accent-text no-print" id="local-time-${reveal ? 'fr' : 'en'}">--:--</span>
+                                    </div>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${i18n[l].openGithub}</span></a>
+                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${i18n[l].openLinkedIn}</span></a>
+                        </div>
+                    </div>
+                </section>`;
   const contactSection = flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left no-break" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
-                        <div class="flex flex-col gap-2">
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                    </div>
-                                    <span class="tooltip-content">${t1.emailTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                </div>
-                                <span class="tooltip-content">${t1.emailTooltip}</span>
-                            </a>
-                            `}
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t1.contactReveal}" data-label-copy="${t1.contactCopy}" data-label-copied="${t1.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t1.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                    </div>
-                                    <span class="tooltip-content">${t1.phoneTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t1.contactReveal}" title="${t1.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t1.contactCopy}" title="${t1.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="tel:${c.phone.replace(/\\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                </div>
-                                <span class="tooltip-content">${t1.phoneTooltip}</span>
-                            </a>
-                            `}
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
-                                </div>
-                                <span class="tooltip-content">${t1.websiteTooltip}</span>
-                            </a>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} ans <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('fr-FR')})</span></span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
-                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                                        <span class="font-mono text-xs accent-text no-print" id="local-time-fr">--:--</span>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t1.openGithub}</span></a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t1.openLinkedIn}</span></a>
-                        </div>
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="mail" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.contact}</h2></div>
-                    <div class="card p-8 flex flex-col gap-6 !overflow-visible">
-                        <div class="flex flex-col gap-2">
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="email" data-contact-encoded="${emailEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                    </div>
-                                    <span class="tooltip-content">${t2.emailTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="mailto:${c.email}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="mail" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.email}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Email</span>
-                                </div>
-                                <span class="tooltip-content">${t2.emailTooltip}</span>
-                            </a>
-                            `}
-                            ${isInteractive ? `
-                            <div class="contact-secure" data-contact-type="phone" data-contact-encoded="${phoneEncoded}" data-label-reveal="${t2.contactReveal}" data-label-copy="${t2.contactCopy}" data-label-copied="${t2.contactCopied}">
-                                <a href="#" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip contact-link">
-                                    <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                    <div class="flex flex-col overflow-hidden">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors contact-value">${t2.contactHidden}</span>
-                                        <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                    </div>
-                                    <span class="tooltip-content">${t2.phoneTooltip}</span>
-                                </a>
-                                <div class="contact-actions">
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="reveal" aria-label="${t2.contactReveal}" title="${t2.contactReveal}">
-                                        <i data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
-                                    <button type="button" class="contact-action contact-action--icon" data-contact-action="copy" aria-label="${t2.contactCopy}" title="${t2.contactCopy}" disabled>
-                                        <i data-lucide="copy" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            ` : `
-                            <a href="tel:${c.phone.replace(/\\s/g, '')}" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="phone" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.phone}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Phone</span>
-                                </div>
-                                <span class="tooltip-content">${t2.phoneTooltip}</span>
-                            </a>
-                            `}
-                            <a href="https://${c.website}" target="_blank" class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group has-tooltip">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="globe" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col overflow-hidden">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${c.website}</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Portfolio</span>
-                                </div>
-                                <span class="tooltip-content">${t2.websiteTooltip}</span>
-                            </a>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="calendar" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">${getAge(c.birthDate)} years old <span class="opacity-50 font-normal text-xs">(${new Date(c.birthDate).toLocaleDateString('en-US')})</span></span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Age</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-accent/30 transition-all group">
-                                <div class="w-10 h-10 rounded-xl surface-muted flex items-center justify-center text-[var(--text-main)] group-hover:text-accent group-hover:bg-accent/10 transition-colors"><i data-lucide="map-pin" class="w-4 h-4"></i></div>
-                                <div class="flex flex-col">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-[var(--text-main)] group-hover:accent-text transition-colors">Toulouse, FR</span>
-                                        <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                                        <span class="font-mono text-xs accent-text no-print" id="local-time-en">--:--</span>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-40">Location</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="h-px bg-[var(--border-card)] w-full my-2"></div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <a href="https://github.com/${c.github}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="github" class="w-4 h-4 group-hover:accent-text"></i> GitHub<span class="tooltip-content">${t2.openGithub}</span></a>
-                            <a href="https://linkedin.com/in/${c.linkedin}" target="_blank" class="flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--border-card)] hover:border-accent/50 hover:bg-accent/5 transition-all text-xs font-bold uppercase tracking-wide group has-tooltip"><i data-lucide="linkedin" class="w-4 h-4 group-hover:accent-text"></i> LinkedIn<span class="tooltip-content">${t2.openLinkedIn}</span></a>
-                        </div>
-                    </div>
-                </section>`, 'delay-100');
+                ${renderContact(lang, true)}`, renderContact(lang2, false), 'delay-100');
 
+  const renderExpertise = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.2s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].expertiseOverview}</h2></div>
+                    <div class="card p-4 flex items-center justify-center h-64">
+                        ${generateRadarChart(data.skills.professional, l)}
+                    </div>
+                </section>`;
   const expertiseOverviewSection = isInteractive ? flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.expertiseOverview}</h2></div>
-                    <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional, lang)}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="bar-chart-3" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.expertiseOverview}</h2></div>
-                    <div class="card p-4 flex items-center justify-center h-64">
-                        ${generateRadarChart(data.skills.professional, lang2)}
-                    </div>
-                </section>`, 'delay-200') : '';
+                ${renderExpertise(lang, true)}`, renderExpertise(lang2, false), 'delay-200') : '';
 
+  const renderLanguages = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.3s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].languages}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[l].map(lng => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${lng.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${lng.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${lng.name.includes('rançais') || lng.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
+                </section>`;
   const languagesSection = flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="globe" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.languages}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.languages[lang2].map(l => `<div class="text-left"><div class="flex justify-between mb-3 font-bold text-sm text-left"><span>${l.name}</span><span class="accent-text opacity-50 italic font-mono text-[0.7rem]">${l.level}</span></div><div class="w-full surface-muted h-1.5 rounded-full overflow-hidden"><div class="accent-bg h-full opacity-80 shadow-[0_0_8px_var(--accent)]" style="width: ${l.name.includes('rançais') || l.name.includes('rench') ? '100%' : '75%'}"></div></div></div>`).join('')}</div>
-                </section>`, 'delay-300');
+                ${renderLanguages(lang, true)}`, renderLanguages(lang2, false), 'delay-300');
 
+  const renderPersonalSkills = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.4s"' : ''}>
+                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].skills}</h2></div>
+                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
+                        ${data.skills.personal[l].map(s => `
+                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
+                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
+                                ${s.label}
+                                <span class="tooltip-content">${s.desc}</span>
+                            </span>
+                        `).join('')}
+                    </div>
+                </section>`;
   const personalSkillsSection = flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
-                        ${data.skills.personal[lang].map(s => `
-                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
-                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
-                                ${s.label}
-                                <span class="tooltip-content">${s.desc}</span>
-                            </span>
-                        `).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.skills}</h2></div>
-                    <div class="card p-8 flex flex-wrap gap-2.5 text-left !overflow-visible">
-                        ${data.skills.personal[lang2].map(s => `
-                            <span class="has-tooltip px-4 py-2 border border-[var(--border-card)] rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-accent/50 transition-all cursor-default flex items-center gap-2.5 group">
-                                <i data-lucide="${s.icon}" class="w-3.5 h-3.5 accent-text opacity-70 group-hover:opacity-100 transition-opacity"></i>
-                                ${s.label}
-                                <span class="tooltip-content">${s.desc}</span>
-                            </span>
-                        `).join('')}
-                    </div>
-                </section>`, 'delay-400');
+                ${renderPersonalSkills(lang, true)}`, renderPersonalSkills(lang2, false), 'delay-400');
 
+  const renderEducation = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.5s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].education}</h2></div>
+                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[l]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
+                </section>`;
   const educationSection = flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.5s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.education}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="graduation-cap" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.education}</h2></div>
-                    <div class="card p-8 text-left space-y-8 text-left">${data.education.map(ed => `<div class="flex justify-between items-start gap-4 text-left"><div class="text-left"><p class="text-[0.9rem] font-black text-[var(--text-main)] uppercase tracking-tight leading-tight mb-1 text-left">${ed.degree[lang2]}</p><p class="text-[0.8rem] opacity-40 italic font-mono text-left">${ed.school}</p></div><span class="text-[0.8rem] font-bold text-slate-500 shrink-0 text-left">${ed.year}</span></div>`).join('')}</div>
-                </section>`, 'delay-500');
+                ${renderEducation(lang, true)}`, renderEducation(lang2, false), 'delay-500');
 
+  const renderCertifications = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.6s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].certifications}</h2></div>
+                    <div class="card p-6 text-left flex flex-col gap-4">
+                        ${data.certifications.map(cert => `
+                            <div class="flex items-center gap-4 group">
+                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
+                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
+                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>`;
   const certificationsSection = flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.6s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.certifications}</h2></div>
-                    <div class="card p-6 text-left flex flex-col gap-4">
-                        ${data.certifications.map(cert => `
-                            <div class="flex items-center gap-4 group">
-                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
-                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
-                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="award" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.certifications}</h2></div>
-                    <div class="card p-6 text-left flex flex-col gap-4">
-                        ${data.certifications.map(cert => `
-                            <div class="flex items-center gap-4 group">
-                                <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0 group-hover:accent-border border border-transparent transition-all">
-                                    <i data-lucide="${cert.icon}" class="w-4.5 h-4.5 accent-text opacity-80"></i>
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <span class="text-[0.8rem] font-black uppercase tracking-tight text-[var(--text-main)] truncate">${cert.name}</span>
-                                    <span class="text-[0.65rem] opacity-40 uppercase tracking-widest truncate">${cert.issuer} • ${cert.year}</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </section>`, 'delay-600');
+                ${renderCertifications(lang, true)}`, renderCertifications(lang2, false), 'delay-600');
 
+  const renderQr = (l, reveal) => `<section class="flex flex-col gap-6 no-break${reveal ? ' reveal' : ''} text-left"${reveal ? ' style="animation-delay: 0.7s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="qr-code" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].qrTitle}</h2></div>
+                    <div class="card p-6 flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <div class="text-sm font-bold uppercase tracking-widest text-[var(--text-main)]">${i18n[l].qrTitle}</div>
+                            <div class="text-[0.75rem] opacity-70">${i18n[l].qrText}</div>
+                        </div>
+                        <div class="qr-image-wrap">
+                            <img src="${qrDataURI}" alt="${i18n[l].qrTitle}" class="qr-image">
+                        </div>
+                    </div>
+                </section>`;
   const qrSection = !isInteractive ? flip(`
-                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.7s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="qr-code" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.qrTitle}</h2></div>
-                    <div class="card p-6 flex flex-col gap-4">
-                        <div class="flex flex-col gap-2">
-                            <div class="text-sm font-bold uppercase tracking-widest text-[var(--text-main)]">${t1.qrTitle}</div>
-                            <div class="text-[0.75rem] opacity-70">${t1.qrText}</div>
-                        </div>
-                        <div class="qr-image-wrap">
-                            <img src="${qrDataURI}" alt="${t1.qrTitle}" class="qr-image">
-                        </div>
-                    </div>
-                </section>`,
-                `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="qr-code" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.qrTitle}</h2></div>
-                    <div class="card p-6 flex flex-col gap-4">
-                        <div class="flex flex-col gap-2">
-                            <div class="text-sm font-bold uppercase tracking-widest text-[var(--text-main)]">${t2.qrTitle}</div>
-                            <div class="text-[0.75rem] opacity-70">${t2.qrText}</div>
-                        </div>
-                        <div class="qr-image-wrap">
-                            <img src="${qrDataURI}" alt="${t2.qrTitle}" class="qr-image">
-                        </div>
-                    </div>
-                </section>`, 'delay-700') : '';
+                ${renderQr(lang, true)}`, renderQr(lang2, false), 'delay-700') : '';
 
+  const renderProfile = (l, reveal) => `<section class="flex flex-col gap-6 no-break text-left${reveal ? ' reveal' : ''}"${reveal ? ' style="animation-delay: 0.1s"' : ''}>
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${i18n[l].profile}</h2></div>
+                    <div class="card p-12 text-left text-[1.05rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[l])}</div>
+                </section>`;
   const profileSection = flip(`
-                <section class="flex flex-col gap-6 no-break text-left reveal" style="animation-delay: 0.1s">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.05rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang])}</div>
+                ${renderProfile(lang, true)}`, renderProfile(lang2, false), 'delay-200');
+
+  // Projects front/back differ only by language, so the cards are built once
+  // per language instead of being duplicated inline.
+  const renderProjectCards = (l) => data.projects.map((p) => {
+    const desc = getLocalizedValue(p.description, l);
+    const tools = (Array.isArray(p.tools) ? p.tools : [])
+      .map((tool) => `<span class="skill-chip skill-tag">${tool}</span>`).join('');
+    return `<a href="https://github.com/${p.github}" target="_blank" class="card p-6 flex flex-col gap-3 group hover:border-accent/40 transition-all text-left no-break">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl surface-muted flex items-center justify-center shrink-0"><i data-lucide="${p.icon}" class="w-4 h-4 accent-text"></i></div>
+                            <span class="text-[0.85rem] font-black uppercase tracking-tight text-[var(--text-main)]">${p.name}</span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-30 group-hover:opacity-100 group-hover:accent-text transition-all ml-auto"></i>
+                        </div>
+                        <p class="text-[0.8rem] opacity-70 leading-relaxed">${desc}</p>
+                        <div class="flex flex-wrap gap-2">${tools}</div>
+                    </a>`;
+  }).join('');
+
+  const projectsSection = flip(`
+                <section class="flex flex-col gap-6 no-break reveal text-left" style="animation-delay: 0.5s">
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t1.projects}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${renderProjectCards(lang)}</div>
                 </section>`,
                 `<section class="flex flex-col gap-6 no-break text-left">
-                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="terminal" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.profile}</h2></div>
-                    <div class="card p-12 text-left text-[1.05rem] leading-relaxed opacity-80 font-medium">${renderSummaryHtml(data.summary[lang2])}</div>
-                </section>`, 'delay-200');
+                    <div class="flex items-center gap-4 px-4 text-left"><i data-lucide="folder-git-2" class="w-5 h-5 accent-text"></i><h2 class="section-title" style="font-family: var(--font-sans);">${t2.projects}</h2></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${renderProjectCards(lang2)}</div>
+                </section>`, 'delay-500');
 
   const mainContent = isInteractive ? `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
@@ -610,6 +466,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 ${profileSection}
                 ${renderProSkillsSection(data.skills.professional, 'delay-300')}
                 ${renderExperienceSection(data.experiences, 'delay-400')}
+                ${projectsSection}
             </div>
         </div>
     ` : `
@@ -650,6 +507,14 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                 </div>
             </div>
             `).join('')}
+            <div class="pdf-page">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start text-left">
+                    <div class="lg:col-span-4 flex flex-col gap-8 text-left"></div>
+                    <div class="lg:col-span-8 flex flex-col gap-8 text-left">
+                        ${projectsSection}
+                    </div>
+                </div>
+            </div>
         </div>
     `;
   
@@ -710,7 +575,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
         ${baseStyles}
     </style>
 </head>
-<body class="p-4 md:p-8 lg:p-12 theme-${theme} font-architect ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
+<body class="p-4 md:p-8 lg:p-12 theme-${theme} font-${fontStack} ${isInteractive ? '' : 'pdf-mode'}" id="body-root" data-title-fr="${c.name} - ${c.title.fr}" data-title-en="${c.name} - ${c.title.en}">
     <canvas id="matrix-canvas" class="no-print" aria-hidden="true"></canvas>
     <div class="matrix-dimmer no-print" aria-hidden="true"></div>
     
@@ -950,7 +815,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
-                    ${activity ? `
+                    ${activity && activity.repo ? `
                     <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
                         <div class="relative flex items-center justify-center">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
@@ -988,7 +853,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <div class="relative group/dl z-20 hidden md:block no-print">
+                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
                         <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
                             <a href="${pdfFilename}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
                                 <i data-lucide="download" class="w-4 h-4 accent-text"></i>
@@ -1049,7 +914,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     <span class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
                         <i data-lucide="map-pin" class="w-3 h-3 accent-text"></i> Toulouse, FR
                     </span>
-                    ${activity ? `
+                    ${activity && activity.repo ? `
                     <a href="https://github.com/${c.github}/${activity.repo}" target="_blank" class="px-3 py-1 rounded-full surface-muted border border-[var(--border-card)] text-[0.65rem] font-bold uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2 hover:border-accent/50 hover:bg-accent/5 transition-all group/repo no-print has-tooltip">
                         <div class="relative flex items-center justify-center">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20"></span>
@@ -1087,7 +952,7 @@ function generateHTML(data, lang, activity = null, qrDataURI = '', mode = 'pdf',
                     
                     <div class="flex-grow"></div>
                     
-                    <div class="relative group/dl z-20 hidden md:block no-print">
+                    <div class="relative group/dl z-20 col-span-3 flex justify-center md:block no-print">
                         <div class="flex items-stretch rounded-xl surface-muted border border-[var(--border-card)] hover:border-accent transition-colors">
                             <a href="${lang === 'fr' ? 'Resume_Thomas_Bourcey_EN.pdf' : 'CV_Thomas_Bourcey_FR.pdf'}" download class="flex items-center gap-3 px-5 py-3 hover:bg-accent/5 transition-all rounded-l-xl">
                                 <i data-lucide="download" class="w-4 h-4 accent-text"></i>
@@ -1180,14 +1045,22 @@ function generatePlain(data, lang) {
     const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
     txt += `${categoryLabel}: ${tools}\n`;
   });
-  
+
+  txt += `\n${t.projects.toUpperCase()}\n`;
+  data.projects.forEach(p => {
+    const desc = getLocalizedValue(p.description, lang);
+    const tools = Array.isArray(p.tools) ? p.tools.join(', ') : p.tools;
+    txt += `- ${p.name}: ${desc} (${tools})\n`;
+    txt += `  https://github.com/${p.github}\n`;
+  });
+
   txt += `\n${t.education.toUpperCase()}\n`;
   data.education.forEach(ed => {
     txt += `${ed.degree[lang]} | ${ed.school} (${ed.year})\n`;
   });
 
   txt += `\n${t.certifications.toUpperCase()}\n`;
-  data.certifications.forEach(cert => txt += `- ${cert}\n`);
+  data.certifications.forEach(cert => txt += `- ${cert.name} — ${cert.issuer} (${cert.year})\n`);
   
   return txt;
 }
@@ -1221,7 +1094,13 @@ function generateMarkdown(data, lang) {
     const tools = Array.isArray(s.tools) ? s.tools.join(', ') : s.tools;
     md += "- **" + categoryLabel + "**: " + tools + "\n";
   });
-  md += "\n## " + t.certifications + "\n"; data.certifications.forEach(cert => md += "- " + cert + "\n");
+  md += "\n## " + t.projects + "\n";
+  data.projects.forEach(p => {
+    const desc = getLocalizedValue(p.description, lang);
+    const tools = Array.isArray(p.tools) ? p.tools.join(', ') : p.tools;
+    md += `- **[${p.name}](https://github.com/${p.github})** — ${desc} _(${tools})_\n`;
+  });
+  md += "\n## " + t.certifications + "\n"; data.certifications.forEach(cert => md += `- **${cert.name}** — ${cert.issuer} (${cert.year})\n`);
   md += "\n"; return md;
 }
 
