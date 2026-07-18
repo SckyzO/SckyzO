@@ -8,7 +8,7 @@
   
   <p>
     <a href="https://github.com/DenverCoder1/readme-typing-svg">
-      <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
+      <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
     </a>
   </p>
 
@@ -68,7 +68,7 @@
 
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&hide_border=false&cache_bust=1" height="180"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=SckyzO&theme=tokyonight&hide_border=false&cache_bust=1" height="180"/>
+  <img src="https://streak-stats.demolab.com?user=SckyzO&theme=tokyonight&hide_border=false&cache_bust=1" height="180"/>
 </div>
 
 ---
