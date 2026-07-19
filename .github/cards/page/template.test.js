@@ -7,12 +7,12 @@ import { renderPage } from './template.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const fx = JSON.parse(readFileSync(join(HERE, '../fixtures/sample.json'), 'utf8'));
-const data = { ...fx, page: { tagline: 'T', typingLines: ['A', 'B'], readmeUrl: '../', dashboardUrl: 'cards/' } };
+const data = { ...fx, page: { tagline: 'T', typingLines: ['A', 'B'], readmeUrl: '../' } };
 
 // All element hooks app.js reads (per .github/cards/page/app.js).
 const ALL_HOOKS = [
   'aboutList', 'activityGraph', 'calGrid', 'calMonths', 'donut', 'feed', 'gauge', 'langLegend',
-  'repoBody', 'repoSearch', 'repoSort', 'repoToggle', 'snakeGrid', 'stackChips', 'statRows',
+  'repoBody', 'repoSearch', 'repoSort', 'repoToggle', 'stackChips', 'statRows',
   'streakRow', 'themeBtn', 'themeLbl', 'tip', 'toolChips', 'trophies',
 ];
 
@@ -23,10 +23,16 @@ test('renderPage inlines css/js and a valid data blob, with every card hook', ()
   const m = html.match(/<script id="cards-data" type="application\/json">([\s\S]*?)<\/script>/);
   assert.ok(m, 'data blob present');
   assert.doesNotThrow(() => JSON.parse(m[1]));
-  for (const id of ['aboutList', 'calGrid', 'activityGraph', 'repoBody', 'donut', 'snakeGrid', 'themeBtn'])
+  for (const id of ['aboutList', 'calGrid', 'activityGraph', 'repoBody', 'donut', 'themeBtn'])
     assert.ok(html.includes(`id="${id}"`), `missing #${id}`);
   assert.match(html, /readme-typing-svg/); // typing image in header
   assert.match(html, /<animate /); // animated capsule
+});
+
+test('snake card embeds the real snake.svg artifact, not a JS-illustrative grid', () => {
+  const html = renderPage(data, { css: '', js: '' });
+  assert.match(html, /<img src="snake\.svg" alt="Contribution snake"/);
+  assert.doesNotMatch(html, /id="snakeGrid"/);
 });
 
 test('renderPage is a complete standalone HTML document', () => {

@@ -10,7 +10,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 export function buildPageData(apiData, cfg) {
   return { ...apiData, about: cfg.about, stack: cfg.stack, tools: cfg.tools,
     page: { tagline: cfg.page.tagline, typingLines: cfg.page.typingLines,
-      readmeUrl: cfg.page.readmeUrl, dashboardUrl: cfg.page.dashboardUrl } };
+      readmeUrl: cfg.page.readmeUrl } };
 }
 
 export async function main(outDir = join(HERE, 'dist')) {

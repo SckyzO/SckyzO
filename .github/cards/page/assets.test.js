@@ -65,4 +65,27 @@ test('app.js escapes untrusted GitHub-sourced content before it reaches innerHTM
   const donutBlock = js.slice(js.indexOf('renderDonut'), js.indexOf('// Stats + streak'));
   assert.match(donutBlock, /safeColor\(l\.color\)/, 'donut/legend language colors must be sanitized');
   assert.match(donutBlock, /escapeHtml\(l\.name\)/, 'language name must be escaped');
+
+  const repoUrlBlock = js.slice(js.indexOf('// Repos:'));
+  assert.match(repoUrlBlock, /href="\$\{escapeHtml\(safeUrl\(r\.url\)\)\}"/,
+    'repo href must be escapeHtml-wrapped around safeUrl as defense-in-depth');
+});
+
+test('donut center label is set from the top language (CSS reads it via attr(data-center))', () => {
+  const js = read('app.js');
+  const donutBlock = js.slice(js.indexOf('renderDonut'), js.indexOf('// Stats + streak'));
+  assert.match(donutBlock, /donut\.dataset\.center\s*=/, 'renderDonut must set #donut\'s data-center');
+});
+
+test('renderCalendar places each day by its actual weekday, not its index in a possibly-partial week', () => {
+  const js = read('app.js');
+  const calBlock = js.slice(js.indexOf('renderCalendar'), js.indexOf('// Activity graph'));
+  assert.match(calBlock, /Date\.UTC\(y, m - 1, d\)\)\.getUTCDay\(\)/,
+    'row must be derived from a timezone-safe UTC weekday, not the day\'s array index');
+});
+
+test('repo search filter treats a null language as empty, not the literal string "null"', () => {
+  const js = read('app.js');
+  const repoBlock = js.slice(js.indexOf('// Repos:'));
+  assert.match(repoBlock, /\$\{r\.language \|\| ''\}/, 'filter string must guard against r.language being null');
 });

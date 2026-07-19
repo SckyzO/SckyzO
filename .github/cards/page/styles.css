@@ -170,8 +170,6 @@ table.repos tr:hover td { background: var(--card-2); }
 
 /* Snake */
 .snake-wrap { overflow-x: auto; }
-.snake-grid { display: grid; grid-template-columns: repeat(34, 13px); grid-auto-rows: 13px; gap: 3px; width: max-content; margin: 0 auto; }
-.snake-grid .scell { width: 13px; height: 13px; border-radius: 3px; background: var(--cal-0); transition: background .1s, opacity .1s; }
 
 /* Activity graph */
 #activityGraph svg { width: 100%; height: auto; display: block; }

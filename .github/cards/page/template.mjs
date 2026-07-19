@@ -128,7 +128,7 @@ function cardsHtml() {
 
     <div class="card">
       <h2 class="ctitle"><span class="em">🐍</span> Contribution Snake</h2>
-      <div class="snake-wrap"><div class="snake-grid" id="snakeGrid"></div></div>
+      <div class="snake-wrap"><img src="snake.svg" alt="Contribution snake" style="width:100%;height:auto" /></div>
     </div>`;
 }
 

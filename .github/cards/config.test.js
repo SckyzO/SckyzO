@@ -22,3 +22,8 @@ test('KNOWN_CARDS covers all known cards', () => {
   for (const n of ['about','stack','tools','stats','streak','activity-graph','top-repos','activity','trophies','languages'])
     assert.ok(KNOWN_CARDS.includes(n));
 });
+
+test('page block has no dashboardUrl — dead data, unconsumed by template/app', () => {
+  const c = loadConfig({});
+  assert.ok(!('dashboardUrl' in c.page), 'cards.config.json / config.js default must not carry dashboardUrl');
+});
