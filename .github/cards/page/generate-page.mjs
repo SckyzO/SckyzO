@@ -16,7 +16,7 @@ export function buildPageData(apiData, cfg) {
 export async function main(outDir = join(HERE, 'dist')) {
   const cfg = loadConfig();
   const token = resolveToken();
-  const apiData = await fetchAll(cfg.username, token, { repoListCount: cfg.page.repoListCount });
+  const apiData = await fetchAll(cfg.username, token, { repoListCount: cfg.page.repoListCount, excludeForks: cfg.languages.excludeForks });
   const data = buildPageData(apiData, cfg);
   const css = readFileSync(join(HERE, 'styles.css'), 'utf8');
   const js = readFileSync(join(HERE, 'app.js'), 'utf8');

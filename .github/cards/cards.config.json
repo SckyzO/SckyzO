@@ -4,6 +4,7 @@
   "cards": ["header", "about", "stack", "tools", "stats", "streak", "activity-graph", "top-repos", "activity", "trophies", "languages", "footer"],
   "topRepos": { "count": 5 },
   "activity": { "count": 5 },
+  "languages": { "excludeForks": true },
   "about": [
     { "icon": "👤", "label": "Identity", "text": "My name is Thomas Bourcey, but you probably know me as SckyzO." },
     { "icon": "🐧", "label": "Linux Addict", "text": "I live in the terminal." },

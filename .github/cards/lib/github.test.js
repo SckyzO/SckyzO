@@ -102,6 +102,28 @@ test('fetchAll aggregates language edges by name across repos before ranking', a
   assert.equal(pyEntries[0].pct, 25);
 });
 
+test('fetchAll excludes forked repos from language stats by default, keeps them with excludeForks:false', async () => {
+  const graphql = { data: { user: {
+    contributionsCollection: { contributionCalendar: { weeks: [] } },
+    repositories: { nodes: [
+      { name: 'mine', description: '', stargazerCount: 1, forkCount: 0, isFork: false, updatedAt: '', url: '',
+        primaryLanguage: { name: 'Go', color: '#00ADD8' },
+        languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
+      { name: 'forked', description: '', stargazerCount: 0, forkCount: 0, isFork: true, updatedAt: '', url: '',
+        primaryLanguage: { name: 'C', color: '#555555' },
+        languages: { edges: [{ size: 9000, node: { name: 'C', color: '#555555' } }] } },
+    ] },
+    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+  } } };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+
+  const def = await fetchAll('octocat', 'tok', { fetchImpl });
+  assert.deepEqual(def.languages.map((l) => l.name), ['Go']); // C came only from the fork -> excluded
+
+  const withForks = await fetchAll('octocat', 'tok', { fetchImpl, excludeForks: false });
+  assert.ok(withForks.languages.some((l) => l.name === 'C')); // fork's C counted when opted in
+});
+
 test('fetchAll honors topReposCount and activityCount options', async () => {
   const graphql = {
     data: { user: {

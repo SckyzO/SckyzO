@@ -34,7 +34,7 @@ export function renderAll(data, cards) {
 export async function main() {
   const cfg = loadConfig();
   const token = resolveToken();
-  const data = await fetchAll(cfg.username, token, { topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count });
+  const data = await fetchAll(cfg.username, token, { topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count, excludeForks: cfg.languages.excludeForks });
   // about/stack/tools are static config, not API data — fetchAll never populates them.
   Object.assign(data, { about: cfg.about, stack: cfg.stack, tools: cfg.tools });
   const svgs = renderAll(data, cfg.cards);

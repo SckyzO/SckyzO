@@ -9,13 +9,13 @@ export function resolveToken(env = process.env) {
 const QUERY = `query($login:String!){ user(login:$login){
   contributionsCollection{ contributionCalendar{ weeks{ contributionDays{ date contributionCount } } } }
   repositories(first:100, ownerAffiliations:OWNER, orderBy:{field:STARGAZERS, direction:DESC}){
-    nodes{ name description stargazerCount forkCount updatedAt url
+    nodes{ name description stargazerCount forkCount updatedAt url isFork
       primaryLanguage{ name color }
       languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name color } } } } }
   pullRequests{ totalCount } issues{ totalCount } followers{ totalCount }
 } }`;
 
-export async function fetchAll(username, token, { fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30 } = {}) {
+export async function fetchAll(username, token, { fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30, excludeForks = true } = {}) {
   const gqlRes = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
@@ -38,6 +38,7 @@ export async function fetchAll(username, token, { fetchImpl = fetch, topReposCou
   const repos = u.repositories.nodes;
   const langTotals = new Map();
   for (const r of repos) {
+    if (excludeForks && r.isFork) continue; // forked repos vendor large codebases that skew language stats
     for (const e of r.languages?.edges || []) {
       const name = e.node.name;
       const existing = langTotals.get(name);

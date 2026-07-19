@@ -16,6 +16,7 @@ export function loadConfig(env = process.env) {
     about: raw.about || [],
     stack: raw.stack || [],
     tools: raw.tools || [],
+    languages: raw.languages || { excludeForks: true },
     page: raw.page || { tagline: '', typingLines: [], readmeUrl: '../', repoListCount: 30 },
   };
   if (!cfg.username) throw new Error('config: username is required');
