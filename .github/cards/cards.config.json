@@ -1,0 +1,8 @@
+{
+  "username": "SckyzO",
+  "theme": "tokyonight",
+  "timeRangeDays": 90,
+  "cards": ["stats", "streak", "top-repos", "activity", "trophies", "languages"],
+  "topRepos": { "count": 5, "sort": "stars" },
+  "activity": { "count": 5 }
+}
