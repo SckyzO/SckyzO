@@ -14,11 +14,14 @@
 
   <p>
     <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
+    <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
   </p>
 </div>
 
 <div align="center">
-  <a href="https://sckyzo.github.io/SckyzO/cards/">🖥️ View the interactive dashboard →</a>
+  <a href="https://sckyzo.github.io/SckyzO/cards/">
+    <img src="https://img.shields.io/badge/%F0%9F%96%A5%EF%B8%8F%20Interactive%20Dashboard-Open-8957e5?style=for-the-badge&logo=github&logoColor=white" alt="Open the interactive dashboard" />
+  </a>
 </div>
 
 ---
