@@ -5,20 +5,39 @@ const DATA = JSON.parse(document.getElementById('cards-data').textContent);
 const $ = (s) => document.querySelector(s);
 const fmt = (n) => (n ?? 0).toLocaleString('en-US');
 
+// Defensive helpers — this page is public (GitHub Pages) and several DATA
+// fields originate from GitHub-hosted content other users control (repo
+// names/descriptions, public-event payloads). Every such value is routed
+// through one of these before it reaches innerHTML, a style="" color, or an
+// href, rather than being trusted at each call site individually.
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+function safeColor(c) {
+  const v = String(c ?? '');
+  return /^#[0-9a-fA-F]{3,8}$/.test(v) || /^[a-zA-Z]+$/.test(v) ? v : '#565f89';
+}
+function safeUrl(u) {
+  const v = String(u ?? '');
+  return /^https?:\/\//.test(v) ? v : '#';
+}
+
 // About
 $('#aboutList').innerHTML = (DATA.about || [])
-  .map((a) => `<li><span class="ic">${a.icon}</span><b>${a.label}:</b> ${a.text}</li>`)
+  .map((a) => `<li><span class="ic">${escapeHtml(a.icon)}</span><b>${escapeHtml(a.label)}:</b> ${escapeHtml(a.text)}</li>`)
   .join('');
 
 // Stack / tools chips
-const chip = (c) => `<span class="chip" style="background:${c.color};color:${c.fg || '#fff'}">${c.label}</span>`;
+const chip = (c) => `<span class="chip" style="background:${safeColor(c.color)};color:${safeColor(c.fg || '#fff')}">${escapeHtml(c.label)}</span>`;
 $('#stackChips').innerHTML = (DATA.stack || []).map(chip).join('');
 $('#toolChips').innerHTML = (DATA.tools || []).map(chip).join('');
 
 // Trophies
 const rkClass = (r) => (r === 'A+' ? 'Ap' : r);
 $('#trophies').innerHTML = (DATA.trophies || [])
-  .map((t) => `<div class="trophy"><div class="rk ${rkClass(t.rank)}">${t.rank}</div><div class="kd">${t.kind}</div></div>`)
+  .map((t) => `<div class="trophy"><div class="rk ${escapeHtml(rkClass(t.rank))}">${escapeHtml(t.rank)}</div><div class="kd">${escapeHtml(t.kind)}</div></div>`)
   .join('');
 
 // Recent activity feed
@@ -40,8 +59,8 @@ function timeAgo(iso) {
 $('#feed').innerHTML = (DATA.activity || [])
   .map((e) => {
     const ic = FEED_ICON[e.type] || '•';
-    const detail = [FEED_VERB[e.type] || '', e.detail].filter(Boolean).join(' ');
-    return `<li><span class="fic">${ic}</span><div><div><span class="repo">${e.repo}</span></div><div class="ago">${detail} · ${timeAgo(e.when)}</div></div></li>`;
+    const detail = [FEED_VERB[e.type] || '', escapeHtml(e.detail || '')].filter(Boolean).join(' ');
+    return `<li><span class="fic">${ic}</span><div><div><span class="repo">${escapeHtml(e.repo)}</span></div><div class="ago">${detail} · ${timeAgo(e.when)}</div></div></li>`;
   })
   .join('');
 
@@ -51,12 +70,12 @@ $('#feed').innerHTML = (DATA.activity || [])
   let acc = 0;
   const stops = [];
   for (const l of LANGS) {
-    stops.push(`${l.color} ${acc}% ${acc + l.pct}%`);
+    stops.push(`${safeColor(l.color)} ${acc}% ${acc + l.pct}%`);
     acc += l.pct;
   }
   $('#donut').style.background = `conic-gradient(${stops.join(',')})`;
   $('#langLegend').innerHTML = LANGS
-    .map((l) => `<div class="row"><span class="dot" style="background:${l.color}"></span>${l.name}<span class="pct">${l.pct}%</span></div>`)
+    .map((l) => `<div class="row"><span class="dot" style="background:${safeColor(l.color)}"></span>${escapeHtml(l.name)}<span class="pct">${l.pct}%</span></div>`)
     .join('');
 })();
 
@@ -85,7 +104,7 @@ $('#feed').innerHTML = (DATA.activity || [])
     // mockup's fixed --v:82).
     const GRADE_PCT = { S: 95, 'A+': 88, A: 75, B: 60, C: 40 };
     gauge.style.setProperty('--v', GRADE_PCT[s.grade] ?? 50);
-    gauge.innerHTML = `<div><span>${s.grade || ''}</span><small>RANK</small></div>`;
+    gauge.innerHTML = `<div><span>${escapeHtml(s.grade || '')}</span><small>RANK</small></div>`;
   }
 })();
 
@@ -130,7 +149,8 @@ const tip = $('#tip');
       }
       const lvl = levelFor(day.count);
       const ds = dateOf(day.date).toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-      cells += `<span class="cell" data-lvl="${lvl}" data-tip="${day.count} contribution${day.count === 1 ? '' : 's'} · ${ds}"></span>`;
+      const tipText = `${day.count} contribution${day.count === 1 ? '' : 's'} · ${ds}`;
+      cells += `<span class="cell" data-lvl="${lvl}" data-tip="${escapeHtml(tipText)}"></span>`;
     }
   }
   $('#calGrid').innerHTML = cells;
@@ -225,8 +245,8 @@ function render() {
   const showAll = expanded || q;
   const shown = showAll ? rows : rows.slice(0, REPO_DEFAULT);
   tbody.innerHTML = shown.map((r) =>
-    `<tr><td><a class="repo-name" href="${r.url}" target="_blank" rel="noopener">${r.name}</a><div class="repo-desc">${r.description}</div></td>
-      <td><span class="lang-tag"><span class="dot" style="background:${r.langColor}"></span>${r.language || ''}</span></td>
+    `<tr><td><a class="repo-name" href="${safeUrl(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.name)}</a><div class="repo-desc">${escapeHtml(r.description)}</div></td>
+      <td><span class="lang-tag"><span class="dot" style="background:${safeColor(r.langColor)}"></span>${escapeHtml(r.language || '')}</span></td>
       <td class="num">${r.stars}</td><td class="num">${r.forks}</td>
       <td class="num" style="color:var(--dim)">${agoLbl(daysSince(r.updatedAt))}</td></tr>`).join('');
   if (q || rows.length <= REPO_DEFAULT) {
