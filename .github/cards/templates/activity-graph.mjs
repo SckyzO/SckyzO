@@ -9,7 +9,10 @@ function fmtDate(iso) {
 }
 
 export function renderActivityGraph(data, t = tokyonight) {
-  const days = (data.activityGraph || []).slice(-30);
+  // The window size (`activityGraph.days` config) is decided upstream by the
+  // data layer (`fetchAll` / `lib/github.mjs`), not here — re-slicing would
+  // silently cap a user's configured window back down to 30.
+  const days = data.activityGraph || [];
   const W = 800, x0 = 34, x1 = 766, y0 = 82, y1 = 178;
   const n = Math.max(1, days.length);
   const max = Math.max(1, ...days.map((d) => d.count));

@@ -29,3 +29,19 @@ test('renderActivityGraph titles the card with the actual configured day count',
   const svg = renderActivityGraph(shortData);
   assert.match(svg, /last 12 days/);
 });
+
+test('renderActivityGraph renders the full configured window, not a hardcoded 30-day cap', () => {
+  // Data layer (`fetchAll`) is the single source of truth for the window
+  // size (`activityGraph.days` config); the template must not re-cap it.
+  const longActivityGraph = Array.from({ length: 45 }, (_, i) => ({
+    date: `2026-01-${String((i % 28) + 1).padStart(2, '0')}`,
+    count: i % 5,
+  }));
+  const longData = { activityGraph: longActivityGraph };
+  const svg = renderActivityGraph(longData);
+  assert.match(svg, /last 45 days/);
+  const polyline = svg.match(/<polyline points="([^"]+)"/);
+  assert.ok(polyline, 'expected a <polyline> with points');
+  const pointCount = polyline[1].trim().split(/\s+/).length;
+  assert.equal(pointCount, 45, `expected 45 plotted points, got ${pointCount}`);
+});
