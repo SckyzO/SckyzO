@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { DEFAULT_GRADE, DEFAULT_TROPHIES } from './lib/transform.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = join(HERE, 'cards.config.json');
@@ -9,19 +10,13 @@ export const KNOWN_CARDS = ['header', 'about', 'stack', 'tools', 'stats', 'strea
 // Canonical defaults for the configurable heuristics blocks. Every value here
 // is the current hardcoded behavior — an unconfigured cards.config.json must
 // produce byte-identical output to before these blocks existed.
+// grade/trophies defaults live in lib/transform.mjs (the pure module that
+// consumes them) and are imported here rather than duplicated, so there is a
+// single source of truth for both the "no config" fetchAll defaults and the
+// "no config" loadConfig defaults.
 export const DEFAULTS = {
-  grade: {
-    weights: { commits: 1, prs: 5, issues: 3, stars: 4, contributedTo: 6 },
-    thresholds: { S: 8000, 'A+': 5000, A: 2500, B: 1000 },
-  },
-  trophies: [
-    { kind: 'Stars', metric: 'stars', tiers: [{ min: 200, rank: 'S' }, { min: 0, rank: 'A' }] },
-    { kind: 'Commit', metric: 'grade' },
-    { kind: 'Repo', metric: 'contributedTo', tiers: [{ min: 30, rank: 'A' }, { min: 0, rank: 'B' }] },
-    { kind: 'PR', metric: 'prs', tiers: [{ min: 150, rank: 'A' }, { min: 0, rank: 'B' }] },
-    { kind: 'Issue', metric: 'issues', tiers: [{ min: 0, rank: 'A' }] },
-    { kind: 'Follow', metric: 'followers', tiers: [{ min: 100, rank: 'S' }, { min: 0, rank: 'A' }] },
-  ],
+  grade: DEFAULT_GRADE,
+  trophies: DEFAULT_TROPHIES,
   theme: {
     name: 'tokyonight',
     palette: {

@@ -181,6 +181,34 @@ test('fetchAll exposes full-year contributionWeeks and a repoList with url/updat
   assert.equal(data.repoList[0].language, 'Go');
 });
 
+test('fetchAll threads repoScanLimit into the GraphQL request and eventsPerPage into the events URL', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    } },
+  };
+  const calls = [];
+  const fetchImpl = async (url, opts) => {
+    calls.push({ url: String(url), opts });
+    return { ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) };
+  };
+
+  await fetchAll('octocat', 'tok', { fetchImpl, repoScanLimit: 7, eventsPerPage: 13 });
+
+  const gqlCall = calls.find((c) => c.url.includes('/graphql'));
+  const body = JSON.parse(gqlCall.opts.body);
+  assert.equal(body.variables.repoLimit, 7, 'repoScanLimit must reach the graphql request as a variable');
+  assert.match(body.query, /\$repoLimit\s*:\s*Int!/, 'query must declare a $repoLimit variable');
+  assert.match(body.query, /first:\s*\$repoLimit\b/, 'repositories(first:...) must reference the variable');
+  assert.ok(!body.query.includes('first:100'), 'the limit must not be string-interpolated into the query body');
+
+  const eventsCall = calls.find((c) => c.url.includes('/events/public'));
+  assert.ok(eventsCall, 'expected an events/public request');
+  assert.ok(eventsCall.url.includes('per_page=13'), `expected per_page=13 in ${eventsCall.url}`);
+});
+
 test('fetchAll drives trophies from a custom trophies config', async () => {
   const graphql = {
     data: { user: {
