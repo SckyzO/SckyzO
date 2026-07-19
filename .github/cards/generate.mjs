@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadConfig } from './config.js';
 import { resolveToken, fetchAll } from './lib/github.mjs';
+import { tokyonight, makeTheme } from './lib/theme.mjs';
 import { renderStats } from './templates/stats.mjs';
 import { renderStreak } from './templates/streak.mjs';
 import { renderTopRepos } from './templates/top-repos.mjs';
@@ -22,11 +23,11 @@ const RENDERERS = {
   stack: renderStack, tools: renderTools,
 };
 
-export function renderAll(data, cards) {
+export function renderAll(data, cards, theme = tokyonight) {
   const out = {};
   for (const name of cards) {
     const fn = RENDERERS[name];
-    if (fn) out[name] = fn(data);
+    if (fn) out[name] = fn(data, theme);
   }
   return out;
 }
@@ -41,7 +42,8 @@ export async function main() {
   });
   // about/stack/tools are static config, not API data — fetchAll never populates them.
   Object.assign(data, { about: cfg.about, stack: cfg.stack, tools: cfg.tools });
-  const svgs = renderAll(data, cfg.cards);
+  const theme = makeTheme(cfg.theme);
+  const svgs = renderAll(data, cfg.cards, theme);
   const outDir = join(dirname(fileURLToPath(import.meta.url)), '../../assets');
   mkdirSync(outDir, { recursive: true });
   for (const [name, svg] of Object.entries(svgs)) {

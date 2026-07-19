@@ -11,7 +11,7 @@ function chipsCard(emoji, title, items, t) {
     const w = Math.round(22 + it.label.length * 8.6);           // approx text width + padding
     if (x + w > W - padX) { x = padX; y += chipH + gapY; }
     out.push(`<rect x="${x}" y="${y}" width="${w}" height="${chipH}" rx="7" fill="${it.color}"/>`
-      + text(x + w / 2, y + 20, it.label, { fill: it.fg || '#ffffff', size: 13, weight: 600, anchor: 'middle' }));
+      + text(x + w / 2, y + 20, it.label, { fill: it.fg || '#ffffff', size: 13, weight: 600, anchor: 'middle' }, t));
     x += w + gapX; maxRowsY = y;
   }
   return svgFrame(W, maxRowsY + chipH + 14, cardTitle(emoji, title, t) + out.join(''), t);

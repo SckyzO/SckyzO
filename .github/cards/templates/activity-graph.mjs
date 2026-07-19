@@ -23,7 +23,7 @@ export function renderActivityGraph(data, t = tokyonight) {
   const yAxis = [0, 0.5, 1].map((f) => {
     const gy = y1 - f * (y1 - y0);
     const val = f === 0 ? 0 : f === 1 ? max : Math.round(max / 2);
-    return text(28, gy + 4, String(val), { fill: t.dim, size: 11, anchor: 'end' });
+    return text(28, gy + 4, String(val), { fill: t.dim, size: 11, anchor: 'end' }, t);
   }).join('');
 
   // X axis: a tick every 7 days plus the last day, labeled "Mon D". When the
@@ -39,7 +39,7 @@ export function renderActivityGraph(data, t = tokyonight) {
   const xAxis = tickIdx.map((i) => {
     const x = px(i).toFixed(1);
     return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y1 + 5}" stroke="${t.dim}"/>`
-      + text(px(i), 194, fmtDate(days[i].date), { fill: t.dim, size: 11, anchor: 'middle' });
+      + text(px(i), 194, fmtDate(days[i].date), { fill: t.dim, size: 11, anchor: 'middle' }, t);
   }).join('');
 
   const total = days.reduce((s, d) => s + d.count, 0);
@@ -51,7 +51,7 @@ export function renderActivityGraph(data, t = tokyonight) {
     + `<polyline points="${line}" fill="none" stroke="${t.title}" stroke-width="2" stroke-linejoin="round"/>`
     + yAxis
     + xAxis
-    + text(x0, 216, `${total} contributions`, { fill: t.dim, size: 12 })
-    + text(x1, 216, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' });
+    + text(x0, 216, `${total} contributions`, { fill: t.dim, size: 12 }, t)
+    + text(x1, 216, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' }, t);
   return svgFrame(W, 232, inner, t);
 }

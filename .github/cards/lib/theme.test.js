@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { tokyonight, escapeXml, svgFrame, text, fmtNum } from './theme.mjs';
+import { tokyonight, escapeXml, svgFrame, text, fmtNum, makeTheme } from './theme.mjs';
 
 test('palette has exact tokyonight values', () => {
   assert.equal(tokyonight.bg, '#1a1b27');
@@ -25,4 +25,20 @@ test('text escapes its content', () => {
 
 test('fmtNum formats thousands with en-US separators', () => {
   assert.equal(fmtNum(4218), '4,218');
+});
+
+test('makeTheme applies palette overrides and falls back to tokyonight for unset keys', () => {
+  const t = makeTheme({ palette: { bg: '#000000' } });
+  assert.equal(t.bg, '#000000');
+  assert.equal(t.ink, '#a9b1d6');
+});
+
+test('makeTheme applies a font override', () => {
+  assert.equal(makeTheme({ font: 'X' }).font, 'X');
+});
+
+test('makeTheme with no args mirrors tokyonight, including its font', () => {
+  const t = makeTheme();
+  assert.equal(t.bg, tokyonight.bg);
+  assert.equal(t.font, tokyonight.font);
 });

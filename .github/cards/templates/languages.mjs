@@ -15,7 +15,7 @@ export function renderLanguages(data, t = tokyonight) {
     const lx = x0 + (i % 2) * colW;
     const ly = legendTop + Math.floor(i / 2) * rowH;
     return `<circle cx="${lx + 6}" cy="${ly - 5}" r="6" fill="${l.color}"/>`
-      + text(lx + 20, ly, `${l.name} ${l.pct}%`, { fill: t.ink, size: 15 });
+      + text(lx + 20, ly, `${l.name} ${l.pct}%`, { fill: t.ink, size: 15 }, t);
   }).join('');
   const inner = cardTitle('💬', 'Most Used Languages', t)
     + `<clipPath id="lb"><rect x="${x0}" y="${barY}" width="${barW}" height="${barH}" rx="6"/></clipPath>`

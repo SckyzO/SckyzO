@@ -11,8 +11,8 @@ export function renderActivity(data, t = tokyonight) {
     const y = top + i * rowH;
     const [glyph, colorKey] = ICON[e.type] || ['•', 'ink'];
     const line = `${VERB[e.type] || ''} ${e.detail ? e.detail + ' · ' : ''}${e.repo.split('/').pop()}`.trim();
-    inner.push(text(padX, y, glyph, { fill: t[colorKey], size: 15 }));
-    inner.push(text(padX + 24, y, line, { fill: t.ink, size: 15 }));
+    inner.push(text(padX, y, glyph, { fill: t[colorKey], size: 15 }, t));
+    inner.push(text(padX + 24, y, line, { fill: t.ink, size: 15 }, t));
   });
   return svgFrame(W, top + (evs.length - 1) * rowH + 40, inner.join(''), t);
 }
