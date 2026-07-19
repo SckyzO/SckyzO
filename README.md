@@ -14,7 +14,6 @@
 
   <p>
     <img src="https://komarev.com/ghpvc/?username=SckyzO&label=VIEWS&color=0e75b6&style=for-the-badge" alt="Profile views" />
-    <img src="https://img.shields.io/github/followers/SckyzO?label=FOLLOWERS&style=for-the-badge&color=blueviolet" alt="GitHub followers" />
   </p>
 </div>
 
@@ -22,53 +21,43 @@
 
 <div align="center"><img src="./assets/about.svg" alt="About Me" /></div>
 
-## 📬 Contact
+<br />
 
-<p align="center">
-  <a href="mailto:sckyzo@gmail.com"><img src="https://img.shields.io/badge/Email-sckyzo@gmail.com-informational?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
-</p>
+<div align="center"><img src="./assets/stack.svg" alt="Languages & Stack" /></div>
 
----
+<br />
 
-## 🧪 Languages & Stack
+<div align="center"><img src="./assets/tools.svg" alt="Tools & Environment" /></div>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
-  <img src="https://img.shields.io/badge/Bash-black?style=for-the-badge&logo=gnubash&logoColor=white" />
-  <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white" />
-  <img src="https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white" />
-  <img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white" />
-  <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" />
-</p>
-
-## 🧰 Tools & Environment
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Vim-019733?style=for-the-badge&logo=vim&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tmux-1BB91F?style=for-the-badge&logo=tmux&logoColor=white" />
-  <img src="https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=zsh&logoColor=white" />
-  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" />
-</p>
-
----
+<br />
 
 <div align="center"><img src="./assets/stats.svg" alt="GitHub Stats" /></div>
 
+<br />
+
 <div align="center"><img src="./assets/streak.svg" alt="Contribution Streak" /></div>
+
+<br />
 
 <div align="center"><img src="./assets/activity-graph.svg" alt="Activity — last 30 days" /></div>
 
+<br />
+
 <div align="center"><img src="./assets/top-repos.svg" alt="Top Repositories" /></div>
+
+<br />
 
 <div align="center"><img src="./assets/activity.svg" alt="Recent Activity" /></div>
 
+<br />
+
 <div align="center"><img src="./assets/languages.svg" alt="Most Used Languages" /></div>
 
+<br />
+
 <div align="center"><img src="./assets/trophies.svg" alt="Achievements" /></div>
+
+<br />
 
 <div align="center"><img src="./assets/snake.svg" alt="Contribution Snake" /></div>
 

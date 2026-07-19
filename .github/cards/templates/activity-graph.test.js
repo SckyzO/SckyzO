@@ -17,3 +17,9 @@ test('renderActivityGraph labels the x-axis with the first and last day dates', 
   const svg = renderActivityGraph(data);
   assert.match(svg, /Jun|Jul|May/);
 });
+
+test('renderActivityGraph renders at least 3 date/axis labels', () => {
+  const svg = renderActivityGraph(data);
+  const dateLabels = svg.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/g) || [];
+  assert.ok(dateLabels.length >= 3, `expected >=3 date labels, got ${dateLabels.length}`);
+});

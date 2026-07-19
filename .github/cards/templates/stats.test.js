@@ -12,4 +12,5 @@ test('renderStats is a valid svg containing the figures and grade', () => {
   assert.match(svg, /318/);       // stars
   assert.match(svg, /4,?218|4218/); // commits
   assert.match(svg, />A\+</);     // grade in the ring
+  assert.match(svg, /142/);       // followers
 });
