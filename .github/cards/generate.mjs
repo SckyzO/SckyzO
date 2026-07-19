@@ -9,10 +9,13 @@ import { renderTopRepos } from './templates/top-repos.mjs';
 import { renderActivity } from './templates/activity.mjs';
 import { renderTrophies } from './templates/trophies.mjs';
 import { renderLanguages } from './templates/languages.mjs';
+import { renderAbout } from './templates/about.mjs';
+import { renderActivityGraph } from './templates/activity-graph.mjs';
 
 const RENDERERS = {
   stats: renderStats, streak: renderStreak, 'top-repos': renderTopRepos,
   activity: renderActivity, trophies: renderTrophies, languages: renderLanguages,
+  about: renderAbout, 'activity-graph': renderActivityGraph,
 };
 
 export function renderAll(data, cards) {

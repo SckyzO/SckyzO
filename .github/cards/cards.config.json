@@ -1,7 +1,16 @@
 {
   "username": "SckyzO",
   "theme": "tokyonight",
-  "cards": ["stats", "streak", "top-repos", "activity", "trophies", "languages"],
+  "cards": ["about", "stats", "streak", "activity-graph", "top-repos", "activity", "trophies", "languages"],
   "topRepos": { "count": 5 },
-  "activity": { "count": 5 }
+  "activity": { "count": 5 },
+  "about": [
+    "👤 Thomas Bourcey — you probably know me as SckyzO",
+    "🐧 Linux addict — I live in the terminal",
+    "🐳 Containerization is my playground (Docker)",
+    "📊 Observability: Prometheus & Grafana are my eyes",
+    "⚡ Automation with Ansible",
+    "🛠️ Building tools in Python and Go",
+    "📍 Toulouse, France"
+  ]
 }

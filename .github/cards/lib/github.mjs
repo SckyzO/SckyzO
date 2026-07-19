@@ -61,6 +61,7 @@ export async function fetchAll(username, token, { fetchImpl = fetch, topReposCou
     streak: computeStreak(days),
     topRepos: pickTopRepos(repos, topReposCount),
     activity: mapActivity(events, activityCount),
+    activityGraph: days.slice(-30),
     languages: topLanguages(langEdges, 5),
     trophies: [
       { kind: 'Stars', rank: stars > 200 ? 'S' : 'A' },

@@ -39,6 +39,33 @@ test('fetchAll assembles the model from mocked responses', async () => {
   assert.ok(data.stats.grade);
 });
 
+test('fetchAll returns activityGraph capped at the last 30 contribution days', async () => {
+  const days = Array.from({ length: 45 }, (_, i) => ({
+    date: `day-${String(i + 1).padStart(2, '0')}`,
+    contributionCount: i % 5,
+  }));
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [{ contributionDays: days }] } },
+      repositories: { nodes: [] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
+      followers: { totalCount: 0 },
+    } },
+  };
+  const rest = [];
+
+  const fetchImpl = async (url) => ({
+    ok: true,
+    json: async () => (String(url).includes('/graphql') ? graphql : rest),
+  });
+
+  const data = await fetchAll('octocat', 'tok', { fetchImpl });
+  assert.ok(data.activityGraph.length <= 30);
+  assert.equal(data.activityGraph.length, 30);
+  assert.equal(data.activityGraph[0].date, 'day-16');
+  assert.equal(data.activityGraph[data.activityGraph.length - 1].date, 'day-45');
+});
+
 test('fetchAll aggregates language edges by name across repos before ranking', async () => {
   const graphql = {
     data: { user: {
