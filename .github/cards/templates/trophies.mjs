@@ -1,14 +1,15 @@
-import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
+import { svgFrame, text, cardTitle, tokyonight } from '../lib/theme.mjs';
 
 export function renderTrophies(data, t = tokyonight) {
   const tr = data.trophies;
-  const W = 430, cellW = (W - 40) / tr.length, top = 42;
-  const inner = [text(20, 30, '🏆 Achievements', { fill: t.title, size: 14, weight: 600 })];
+  const W = 495, padX = 28, top = 78, gap = 10, chipH = 72;
+  const cellW = (W - padX * 2 - gap * (tr.length - 1)) / tr.length;
+  const inner = [cardTitle('🏆', 'Achievements', t)];
   tr.forEach((c, i) => {
-    const x = 20 + cellW * i;
-    inner.push(`<rect x="${x + 3}" y="${top}" width="${cellW - 6}" height="46" rx="7" fill="none" stroke="${t.line}"/>`);
-    inner.push(text(x + cellW / 2, top + 24, c.rank, { fill: t.gold, size: 15, weight: 700, anchor: 'middle', mono: true }));
-    inner.push(text(x + cellW / 2, top + 40, c.kind, { fill: t.dim, size: 9, anchor: 'middle' }));
+    const x = padX + i * (cellW + gap);
+    inner.push(`<rect x="${x.toFixed(1)}" y="${top}" width="${cellW.toFixed(1)}" height="${chipH}" rx="10" fill="none" stroke="${t.line}" stroke-width="1.5"/>`);
+    inner.push(text(x + cellW / 2, top + 36, c.rank, { fill: t.gold, size: 22, weight: 700, anchor: 'middle' }));
+    inner.push(text(x + cellW / 2, top + 58, c.kind, { fill: t.dim, size: 12, anchor: 'middle' }));
   });
-  return svgFrame(W, top + 58, inner.join(''), t);
+  return svgFrame(W, top + chipH + 28, inner.join(''), t);
 }

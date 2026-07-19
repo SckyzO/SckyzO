@@ -1,23 +1,25 @@
-import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
+import { svgFrame, text, cardTitle, tokyonight } from '../lib/theme.mjs';
 
 export function renderLanguages(data, t = tokyonight) {
   const langs = data.languages;
-  const W = 430, barX = 20, barW = W - 40, barY = 48;
-  let x = barX;
+  const W = 495, padX = 28, barY = 88, barH = 14, barW = W - padX * 2;
+  let x = padX;
   const bar = langs.map((l) => {
     const w = (l.pct / 100) * barW;
-    const seg = `<rect x="${x.toFixed(1)}" y="${barY}" width="${w.toFixed(1)}" height="9" fill="${l.color}"/>`;
+    const seg = `<rect x="${x.toFixed(1)}" y="${barY}" width="${w.toFixed(1)}" height="${barH}" fill="${l.color}"/>`;
     x += w;
     return seg;
   }).join('');
+  const legendTop = barY + barH + 32, rowH = 30, colW = barW / 2;
   const legend = langs.map((l, i) => {
-    const lx = barX + (i % 2) * (barW / 2);
-    const ly = 78 + Math.floor(i / 2) * 20;
-    return `<circle cx="${lx + 5}" cy="${ly - 4}" r="5" fill="${l.color}"/>`
-      + text(lx + 16, ly, `${l.name} ${l.pct}%`, { fill: t.ink, size: 12 });
+    const lx = padX + (i % 2) * colW;
+    const ly = legendTop + Math.floor(i / 2) * rowH;
+    return `<circle cx="${lx + 6}" cy="${ly - 5}" r="6" fill="${l.color}"/>`
+      + text(lx + 20, ly, `${l.name} ${l.pct}%`, { fill: t.ink, size: 15 });
   }).join('');
-  const inner = text(20, 30, 'Most Used Languages', { fill: t.title, size: 14, weight: 600 })
-    + `<clipPath id="lb"><rect x="${barX}" y="${barY}" width="${barW}" height="9" rx="4"/></clipPath>`
+  const inner = cardTitle('💬', 'Most Used Languages', t)
+    + `<clipPath id="lb"><rect x="${padX}" y="${barY}" width="${barW}" height="${barH}" rx="6"/></clipPath>`
     + `<g clip-path="url(#lb)">${bar}</g>` + legend;
-  return svgFrame(W, 78 + Math.ceil(langs.length / 2) * 20 + 8, inner, t);
+  const rows = Math.ceil(langs.length / 2);
+  return svgFrame(W, legendTop + (rows - 1) * rowH + 26, inner, t);
 }

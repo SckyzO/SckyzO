@@ -1,19 +1,19 @@
-import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
+import { svgFrame, text, cardTitle, tokyonight } from '../lib/theme.mjs';
 
 const clip = (s, n) => { const a = [...s]; return a.length > n ? a.slice(0, n - 1).join('') + '…' : s; };
 
 export function renderTopRepos(data, t = tokyonight) {
   const repos = data.topRepos;
-  const W = 430, rowH = 34, top = 52;
-  const inner = [text(20, 34, '📌 Top Repositories', { fill: t.title, size: 14, weight: 600 })];
+  const W = 495, padX = 28, top = 90, rowH = 58;
+  const inner = [cardTitle('📌', 'Top Repositories', t)];
   repos.forEach((r, i) => {
     const y = top + i * rowH;
-    inner.push(text(20, y, r.name, { fill: t.title, size: 13, weight: 600, mono: true }));
-    inner.push(text(20, y + 15, clip(r.description, 52), { fill: t.dim, size: 11 }));
-    inner.push(`<circle cx="322" cy="${y - 4}" r="5" fill="${r.langColor}"/>`);
-    inner.push(text(334, y, r.language, { fill: t.ink, size: 11, mono: true }));
-    inner.push(text(410, y, `★ ${r.stars}`, { fill: t.gold, size: 11, anchor: 'end', mono: true }));
-    if (i < repos.length - 1) inner.push(`<line x1="20" y1="${y + 24}" x2="410" y2="${y + 24}" stroke="${t.line}"/>`);
+    inner.push(text(padX, y, r.name, { fill: t.title, size: 16, weight: 600 }));
+    inner.push(text(padX, y + 22, clip(r.description, 58), { fill: t.dim, size: 13 }));
+    inner.push(`<circle cx="${W - 108}" cy="${y - 5}" r="6" fill="${r.langColor}"/>`);
+    inner.push(text(W - 96, y, r.language, { fill: t.ink, size: 13 }));
+    inner.push(text(W - padX, y, `★ ${r.stars}`, { fill: t.gold, size: 14, weight: 600, anchor: 'end' }));
+    if (i < repos.length - 1) inner.push(`<line x1="${padX}" y1="${y + 34}" x2="${W - padX}" y2="${y + 34}" stroke="${t.line}"/>`);
   });
-  return svgFrame(W, top + repos.length * rowH, inner.join(''), t);
+  return svgFrame(W, top + (repos.length - 1) * rowH + 56, inner.join(''), t);
 }
