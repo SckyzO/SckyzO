@@ -1,0 +1,48 @@
+# .github/workflows/cards.yml
+name: Profile cards
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # every 6 hours
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/cards/**', '.github/workflows/cards.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-cards
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+
+      - name: Run card generator tests
+        run: node --test '.github/cards/**/*.test.js'
+
+      - name: Generate SVG cards
+        env:
+          CARDS_TOKEN: ${{ secrets.CARDS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/cards/generate.mjs
+
+      - name: Generate contribution snake
+        uses: Platane/snk@v3.5.0
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: assets/snake.svg?palette=github-dark
+
+      - name: Commit changed assets
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: 'chore(cards): refresh profile SVGs'
+          file_pattern: 'assets/*.svg'
