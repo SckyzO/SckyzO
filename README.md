@@ -67,16 +67,34 @@
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=SckyzO&theme=tokyonight&show_icons=true&hide_border=false&cache_bust=1" height="180"/>
-  <img src="https://streak-stats.demolab.com?user=SckyzO&theme=tokyonight&hide_border=false&cache_bust=1" height="180"/>
+  <img src="./assets/stats.svg" height="180"/>
+  <img src="./assets/streak.svg" height="180"/>
 </div>
+
+---
+
+## 📌 Top Repositories
+
+<div align="center"><img src="./assets/top-repos.svg" alt="Top Repositories" /></div>
+
+---
+
+## ⚡ Recent Activity
+
+<div align="center"><img src="./assets/activity.svg" alt="Recent Activity" /></div>
+
+---
+
+## 🗣️ Most Used Languages
+
+<div align="center"><img src="./assets/languages.svg" alt="Most Used Languages" /></div>
 
 ---
 
 ## 🏆 Achievements
 
 <div align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=SckyzO&theme=onedark&no-frame=true&column=7&margin-w=10&cache_bust=1" />
+  <img src="./assets/trophies.svg" />
 </div>
 
 ---
@@ -86,6 +104,8 @@
 <div align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=SckyzO&theme=tokyo-night&hide_border=false" />
 </div>
+
+<div align="center"><img src="./assets/snake.svg" alt="Contribution Snake" /></div>
 
 ---
 
