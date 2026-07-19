@@ -19,5 +19,12 @@
   ],
   "tools": [
     {"label":"Vim","color":"#019733"},{"label":"Tmux","color":"#1BB91F"},{"label":"Zsh","color":"#F15A24"},{"label":"Git","color":"#F05032"},{"label":"VS Code","color":"#007ACC"}
-  ]
+  ],
+  "page": {
+    "tagline": "SysAdmin & DevOps Enthusiast · Automation Lover · Monitoring Wizard · Python & Go",
+    "typingLines": ["SysAdmin & DevOps Enthusiast", "Automation Lover", "Monitoring Wizard", "Python & Go Developer"],
+    "readmeUrl": "../",
+    "dashboardUrl": "cards/",
+    "repoListCount": 30
+  }
 }
