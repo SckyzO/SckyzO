@@ -17,6 +17,10 @@
   </p>
 </div>
 
+<div align="center">
+  <a href="https://sckyzo.github.io/SckyzO/cards/">🖥️ View the interactive dashboard →</a>
+</div>
+
 ---
 
 <div align="center"><img src="./assets/about.svg" alt="About Me" /></div>
