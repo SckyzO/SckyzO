@@ -36,13 +36,13 @@ jobs:
         run: node .github/cards/generate.mjs
 
       - name: Generate contribution snake
-        uses: Platane/snk@v3.5.0
+        uses: Platane/snk@d8f6715049803e982ee5ff501b6b9b7d5deeb09b  # v3.5.0
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: assets/snake.svg?palette=github-dark
 
       - name: Commit changed assets
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d  # v7.2.0
         with:
           commit_message: 'chore(cards): refresh profile SVGs'
           file_pattern: 'assets/*.svg'
