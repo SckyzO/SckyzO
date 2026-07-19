@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { computeStreak, computeGrade, topLanguages, pickTopRepos, mapActivity } from './transform.mjs';
+import { computeStreak, computeGrade, topLanguages, pickTopRepos, mapActivity, computeTrophies, DEFAULT_TROPHIES } from './transform.mjs';
 
 test('computeStreak counts total, current and longest', () => {
   const days = [
@@ -36,6 +36,42 @@ test('computeGrade grades by score buckets (commits*1 + prs*5 + issues*3 + stars
   // mixed metrics: commits*1 + prs*5 + issues*3 + stars*4 + contributedTo*6
   // = 1000 + 600 + 300 + 400 + 600 = 2900 → A
   assert.equal(computeGrade({ commits: 1000, prs: 120, issues: 100, stars: 100, contributedTo: 100 }), 'A');
+});
+
+test('computeGrade honors a custom weights/thresholds config', () => {
+  const cfg = { weights: { stars: 100 }, thresholds: { S: 100, 'A+': 50, A: 10, B: 1 } };
+  // score = stars(100) * weight(100) = 10000 -> far above the S threshold (100)
+  assert.equal(computeGrade({ stars: 100 }, cfg), 'S');
+});
+
+test('computeGrade with no cfg arg still uses the built-in defaults', () => {
+  // commits:1 -> score 1, below every threshold -> C, same as before config existed
+  assert.equal(computeGrade({ commits: 1 }), 'C');
+});
+
+test('computeTrophies picks the grade rank for a metric:"grade" entry', () => {
+  const stats = { stars: 0, prs: 0, issues: 0, followers: 0, contributedTo: 0, grade: 'A+' };
+  const trophies = computeTrophies(stats, [{ kind: 'Commit', metric: 'grade' }]);
+  assert.deepEqual(trophies, [{ kind: 'Commit', rank: 'A+' }]);
+});
+
+test('computeTrophies picks the tier whose min is strictly below the metric value', () => {
+  const stats = { stars: 9, prs: 0, issues: 0, followers: 0, contributedTo: 0, grade: 'C' };
+  const trophies = computeTrophies(stats, [
+    { kind: 'Stars', metric: 'stars', tiers: [{ min: 5, rank: 'S' }, { min: 0, rank: 'A' }] },
+  ]);
+  assert.deepEqual(trophies, [{ kind: 'Stars', rank: 'S' }]);
+});
+
+test('computeTrophies with the default config reproduces the old boundary exactly at stars=200', () => {
+  // Old hardcoded rule was `stars > 200 ? 'S' : 'A'` — 200 itself fell through to 'A'.
+  // DEFAULT_TROPHIES' Stars tier uses min:200, so the terminal tier is an
+  // unconditional catch-all and non-terminal tiers require a STRICT `>`
+  // match; this preserves that exact boundary instead of a naive `min<=value`.
+  const stats = { stars: 200, prs: 0, issues: 0, followers: 0, contributedTo: 0, grade: 'C' };
+  const trophies = computeTrophies(stats, DEFAULT_TROPHIES);
+  const starsTrophy = trophies.find((t) => t.kind === 'Stars');
+  assert.equal(starsTrophy.rank, 'A');
 });
 
 test('topLanguages returns percentages summing ~100 for the top n', () => {

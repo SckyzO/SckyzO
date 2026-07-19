@@ -181,6 +181,71 @@ test('fetchAll exposes full-year contributionWeeks and a repoList with url/updat
   assert.equal(data.repoList[0].language, 'Go');
 });
 
+test('fetchAll drives trophies from a custom trophies config', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [
+        { name: 'r1', description: '', stargazerCount: 9, forkCount: 0, isFork: false,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
+      ] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    } },
+  };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+
+  const trophies = [
+    { kind: 'Stars', metric: 'stars', tiers: [{ min: 5, rank: 'S' }, { min: 0, rank: 'A' }] },
+    { kind: 'Commit', metric: 'grade' },
+  ];
+  const data = await fetchAll('octocat', 'tok', { fetchImpl, trophies });
+  assert.deepEqual(data.trophies, [
+    { kind: 'Stars', rank: 'S' },
+    { kind: 'Commit', rank: data.stats.grade },
+  ]);
+});
+
+test('fetchAll honors languagesCount and activityGraphDays options', async () => {
+  const days = Array.from({ length: 45 }, (_, i) => ({
+    date: `day-${String(i + 1).padStart(2, '0')}`,
+    contributionCount: i % 5,
+  }));
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [{ contributionDays: days }] } },
+      repositories: { nodes: [
+        { name: 'r1', description: '', stargazerCount: 1, forkCount: 0, isFork: false,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' },
+          languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
+        { name: 'r2', description: '', stargazerCount: 1, forkCount: 0, isFork: false,
+          primaryLanguage: { name: 'Python', color: '#3572A5' },
+          languages: { edges: [{ size: 50, node: { name: 'Python', color: '#3572A5' } }] } },
+      ] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    } },
+  };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+
+  const data = await fetchAll('octocat', 'tok', { fetchImpl, languagesCount: 1, activityGraphDays: 10 });
+  assert.equal(data.languages.length, 1);
+  assert.equal(data.activityGraph.length, 10);
+});
+
+test('fetchAll honors a custom gradeConfig', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    } },
+  };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+
+  const gradeConfig = { weights: { commits: 0, prs: 0, issues: 0, stars: 0, contributedTo: 0 }, thresholds: { S: -1, 'A+': -2, A: -3, B: -4 } };
+  const data = await fetchAll('octocat', 'tok', { fetchImpl, gradeConfig });
+  assert.equal(data.stats.grade, 'S'); // score 0 > every (negative) threshold
+});
+
 test('fetchAll caps repoList at repoListCount', async () => {
   const nodes = Array.from({ length: 40 }, (_, i) => ({
     name: `r${i}`, description: '', stargazerCount: 40 - i, forkCount: 0,

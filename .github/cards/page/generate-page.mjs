@@ -16,7 +16,11 @@ export function buildPageData(apiData, cfg) {
 export async function main(outDir = join(HERE, 'dist')) {
   const cfg = loadConfig();
   const token = resolveToken();
-  const apiData = await fetchAll(cfg.username, token, { repoListCount: cfg.page.repoListCount, excludeForks: cfg.languages.excludeForks });
+  const apiData = await fetchAll(cfg.username, token, {
+    repoListCount: cfg.page.repoListCount, excludeForks: cfg.languages.excludeForks,
+    gradeConfig: cfg.grade, trophies: cfg.trophies, languagesCount: cfg.languages.count,
+    repoScanLimit: cfg.fetch.repoScanLimit, eventsPerPage: cfg.fetch.eventsPerPage, activityGraphDays: cfg.activityGraph.days,
+  });
   const data = buildPageData(apiData, cfg);
   const css = readFileSync(join(HERE, 'styles.css'), 'utf8');
   const js = readFileSync(join(HERE, 'app.js'), 'utf8');

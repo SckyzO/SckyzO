@@ -11,14 +11,63 @@ export function computeStreak(days) {
   return { total, current, longest };
 }
 
-export function computeGrade({ commits = 0, prs = 0, issues = 0, stars = 0, contributedTo = 0 }) {
+// Canonical default — equal to the formula that was hardcoded before grade
+// became configurable. Kept here (rather than importing config.js) so this
+// module stays a self-contained pure layer with no dependency on the app's
+// config loader.
+export const DEFAULT_GRADE = {
+  weights: { commits: 1, prs: 5, issues: 3, stars: 4, contributedTo: 6 },
+  thresholds: { S: 8000, 'A+': 5000, A: 2500, B: 1000 },
+};
+
+export function computeGrade({ commits = 0, prs = 0, issues = 0, stars = 0, contributedTo = 0 }, cfg = DEFAULT_GRADE) {
   // Weighted score, mapped to letter ranks. Heuristic — tune against real data.
-  const score = commits * 1 + prs * 5 + issues * 3 + stars * 4 + contributedTo * 6;
-  if (score > 8000) return 'S';
-  if (score > 5000) return 'A+';
-  if (score > 2500) return 'A';
-  if (score > 1000) return 'B';
+  const w = cfg.weights;
+  const t = cfg.thresholds;
+  const score = commits * (w.commits ?? 0) + prs * (w.prs ?? 0) + issues * (w.issues ?? 0)
+    + stars * (w.stars ?? 0) + contributedTo * (w.contributedTo ?? 0);
+  if (score > t.S) return 'S';
+  if (score > t['A+']) return 'A+';
+  if (score > t.A) return 'A';
+  if (score > t.B) return 'B';
   return 'C';
+}
+
+// Canonical default — the 6 rules that were hardcoded in fetchAll's trophies
+// array before trophies became configurable.
+export const DEFAULT_TROPHIES = [
+  { kind: 'Stars', metric: 'stars', tiers: [{ min: 200, rank: 'S' }, { min: 0, rank: 'A' }] },
+  { kind: 'Commit', metric: 'grade' },
+  { kind: 'Repo', metric: 'contributedTo', tiers: [{ min: 30, rank: 'A' }, { min: 0, rank: 'B' }] },
+  { kind: 'PR', metric: 'prs', tiers: [{ min: 150, rank: 'A' }, { min: 0, rank: 'B' }] },
+  { kind: 'Issue', metric: 'issues', tiers: [{ min: 0, rank: 'A' }] },
+  { kind: 'Follow', metric: 'followers', tiers: [{ min: 100, rank: 'S' }, { min: 0, rank: 'A' }] },
+];
+
+/**
+ * Picks a tier's rank for `value`. Non-terminal tiers require a STRICT
+ * `value > tier.min` match; the terminal (last) tier always matches — it's
+ * the floor/catch-all.
+ *
+ * This reproduces the exact boundary of the old hardcoded rules, which used
+ * strict `>` (e.g. `stars > 200 ? 'S' : 'A'`): a value equal to a tier's
+ * `min` falls through rather than matching it. A naive non-strict
+ * `min <= value` scan would flip that boundary for every default tier
+ * (e.g. stars===200 would score 'S' instead of the old 'A').
+ */
+function pickTier(tiers, value) {
+  for (let i = 0; i < tiers.length; i++) {
+    if (i === tiers.length - 1 || value > tiers[i].min) return tiers[i].rank;
+  }
+  return undefined;
+}
+
+/** Pure trophy computation: config entries in, `{kind, rank}` entries out, same order. */
+export function computeTrophies(stats, trophiesConfig = DEFAULT_TROPHIES) {
+  return trophiesConfig.map(({ kind, metric, tiers }) => {
+    if (metric === 'grade') return { kind, rank: stats.grade };
+    return { kind, rank: pickTier(tiers, stats[metric] ?? 0) };
+  });
 }
 
 export function topLanguages(edges, n = 5) {
