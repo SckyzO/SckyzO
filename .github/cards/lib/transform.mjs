@@ -35,6 +35,17 @@ export function computeGrade({ commits = 0, prs = 0, issues = 0, stars = 0, cont
 
 // Canonical default — the 6 rules that were hardcoded in fetchAll's trophies
 // array before trophies became configurable.
+//
+// Config contract for `trophies` entries (each `{kind, metric, tiers?}`):
+//   - `kind`: display label for the trophy.
+//   - `metric`: `'grade'` uses the already-computed letter grade directly and
+//     needs no `tiers` (see the `metric === 'grade'` branch in
+//     `computeTrophies` below); any other value looks up `stats[metric]` and
+//     requires `tiers`.
+//   - `tiers`: must be ordered by DESCENDING `min`. `pickTier` walks the list
+//     and returns the rank of the first tier whose `min` is STRICTLY less
+//     than the metric value; the final entry (lowest `min`, typically
+//     `min: 0`) is the catch-all and always matches regardless of value.
 export const DEFAULT_TROPHIES = [
   { kind: 'Stars', metric: 'stars', tiers: [{ min: 200, rank: 'S' }, { min: 0, rank: 'A' }] },
   { kind: 'Commit', metric: 'grade' },

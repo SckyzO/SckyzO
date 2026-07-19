@@ -44,7 +44,7 @@ export function renderActivityGraph(data, t = tokyonight) {
 
   const total = days.reduce((s, d) => s + d.count, 0);
   const avg = (total / n).toFixed(1);
-  const inner = cardTitle('📈', 'Activity · last 30 days', t)
+  const inner = cardTitle('📈', `Activity · last ${days.length} days`, t)
     + `<defs><linearGradient id="ag" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${t.title}" stop-opacity="0.35"/><stop offset="1" stop-color="${t.title}" stop-opacity="0"/></linearGradient></defs>`
     + grid
     + `<polygon points="${area}" fill="url(#ag)"/>`

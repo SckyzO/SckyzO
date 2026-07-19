@@ -23,3 +23,9 @@ test('renderActivityGraph renders at least 3 date/axis labels', () => {
   const dateLabels = svg.match(/Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/g) || [];
   assert.ok(dateLabels.length >= 3, `expected >=3 date labels, got ${dateLabels.length}`);
 });
+
+test('renderActivityGraph titles the card with the actual configured day count', () => {
+  const shortData = { activityGraph: data.activityGraph.slice(-12) };
+  const svg = renderActivityGraph(shortData);
+  assert.match(svg, /last 12 days/);
+});
