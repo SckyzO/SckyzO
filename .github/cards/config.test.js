@@ -18,7 +18,7 @@ test('rejects unknown card names', () => {
   assert.throws(() => loadConfig({ CARDS_CARDS: 'stats,bogus' }), /unknown card/i);
 });
 
-test('KNOWN_CARDS covers all eight cards', () => {
-  for (const n of ['about','stats','streak','activity-graph','top-repos','activity','trophies','languages'])
+test('KNOWN_CARDS covers all known cards', () => {
+  for (const n of ['about','stack','tools','stats','streak','activity-graph','top-repos','activity','trophies','languages'])
     assert.ok(KNOWN_CARDS.includes(n));
 });

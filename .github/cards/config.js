@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-export const KNOWN_CARDS = ['header', 'about', 'stats', 'streak', 'activity-graph', 'top-repos', 'activity', 'trophies', 'languages', 'footer'];
+export const KNOWN_CARDS = ['header', 'about', 'stack', 'tools', 'stats', 'streak', 'activity-graph', 'top-repos', 'activity', 'trophies', 'languages', 'footer'];
 
 export function loadConfig(env = process.env) {
   const raw = JSON.parse(readFileSync(join(HERE, 'cards.config.json'), 'utf8'));
@@ -14,6 +14,8 @@ export function loadConfig(env = process.env) {
     topRepos: raw.topRepos || { count: 5 },
     activity: raw.activity || { count: 5 },
     about: raw.about || [],
+    stack: raw.stack || [],
+    tools: raw.tools || [],
   };
   if (!cfg.username) throw new Error('config: username is required');
   for (const name of cfg.cards)

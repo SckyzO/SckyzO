@@ -12,3 +12,8 @@ test('renderActivityGraph draws a 30-day area chart with a contributions footer'
   assert.match(svg, /<polyline/);
   assert.match(svg, /contributions/);
 });
+
+test('renderActivityGraph labels the x-axis with the first and last day dates', () => {
+  const svg = renderActivityGraph(data);
+  assert.match(svg, /Jun|Jul|May/);
+});

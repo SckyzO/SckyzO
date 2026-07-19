@@ -1,4 +1,13 @@
 import { svgFrame, text, cardTitle, tokyonight } from '../lib/theme.mjs';
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Parsed manually (no Date) to avoid timezone-shift surprises on "YYYY-MM-DD" strings.
+function fmtDate(iso) {
+  const [, m, d] = iso.split('-');
+  return `${MONTHS[Number(m) - 1]} ${Number(d)}`;
+}
+
 export function renderActivityGraph(data, t = tokyonight) {
   const days = (data.activityGraph || []).slice(-30);
   const W = 800, x0 = 34, x1 = 766, y0 = 82, y1 = 178;
@@ -11,12 +20,17 @@ export function renderActivityGraph(data, t = tokyonight) {
   const grid = [0, 0.5, 1].map((f) => { const gy = y1 - f * (y1 - y0); return `<line x1="${x0}" y1="${gy}" x2="${x1}" y2="${gy}" stroke="${t.line}"/>`; }).join('');
   const total = days.reduce((s, d) => s + d.count, 0);
   const avg = (total / n).toFixed(1);
+  const dateLabels = days.length
+    ? text(x0, 216, fmtDate(days[0].date), { fill: t.dim, size: 11 })
+      + text(x1, 216, fmtDate(days[days.length - 1].date), { fill: t.dim, size: 11, anchor: 'end' })
+    : '';
   const inner = cardTitle('📈', 'Activity · last 30 days', t)
     + `<defs><linearGradient id="ag" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${t.title}" stop-opacity="0.35"/><stop offset="1" stop-color="${t.title}" stop-opacity="0"/></linearGradient></defs>`
     + grid
     + `<polygon points="${area}" fill="url(#ag)"/>`
     + `<polyline points="${line}" fill="none" stroke="${t.title}" stroke-width="2" stroke-linejoin="round"/>`
-    + text(34, 200, `${total} contributions`, { fill: t.dim, size: 12 })
-    + text(766, 200, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' });
-  return svgFrame(W, 214, inner, t);
+    + text(x0, 196, `${total} contributions`, { fill: t.dim, size: 12 })
+    + text(x1, 196, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' })
+    + dateLabels;
+  return svgFrame(W, 230, inner, t);
 }

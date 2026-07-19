@@ -26,7 +26,14 @@
     { "icon": "📊", "label": "Observability", "text": "Prometheus & Grafana are my eyes." },
     { "icon": "⚡", "label": "Automation", "text": "Ansible makes my life easier." },
     { "icon": "🛠️", "label": "Dev", "text": "Coding tools in Python and Go to solve real problems." },
-    { "icon": "📍", "label": "Location", "text": "Toulouse, France." }
+    { "icon": "📍", "label": "Location", "text": "Toulouse, France." },
+    { "icon": "📬", "label": "Contact", "text": "sckyzo@gmail.com" }
+  ],
+  "stack": [
+    {"label":"Linux","color":"#FCC624","fg":"#000"},{"label":"Bash","color":"#111111"},{"label":"Python","color":"#3776AB"},{"label":"Go","color":"#00ADD8"},{"label":"Ansible","color":"#EE0000"},{"label":"Docker","color":"#2496ED"},{"label":"Prometheus","color":"#E6522C"},{"label":"Grafana","color":"#F46800"},{"label":"Terraform","color":"#7B42BC"}
+  ],
+  "tools": [
+    {"label":"Vim","color":"#019733"},{"label":"Tmux","color":"#1BB91F"},{"label":"Zsh","color":"#F15A24"},{"label":"Git","color":"#F05032"},{"label":"VS Code","color":"#007ACC"}
   ],
   "activityGraph": [
     { "date": "2026-06-01", "count": 2 },
