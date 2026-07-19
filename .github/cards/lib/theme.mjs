@@ -14,7 +14,8 @@ export function makeTheme({ palette = {}, font } = {}) {
 
 export const escapeXml = (s) => String(s).replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
 export const fmtNum = (n) => n.toLocaleString('en-US');
-export function text(x, y, str, { fill = tokyonight.ink, size = 15, weight = 400, anchor = 'start', letterSpacing = 0, opacity = 1 } = {}, t = tokyonight) {
+export function text(x, y, str, opts = {}, t = tokyonight) {
+  const { fill = t.ink, size = 15, weight = 400, anchor = 'start', letterSpacing = 0, opacity = 1 } = opts;
   return `<text x="${x}" y="${y}" fill="${fill}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}" font-family="${t.font}"${letterSpacing ? ` letter-spacing="${letterSpacing}"` : ''}${opacity < 1 ? ` opacity="${opacity}"` : ''}>${escapeXml(str)}</text>`;
 }
 export function svgFrame(w, h, inner, t = tokyonight) {
