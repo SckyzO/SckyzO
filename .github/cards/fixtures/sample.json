@@ -1,0 +1,21 @@
+{
+  "user": "SckyzO",
+  "stats": { "stars": 318, "commits": 4218, "prs": 196, "issues": 73, "contributedTo": 41, "followers": 142, "grade": "A+" },
+  "streak": { "total": 6842, "current": 37, "longest": 129 },
+  "topRepos": [
+    { "name": "prom-github-exporter", "description": "Prometheus exporter for GitHub metrics", "language": "Go", "langColor": "#00ADD8", "stars": 128, "forks": 24 },
+    { "name": "grafana-readme-svg", "description": "Self-hosted SVG dashboard generator", "language": "Go", "langColor": "#00ADD8", "stars": 74, "forks": 9 }
+  ],
+  "activity": [
+    { "type": "push", "repo": "SckyzO/prom-github-exporter", "detail": "6 commits", "when": "2026-07-19T16:00:00Z" },
+    { "type": "star", "repo": "anuraghazra/github-readme-stats", "detail": "", "when": "2026-07-19T09:00:00Z" }
+  ],
+  "languages": [
+    { "name": "Go", "color": "#00ADD8", "pct": 34 },
+    { "name": "Python", "color": "#3572A5", "pct": 26 },
+    { "name": "Shell", "color": "#89e051", "pct": 18 }
+  ],
+  "trophies": [
+    { "kind": "Stars", "rank": "S" }, { "kind": "Commit", "rank": "A+" }, { "kind": "Repo", "rank": "A" }
+  ]
+}
