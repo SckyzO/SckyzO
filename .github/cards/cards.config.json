@@ -4,7 +4,21 @@
   "cards": ["header", "about", "stack", "tools", "stats", "streak", "activity-graph", "top-repos", "activity", "trophies", "languages", "footer"],
   "topRepos": { "count": 5 },
   "activity": { "count": 5 },
-  "languages": { "excludeForks": true },
+  "languages": { "excludeForks": true, "count": 5 },
+  "grade": {
+    "weights": { "commits": 1, "prs": 5, "issues": 3, "stars": 4, "contributedTo": 6 },
+    "thresholds": { "S": 8000, "A+": 5000, "A": 2500, "B": 1000 }
+  },
+  "trophies": [
+    { "kind": "Stars", "metric": "stars", "tiers": [{ "min": 200, "rank": "S" }, { "min": 0, "rank": "A" }] },
+    { "kind": "Commit", "metric": "grade" },
+    { "kind": "Repo", "metric": "contributedTo", "tiers": [{ "min": 30, "rank": "A" }, { "min": 0, "rank": "B" }] },
+    { "kind": "PR", "metric": "prs", "tiers": [{ "min": 150, "rank": "A" }, { "min": 0, "rank": "B" }] },
+    { "kind": "Issue", "metric": "issues", "tiers": [{ "min": 0, "rank": "A" }] },
+    { "kind": "Follow", "metric": "followers", "tiers": [{ "min": 100, "rank": "S" }, { "min": 0, "rank": "A" }] }
+  ],
+  "fetch": { "repoScanLimit": 100, "eventsPerPage": 30 },
+  "activityGraph": { "days": 30 },
   "about": [
     { "icon": "👤", "label": "Identity", "text": "My name is Thomas Bourcey, but you probably know me as SckyzO." },
     { "icon": "🐧", "label": "Linux Addict", "text": "I live in the terminal." },
