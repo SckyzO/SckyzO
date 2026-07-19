@@ -36,7 +36,16 @@ export async function fetchAll(username, token, { fetchImpl = fetch } = {}) {
     .flatMap((w) => w.contributionDays)
     .map((d) => ({ date: d.date, count: d.contributionCount }));
   const repos = u.repositories.nodes;
-  const langEdges = repos.flatMap((r) => r.languages?.edges || []);
+  const langTotals = new Map();
+  for (const r of repos) {
+    for (const e of r.languages?.edges || []) {
+      const name = e.node.name;
+      const existing = langTotals.get(name);
+      if (existing) existing.size += e.size;
+      else langTotals.set(name, { size: e.size, node: { name, color: e.node.color } });
+    }
+  }
+  const langEdges = [...langTotals.values()];
   const stars = repos.reduce((s, r) => s + r.stargazerCount, 0);
   const commits = days.reduce((s, d) => s + d.count, 0);
 

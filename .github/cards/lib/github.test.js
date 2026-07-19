@@ -38,3 +38,39 @@ test('fetchAll assembles the model from mocked responses', async () => {
   assert.equal(data.activity[0].type, 'push');
   assert.ok(data.stats.grade);
 });
+
+test('fetchAll aggregates language edges by name across repos before ranking', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [
+        { name: 'go-one', description: '', stargazerCount: 1, forkCount: 0,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' },
+          languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
+        { name: 'go-two', description: '', stargazerCount: 1, forkCount: 0,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' },
+          languages: { edges: [{ size: 50, node: { name: 'Go', color: '#00ADD8' } }] } },
+        { name: 'py-one', description: '', stargazerCount: 1, forkCount: 0,
+          primaryLanguage: { name: 'Python', color: '#3572A5' },
+          languages: { edges: [{ size: 50, node: { name: 'Python', color: '#3572A5' } }] } },
+      ] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
+      followers: { totalCount: 0 },
+    } },
+  };
+  const rest = [];
+
+  const fetchImpl = async (url) => ({
+    ok: true,
+    json: async () => (String(url).includes('/graphql') ? graphql : rest),
+  });
+
+  const data = await fetchAll('octocat', 'tok', { fetchImpl });
+  const goEntries = data.languages.filter((l) => l.name === 'Go');
+  assert.equal(goEntries.length, 1);
+  // Go: 100 + 50 = 150, Python: 50, total = 200 -> Go pct = round(150/200*100) = 75
+  assert.equal(goEntries[0].pct, 75);
+  const pyEntries = data.languages.filter((l) => l.name === 'Python');
+  assert.equal(pyEntries.length, 1);
+  assert.equal(pyEntries[0].pct, 25);
+});
