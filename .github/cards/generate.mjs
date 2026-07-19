@@ -1,0 +1,42 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { loadConfig } from './config.js';
+import { resolveToken, fetchAll } from './lib/github.mjs';
+import { renderStats } from './templates/stats.mjs';
+import { renderStreak } from './templates/streak.mjs';
+import { renderTopRepos } from './templates/top-repos.mjs';
+import { renderActivity } from './templates/activity.mjs';
+import { renderTrophies } from './templates/trophies.mjs';
+import { renderLanguages } from './templates/languages.mjs';
+
+const RENDERERS = {
+  stats: renderStats, streak: renderStreak, 'top-repos': renderTopRepos,
+  activity: renderActivity, trophies: renderTrophies, languages: renderLanguages,
+};
+
+export function renderAll(data, cards) {
+  const out = {};
+  for (const name of cards) {
+    const fn = RENDERERS[name];
+    if (fn) out[name] = fn(data);
+  }
+  return out;
+}
+
+export async function main() {
+  const cfg = loadConfig();
+  const token = resolveToken();
+  const data = await fetchAll(cfg.username, token);
+  const svgs = renderAll(data, cfg.cards);
+  const outDir = join(dirname(fileURLToPath(import.meta.url)), '../../assets');
+  mkdirSync(outDir, { recursive: true });
+  for (const [name, svg] of Object.entries(svgs)) {
+    writeFileSync(join(outDir, `${name}.svg`), svg, 'utf8');
+    console.log(`wrote assets/${name}.svg (${svg.length} bytes)`);
+  }
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}
