@@ -103,9 +103,25 @@ test('theme.palette/font overrides are emitted after the base <style> block, ove
   const html = renderPage(themed, { css: ':root{--title:#70a5fd}', js: '' });
   const baseIdx = html.indexOf('<style>:root{--title:#70a5fd}</style>');
   assert.ok(baseIdx >= 0, 'base css block must be present, untouched');
-  const overrideIdx = html.indexOf(':root{--title:#abcdef}', baseIdx + 1);
+  const overrideIdx = html.indexOf(':root{--title:#abcdef !important}', baseIdx + 1);
   assert.ok(overrideIdx > baseIdx, 'override :root must be placed after the base <style> block');
   assert.match(html.slice(overrideIdx), /body\{font-family:MyFont\}/, 'font override must follow the palette override');
+});
+
+test('palette override carries !important on the custom property so it also wins in light mode', () => {
+  // styles.css's light-mode selectors (:root:not([data-theme="dark"]),
+  // :root[data-theme="light"]) out-specificity a plain :root override;
+  // !important on the custom property is specificity-agnostic and wins
+  // regardless of theme.
+  const html = renderPage({ ...data, theme: { palette: { title: '#abcdef' }, font: null } }, { css: '', js: '' });
+  assert.match(html, /--title:\s*#abcdef\s*!important/);
+});
+
+test('theme.font is dropped when it fails the font-safe allowlist, preventing markup injection', () => {
+  const evilFont = "'X'};</style><img src=x onerror=alert(1)>";
+  const html = renderPage({ ...data, theme: { palette: {}, font: evilFont } }, { css: '', js: '' });
+  assert.doesNotMatch(html, /<\/style><img/, 'unsafe font must not close the <style> block');
+  assert.doesNotMatch(html, /<img src=x onerror=alert\(1\)>/, 'unsafe font must not inject markup');
 });
 
 test('no theme override block is emitted for the unconfigured (default) theme', () => {

@@ -28,11 +28,29 @@ function safeColor(v) {
   return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^[a-zA-Z]+$/.test(s) ? s : null;
 }
 
+// A font stack is a handful of comma-separated names, optionally quoted
+// (e.g. "'Segoe UI',Ubuntu,'Helvetica Neue',Sans-Serif"). Reject anything
+// outside this allowlist rather than escaping it — escaping (e.g. HTML
+// entities) would corrupt the quotes a valid stack legitimately needs —
+// so a malformed/malicious config value (e.g. one trying to close the
+// <style> tag and inject markup) is dropped instead of interpolated.
+const SAFE_FONT = /^[a-zA-Z0-9\s',."()-]+$/;
+
 // Pure: builds a :root override for only the palette keys the config
 // actually changed (buildPageData already reduced theme.palette to that
-// diff), plus a body font-family override when theme.font is set. Returns
-// '' when there is nothing to override, so an unconfigured (default) theme
-// injects no extra <style> block and the page stays byte-identical.
+// diff), plus a body font-family override when theme.font is set and
+// passes SAFE_FONT. Returns '' when there is nothing to override, so an
+// unconfigured (default) theme injects no extra <style> block and the page
+// stays byte-identical.
+//
+// Palette custom properties carry !important: styles.css's light-mode
+// selectors (`:root:not([data-theme="dark"])`, `:root[data-theme="light"]`)
+// have higher specificity than a plain `:root`, so without !important a
+// configured palette would silently apply only in dark mode. !important is
+// specificity-agnostic on custom properties, so it wins in both themes.
+// The font rule doesn't need it: styles.css's font-family lives on a plain
+// `body` selector, the same specificity as this override, which wins by
+// source order (this block renders after styles.css).
 export function paletteOverrideCss(theme = {}) {
   const palette = theme.palette || {};
   const decls = [];
@@ -40,10 +58,10 @@ export function paletteOverrideCss(theme = {}) {
     if (!(key in palette)) continue;
     const color = safeColor(palette[key]);
     if (!color) continue;
-    for (const token of tokens) decls.push(`${token}:${color}`);
+    for (const token of tokens) decls.push(`${token}:${color} !important`);
   }
   let css = decls.length ? `:root{${decls.join(';')}}` : '';
-  if (theme.font) css += `body{font-family:${theme.font}}`;
+  if (theme.font && SAFE_FONT.test(String(theme.font))) css += `body{font-family:${theme.font}}`;
   return css ? `<style>${css}</style>` : '';
 }
 
