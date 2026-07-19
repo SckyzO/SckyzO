@@ -133,3 +133,43 @@ test('fetchAll honors topReposCount and activityCount options', async () => {
   assert.equal(data.topRepos.length, 2);
   assert.equal(data.activity.length, 2);
 });
+
+test('fetchAll exposes full-year contributionWeeks and a repoList with url/updatedAt', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [
+        { contributionDays: [{ date: '2026-01-01', contributionCount: 2 }, { date: '2026-01-02', contributionCount: 3 }] },
+        { contributionDays: [{ date: '2026-01-03', contributionCount: 0 }] },
+      ] } },
+      repositories: { nodes: [
+        { name: 'r1', description: 'd', stargazerCount: 9, forkCount: 1,
+          updatedAt: '2026-01-05T00:00:00Z', url: 'https://github.com/o/r1',
+          primaryLanguage: { name: 'Go', color: '#00ADD8' },
+          languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
+      ] },
+      pullRequests: { totalCount: 1 }, issues: { totalCount: 1 }, followers: { totalCount: 1 },
+    } },
+  };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+  const data = await fetchAll('octocat', 'tok', { fetchImpl });
+  assert.equal(data.contributionWeeks.length, 2);
+  assert.deepEqual(data.contributionWeeks[0][0], { date: '2026-01-01', count: 2 });
+  assert.equal(data.repoList[0].url, 'https://github.com/o/r1');
+  assert.equal(data.repoList[0].updatedAt, '2026-01-05T00:00:00Z');
+  assert.equal(data.repoList[0].language, 'Go');
+});
+
+test('fetchAll caps repoList at repoListCount', async () => {
+  const nodes = Array.from({ length: 40 }, (_, i) => ({
+    name: `r${i}`, description: '', stargazerCount: 40 - i, forkCount: 0,
+    updatedAt: '2026-01-01T00:00:00Z', url: `https://github.com/o/r${i}`,
+    primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] },
+  }));
+  const graphql = { data: { user: {
+    contributionsCollection: { contributionCalendar: { weeks: [] } },
+    repositories: { nodes }, pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+  } } };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+  const data = await fetchAll('octocat', 'tok', { fetchImpl, repoListCount: 10 });
+  assert.equal(data.repoList.length, 10);
+});

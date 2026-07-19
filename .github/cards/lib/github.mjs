@@ -9,13 +9,13 @@ export function resolveToken(env = process.env) {
 const QUERY = `query($login:String!){ user(login:$login){
   contributionsCollection{ contributionCalendar{ weeks{ contributionDays{ date contributionCount } } } }
   repositories(first:100, ownerAffiliations:OWNER, orderBy:{field:STARGAZERS, direction:DESC}){
-    nodes{ name description stargazerCount forkCount
+    nodes{ name description stargazerCount forkCount updatedAt url
       primaryLanguage{ name color }
       languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name color } } } } }
   pullRequests{ totalCount } issues{ totalCount } followers{ totalCount }
 } }`;
 
-export async function fetchAll(username, token, { fetchImpl = fetch, topReposCount = 5, activityCount = 5 } = {}) {
+export async function fetchAll(username, token, { fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30 } = {}) {
   const gqlRes = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
@@ -55,6 +55,14 @@ export async function fetchAll(username, token, { fetchImpl = fetch, topReposCou
     grade: computeGrade({ commits, prs: u.pullRequests.totalCount, issues: u.issues.totalCount, stars, contributedTo: repos.length }),
   };
 
+  const contributionWeeks = u.contributionsCollection.contributionCalendar.weeks
+    .map((w) => w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount })));
+  const repoList = repos.slice(0, repoListCount).map((r) => ({
+    name: r.name, description: r.description || '',
+    language: r.primaryLanguage?.name || null, langColor: r.primaryLanguage?.color || '#565f89',
+    stars: r.stargazerCount, forks: r.forkCount, updatedAt: r.updatedAt, url: r.url,
+  }));
+
   return {
     user: username,
     stats,
@@ -62,6 +70,8 @@ export async function fetchAll(username, token, { fetchImpl = fetch, topReposCou
     topRepos: pickTopRepos(repos, topReposCount),
     activity: mapActivity(events, activityCount),
     activityGraph: days.slice(-30),
+    contributionWeeks,
+    repoList,
     languages: topLanguages(langEdges, 5),
     trophies: [
       { kind: 'Stars', rank: stars > 200 ? 'S' : 'A' },
