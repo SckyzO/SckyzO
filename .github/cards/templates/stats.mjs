@@ -1,6 +1,4 @@
-import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
-
-const fmt = (n) => n.toLocaleString('en-US');
+import { svgFrame, text, tokyonight, fmtNum } from '../lib/theme.mjs';
 
 export function renderStats(data, t = tokyonight) {
   const s = data.stats;
@@ -17,7 +15,7 @@ export function renderStats(data, t = tokyonight) {
       const y = 62 + i * 26;
       return [
         text(20, y, label, { fill: t.ink, size: 13 }),
-        text(300, y, fmt(val), { fill: t.white, size: 13, anchor: 'end', mono: true }),
+        text(300, y, fmtNum(val), { fill: t.white, size: 13, anchor: 'end', mono: true }),
       ];
     }),
     // grade ring

@@ -7,6 +7,8 @@ export const tokyonight = {
 const MONO = "ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace";
 const SANS = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
 
+export const fmtNum = (n) => n.toLocaleString('en-US');
+
 export const escapeXml = (s) =>
   String(s).replace(/[<>&'"]/g, (c) =>
     ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));

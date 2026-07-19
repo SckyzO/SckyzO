@@ -1,13 +1,11 @@
-import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
-
-const fmt = (n) => n.toLocaleString('en-US');
+import { svgFrame, text, tokyonight, fmtNum } from '../lib/theme.mjs';
 
 export function renderStreak(data, t = tokyonight) {
   const s = data.streak;
   const cols = [
-    { big: fmt(s.total), sub: 'Total Contributions', color: t.white },
+    { big: fmtNum(s.total), sub: 'Total Contributions', color: t.white },
     { big: String(s.current), sub: 'Current Streak', color: t.flame },
-    { big: fmt(s.longest), sub: 'Longest Streak', color: t.white },
+    { big: fmtNum(s.longest), sub: 'Longest Streak', color: t.white },
   ];
   const W = 430, colW = W / 3;
   const inner = cols.flatMap((c, i) => {

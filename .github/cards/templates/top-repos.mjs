@@ -1,6 +1,6 @@
 import { svgFrame, text, tokyonight } from '../lib/theme.mjs';
 
-const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
+const clip = (s, n) => { const a = [...s]; return a.length > n ? a.slice(0, n - 1).join('') + '…' : s; };
 
 export function renderTopRepos(data, t = tokyonight) {
   const repos = data.topRepos;

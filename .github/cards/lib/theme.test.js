@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { tokyonight, escapeXml, svgFrame, text } from './theme.mjs';
+import { tokyonight, escapeXml, svgFrame, text, fmtNum } from './theme.mjs';
 
 test('palette has exact tokyonight values', () => {
   assert.equal(tokyonight.bg, '#1a1b27');
@@ -21,4 +21,8 @@ test('svgFrame is a standalone sized svg with the bg', () => {
 
 test('text escapes its content', () => {
   assert.match(text(10, 20, 'a<b', {}), /a&lt;b/);
+});
+
+test('fmtNum formats thousands with en-US separators', () => {
+  assert.equal(fmtNum(4218), '4,218');
 });
