@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=header&reversal=true" />
+  <img src="./assets/header.svg" alt="" width="100%" />
 </div>
 
 <div align="center">
@@ -75,5 +75,5 @@
 ---
 
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=100&section=footer" />
+  <img src="./assets/footer.svg" alt="" width="100%" />
 </div>
