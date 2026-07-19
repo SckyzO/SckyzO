@@ -8,6 +8,8 @@ on:
       - cv/**
       - .github/workflows/deploy.yml
   workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'   # daily — refresh the baked dashboard data
 
 permissions:
   contents: read
@@ -64,6 +66,13 @@ jobs:
           done
           cp dist/.htaccess out/
           cp dist/robots.txt out/
+
+      - name: "🖥️ Generate dashboard page"
+        working-directory: ${{ github.workspace }}
+        env:
+          CARDS_TOKEN: ${{ secrets.CARDS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/cards/page/generate-page.mjs "${{ github.workspace }}/cv/out/cards"
 
       - name: "📤 Upload Pages artifact"
         uses: actions/upload-pages-artifact@v5
