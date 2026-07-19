@@ -12,6 +12,41 @@ function escapeHtml(s) {
   }[c]));
 }
 
+// Config-key -> dashboard :root token(s). `white` has no dashboard token
+// (styles.css has no --white) and is intentionally omitted.
+const PALETTE_TOKEN_MAP = {
+  bg: ['--bg'], ink: ['--ink', '--ink-soft'], dim: ['--dim'], title: ['--title'],
+  accent: ['--accent'], teal: ['--teal'], green: ['--green'], flame: ['--flame'],
+  gold: ['--gold'], line: ['--line'],
+};
+
+// Same allowlist as app.js's safeColor() — a config-supplied palette value
+// must be a hex color or a bare CSS color keyword, never injected verbatim,
+// so a malformed cards.config.json can't break out of the <style> block.
+function safeColor(v) {
+  const s = String(v ?? '');
+  return /^#[0-9a-fA-F]{3,8}$/.test(s) || /^[a-zA-Z]+$/.test(s) ? s : null;
+}
+
+// Pure: builds a :root override for only the palette keys the config
+// actually changed (buildPageData already reduced theme.palette to that
+// diff), plus a body font-family override when theme.font is set. Returns
+// '' when there is nothing to override, so an unconfigured (default) theme
+// injects no extra <style> block and the page stays byte-identical.
+export function paletteOverrideCss(theme = {}) {
+  const palette = theme.palette || {};
+  const decls = [];
+  for (const [key, tokens] of Object.entries(PALETTE_TOKEN_MAP)) {
+    if (!(key in palette)) continue;
+    const color = safeColor(palette[key]);
+    if (!color) continue;
+    for (const token of tokens) decls.push(`${token}:${color}`);
+  }
+  let css = decls.length ? `:root{${decls.join(';')}}` : '';
+  if (theme.font) css += `body{font-family:${theme.font}}`;
+  return css ? `<style>${css}</style>` : '';
+}
+
 // Both capsules (header + footer) share the same waving path/animation; only
 // the aria-label, height and rotation differ between them.
 const CAPSULE_D = 'M0,50 C160,90 320,20 480,60 C620,94 720,46 800,76 L800,0 L0,0 Z';
@@ -177,7 +212,7 @@ export function renderPage(data, { css, js }) {
 <div class="tip" id="tip"></div>
 
 <script id="cards-data" type="application/json">${dataBlob}</script>
-<style>${css}</style>
+<style>${css}</style>${paletteOverrideCss(data.theme)}
 <script>${js}</script>
 </body>
 </html>`;

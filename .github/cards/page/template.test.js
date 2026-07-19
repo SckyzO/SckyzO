@@ -97,3 +97,34 @@ test('back link points at data.page.readmeUrl', () => {
   const html = renderPage(data, { css: '', js: '' });
   assert.match(html, /<a class="back" href="\.\.\/">← Back to profile README<\/a>/);
 });
+
+test('theme.palette/font overrides are emitted after the base <style> block, overriding only configured tokens', () => {
+  const themed = { ...data, theme: { palette: { title: '#abcdef' }, font: 'MyFont' } };
+  const html = renderPage(themed, { css: ':root{--title:#70a5fd}', js: '' });
+  const baseIdx = html.indexOf('<style>:root{--title:#70a5fd}</style>');
+  assert.ok(baseIdx >= 0, 'base css block must be present, untouched');
+  const overrideIdx = html.indexOf(':root{--title:#abcdef}', baseIdx + 1);
+  assert.ok(overrideIdx > baseIdx, 'override :root must be placed after the base <style> block');
+  assert.match(html.slice(overrideIdx), /body\{font-family:MyFont\}/, 'font override must follow the palette override');
+});
+
+test('no theme override block is emitted for the unconfigured (default) theme', () => {
+  const html = renderPage({ ...data, theme: { palette: {}, font: null } }, { css: ':root{--title:#70a5fd}', js: '' });
+  assert.equal((html.match(/<style>/g) || []).length, 1, 'only the base <style> block should be present');
+  assert.match(html, /<style>:root\{--title:#70a5fd\}<\/style>/, 'base css must be unchanged');
+});
+
+test('theme override omitted entirely when data.theme is absent (back-compat with untouched callers)', () => {
+  const html = renderPage(data, { css: ':root{--title:#70a5fd}', js: '' });
+  assert.equal((html.match(/<style>/g) || []).length, 1);
+});
+
+test('palette values are guarded through the color allowlist to prevent CSS injection from a malformed config', () => {
+  const evil = { ...data, theme: { palette: { title: '}body{background:url(evil)' }, font: null } };
+  const html = renderPage(evil, { css: '', js: '' });
+  // The unsafe value legitimately still appears in the inert JSON data blob
+  // (it's JSON-encoded text there, not executable CSS) — the guard only
+  // needs to keep it out of an actual <style> block.
+  for (const styleBlock of html.matchAll(/<style>([\s\S]*?)<\/style>/g))
+    assert.doesNotMatch(styleBlock[1], /url\(evil\)/, 'unsafe palette value must be dropped, not injected into a <style> block');
+});

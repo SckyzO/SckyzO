@@ -1,16 +1,34 @@
 import { mkdirSync, writeFileSync, readFileSync, copyFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { loadConfig } from '../config.js';
+import { loadConfig, DEFAULTS } from '../config.js';
 import { resolveToken, fetchAll } from '../lib/github.mjs';
 import { renderPage } from './template.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
+// Reduces cfg.theme to only what the user actually changed from the
+// defaults. The dashboard's own styles.css already renders the default
+// (tokyonight) look, so injecting the full default palette would fight it
+// on token names that don't line up 1:1 (e.g. config `bg` vs styles.css
+// `--bg`/`--surface`/`--card`) and visibly change unconfigured output.
+// Diffing to only the changed keys keeps an unconfigured page untouched.
+function themeDiff(theme) {
+  const cfgPalette = theme?.palette || {};
+  const palette = {};
+  for (const key of Object.keys(DEFAULTS.theme.palette)) {
+    const value = cfgPalette[key];
+    if (value !== undefined && value !== DEFAULTS.theme.palette[key]) palette[key] = value;
+  }
+  const font = theme?.font && theme.font !== DEFAULTS.theme.font ? theme.font : null;
+  return { palette, font };
+}
+
 export function buildPageData(apiData, cfg) {
   return { ...apiData, about: cfg.about, stack: cfg.stack, tools: cfg.tools,
     page: { tagline: cfg.page.tagline, typingLines: cfg.page.typingLines,
-      readmeUrl: cfg.page.readmeUrl } };
+      readmeUrl: cfg.page.readmeUrl },
+    theme: themeDiff(cfg.theme) };
 }
 
 export async function main(outDir = join(HERE, 'dist')) {
