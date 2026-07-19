@@ -43,7 +43,7 @@
 
 <br />
 
-<div align="center"><img src="./assets/activity-graph.svg" alt="Activity — last 30 days" /></div>
+<div align="center"><img src="./assets/activity-graph.svg" alt="Activity · last 30 days" /></div>
 
 <br />
 
