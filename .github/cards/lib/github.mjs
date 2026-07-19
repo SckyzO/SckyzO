@@ -15,7 +15,7 @@ const QUERY = `query($login:String!){ user(login:$login){
   pullRequests{ totalCount } issues{ totalCount } followers{ totalCount }
 } }`;
 
-export async function fetchAll(username, token, { fetchImpl = fetch } = {}) {
+export async function fetchAll(username, token, { fetchImpl = fetch, topReposCount = 5, activityCount = 5 } = {}) {
   const gqlRes = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
@@ -59,8 +59,8 @@ export async function fetchAll(username, token, { fetchImpl = fetch } = {}) {
     user: username,
     stats,
     streak: computeStreak(days),
-    topRepos: pickTopRepos(repos, 5),
-    activity: mapActivity(events, 5),
+    topRepos: pickTopRepos(repos, topReposCount),
+    activity: mapActivity(events, activityCount),
     languages: topLanguages(langEdges, 5),
     trophies: [
       { kind: 'Stars', rank: stars > 200 ? 'S' : 'A' },

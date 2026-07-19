@@ -74,3 +74,35 @@ test('fetchAll aggregates language edges by name across repos before ranking', a
   assert.equal(pyEntries.length, 1);
   assert.equal(pyEntries[0].pct, 25);
 });
+
+test('fetchAll honors topReposCount and activityCount options', async () => {
+  const graphql = {
+    data: { user: {
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [
+        { name: 'r1', description: '', stargazerCount: 3, forkCount: 0,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
+        { name: 'r2', description: '', stargazerCount: 2, forkCount: 0,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
+        { name: 'r3', description: '', stargazerCount: 1, forkCount: 0,
+          primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
+      ] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
+      followers: { totalCount: 0 },
+    } },
+  };
+  const rest = [
+    { type: 'PushEvent', repo: { name: 'o/r1' }, payload: { commits: [1] }, created_at: '2026-01-01T10:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/r2' }, payload: { commits: [1] }, created_at: '2026-01-02T10:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/r3' }, payload: { commits: [1] }, created_at: '2026-01-03T10:00:00Z' },
+  ];
+
+  const fetchImpl = async (url) => ({
+    ok: true,
+    json: async () => (String(url).includes('/graphql') ? graphql : rest),
+  });
+
+  const data = await fetchAll('octocat', 'tok', { fetchImpl, topReposCount: 2, activityCount: 2 });
+  assert.equal(data.topRepos.length, 2);
+  assert.equal(data.activity.length, 2);
+});

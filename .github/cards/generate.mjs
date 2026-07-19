@@ -27,7 +27,7 @@ export function renderAll(data, cards) {
 export async function main() {
   const cfg = loadConfig();
   const token = resolveToken();
-  const data = await fetchAll(cfg.username, token);
+  const data = await fetchAll(cfg.username, token, { topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count });
   const svgs = renderAll(data, cfg.cards);
   const outDir = join(dirname(fileURLToPath(import.meta.url)), '../../assets');
   mkdirSync(outDir, { recursive: true });
