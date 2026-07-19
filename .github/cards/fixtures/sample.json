@@ -16,6 +16,7 @@
     { "name": "Shell", "color": "#89e051", "pct": 18 }
   ],
   "trophies": [
-    { "kind": "Stars", "rank": "S" }, { "kind": "Commit", "rank": "A+" }, { "kind": "Repo", "rank": "A" }
+    { "kind": "Stars", "rank": "S" }, { "kind": "Commit", "rank": "A+" }, { "kind": "Repo", "rank": "A" },
+    { "kind": "PR", "rank": "B" }, { "kind": "Issue", "rank": "A" }, { "kind": "Follow", "rank": "S" }
   ]
 }
