@@ -5,7 +5,7 @@
 <div align="center">
   <h1>Hi, I'm <code>Tom</code> 👋</h1>
   <h3><code>SckyzO</code> • <code>Thomas Bourcey</code></h3>
-  
+
   <p>
     <a href="https://github.com/DenverCoder1/readme-typing-svg">
       <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer" />
@@ -20,15 +20,7 @@
 
 ---
 
-## 🧠 About Me
-
-- 👤 **Identity**: My name is **Thomas Bourcey**, but you probably know me as **SckyzO**.
-- 🐧 **Linux Addict**: I live in the terminal.
-- 🐳 **Containerization**: Docker is my playground.
-- 📊 **Observability**: Prometheus & Grafana are my eyes.
-- ⚡ **Automation**: Ansible makes my life easier.
-- 🛠️ **Dev**: Coding tools in Python and Go to solve real problems.
-- 📍 **Location**: Toulouse, France.
+<div align="center"><img src="./assets/about.svg" alt="About Me" /></div>
 
 ## 📬 Contact
 
@@ -64,46 +56,19 @@
 
 ---
 
-## 📊 GitHub Stats
+<div align="center"><img src="./assets/stats.svg" alt="GitHub Stats" /></div>
 
-<div align="center">
-  <img src="./assets/stats.svg" height="180"/>
-  <img src="./assets/streak.svg" height="180"/>
-</div>
+<div align="center"><img src="./assets/streak.svg" alt="Contribution Streak" /></div>
 
----
-
-## 📌 Top Repositories
+<div align="center"><img src="./assets/activity-graph.svg" alt="Activity — last 30 days" /></div>
 
 <div align="center"><img src="./assets/top-repos.svg" alt="Top Repositories" /></div>
 
----
-
-## ⚡ Recent Activity
-
 <div align="center"><img src="./assets/activity.svg" alt="Recent Activity" /></div>
-
----
-
-## 🗣️ Most Used Languages
 
 <div align="center"><img src="./assets/languages.svg" alt="Most Used Languages" /></div>
 
----
-
-## 🏆 Achievements
-
-<div align="center">
-  <img src="./assets/trophies.svg" />
-</div>
-
----
-
-## 📈 Activity
-
-<div align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=SckyzO&theme=tokyo-night&hide_border=false" />
-</div>
+<div align="center"><img src="./assets/trophies.svg" alt="Achievements" /></div>
 
 <div align="center"><img src="./assets/snake.svg" alt="Contribution Snake" /></div>
 
