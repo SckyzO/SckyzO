@@ -5,7 +5,7 @@ const VERB = { push: 'Pushed', pr: 'Merged', star: 'Starred', issue: 'Opened', r
 
 export function renderActivity(data, t = tokyonight) {
   const evs = data.activity;
-  const W = 495, padX = 28, top = 90, rowH = 34;
+  const W = 800, padX = 28, top = 90, rowH = 34;
   const inner = [cardTitle('⚡', 'Recent Activity', t)];
   evs.forEach((e, i) => {
     const y = top + i * rowH;

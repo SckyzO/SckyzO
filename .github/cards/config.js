@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-export const KNOWN_CARDS = ['about', 'stats', 'streak', 'activity-graph', 'top-repos', 'activity', 'trophies', 'languages'];
+export const KNOWN_CARDS = ['header', 'about', 'stats', 'streak', 'activity-graph', 'top-repos', 'activity', 'trophies', 'languages', 'footer'];
 
 export function loadConfig(env = process.env) {
   const raw = JSON.parse(readFileSync(join(HERE, 'cards.config.json'), 'utf8'));

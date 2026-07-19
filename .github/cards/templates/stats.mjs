@@ -3,7 +3,7 @@ export function renderStats(data, t = tokyonight) {
   const s = data.stats;
   const rows = [['⭐', 'Total Stars Earned', s.stars], ['⬆', 'Total Commits', s.commits], ['⎇', 'Total PRs', s.prs], ['◎', 'Total Issues', s.issues], ['◈', 'Contributed to', s.contributedTo]];
   const inner = cardTitle('📊', 'GitHub Stats', t)
-    + rows.map(([ic, l, v], i) => { const y = 90 + i * 26; return text(34, y, ic, { fill: t.dim, size: 14 }) + text(58, y, l, { size: 15 }) + text(360, y, fmtNum(v), { fill: t.white, size: 15, weight: 600, anchor: 'end' }); }).join('')
-    + `<g transform="translate(420,124)"><circle r="46" fill="none" stroke="${t.line}" stroke-width="7"/><circle r="46" fill="none" stroke="${t.accent}" stroke-width="7" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="40" transform="rotate(-90)"/>${text(0, 9, s.grade, { fill: t.accent, size: 27, weight: 700, anchor: 'middle' })}</g>`;
-  return svgFrame(495, 224, inner, t);
+    + rows.map(([ic, l, v], i) => { const y = 90 + i * 26; return text(34, y, ic, { fill: t.dim, size: 14 }) + text(58, y, l, { size: 15 }) + text(630, y, fmtNum(v), { fill: t.white, size: 15, weight: 600, anchor: 'end' }); }).join('')
+    + `<g transform="translate(710,124)"><circle r="46" fill="none" stroke="${t.line}" stroke-width="7"/><circle r="46" fill="none" stroke="${t.accent}" stroke-width="7" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="40" transform="rotate(-90)"/>${text(0, 9, s.grade, { fill: t.accent, size: 27, weight: 700, anchor: 'middle' })}</g>`;
+  return svgFrame(800, 224, inner, t);
 }

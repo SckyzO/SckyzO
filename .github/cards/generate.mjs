@@ -11,11 +11,13 @@ import { renderTrophies } from './templates/trophies.mjs';
 import { renderLanguages } from './templates/languages.mjs';
 import { renderAbout } from './templates/about.mjs';
 import { renderActivityGraph } from './templates/activity-graph.mjs';
+import { renderHeader, renderFooter } from './templates/header.mjs';
 
 const RENDERERS = {
   stats: renderStats, streak: renderStreak, 'top-repos': renderTopRepos,
   activity: renderActivity, trophies: renderTrophies, languages: renderLanguages,
   about: renderAbout, 'activity-graph': renderActivityGraph,
+  header: renderHeader, footer: renderFooter,
 };
 
 export function renderAll(data, cards) {

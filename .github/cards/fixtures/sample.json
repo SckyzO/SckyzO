@@ -20,13 +20,13 @@
     { "kind": "PR", "rank": "B" }, { "kind": "Issue", "rank": "A" }, { "kind": "Follow", "rank": "S" }
   ],
   "about": [
-    "👤 Thomas Bourcey — you probably know me as SckyzO",
-    "🐧 Linux addict — I live in the terminal",
-    "🐳 Containerization is my playground (Docker)",
-    "📊 Observability: Prometheus & Grafana are my eyes",
-    "⚡ Automation with Ansible",
-    "🛠️ Building tools in Python and Go",
-    "📍 Toulouse, France"
+    { "icon": "👤", "label": "Identity", "text": "My name is Thomas Bourcey, but you probably know me as SckyzO." },
+    { "icon": "🐧", "label": "Linux Addict", "text": "I live in the terminal." },
+    { "icon": "🐳", "label": "Containerization", "text": "Docker is my playground." },
+    { "icon": "📊", "label": "Observability", "text": "Prometheus & Grafana are my eyes." },
+    { "icon": "⚡", "label": "Automation", "text": "Ansible makes my life easier." },
+    { "icon": "🛠️", "label": "Dev", "text": "Coding tools in Python and Go to solve real problems." },
+    { "icon": "📍", "label": "Location", "text": "Toulouse, France." }
   ],
   "activityGraph": [
     { "date": "2026-06-01", "count": 2 },

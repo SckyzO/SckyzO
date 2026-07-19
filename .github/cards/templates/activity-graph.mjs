@@ -1,7 +1,7 @@
 import { svgFrame, text, cardTitle, tokyonight } from '../lib/theme.mjs';
 export function renderActivityGraph(data, t = tokyonight) {
   const days = (data.activityGraph || []).slice(-30);
-  const W = 495, x0 = 30, x1 = 465, y0 = 82, y1 = 178;
+  const W = 800, x0 = 34, x1 = 766, y0 = 82, y1 = 178;
   const n = Math.max(1, days.length);
   const max = Math.max(1, ...days.map((d) => d.count));
   const px = (i) => x0 + (i / Math.max(1, n - 1)) * (x1 - x0);
@@ -16,7 +16,7 @@ export function renderActivityGraph(data, t = tokyonight) {
     + grid
     + `<polygon points="${area}" fill="url(#ag)"/>`
     + `<polyline points="${line}" fill="none" stroke="${t.title}" stroke-width="2" stroke-linejoin="round"/>`
-    + text(30, 200, `${total} contributions`, { fill: t.dim, size: 12 })
-    + text(465, 200, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' });
+    + text(34, 200, `${total} contributions`, { fill: t.dim, size: 12 })
+    + text(766, 200, `avg ${avg}/day · peak ${max}`, { fill: t.dim, size: 12, anchor: 'end' });
   return svgFrame(W, 214, inner, t);
 }
