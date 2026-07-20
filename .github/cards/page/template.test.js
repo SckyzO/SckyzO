@@ -130,6 +130,25 @@ test('no theme override block is emitted for the unconfigured (default) theme', 
   assert.match(html, /<style>:root\{--title:#70a5fd\}<\/style>/, 'base css must be unchanged');
 });
 
+test('card wrappers carry anchor ids for README deep-links, without breaking app.js hooks', () => {
+  const html = renderPage(data, { css: '', js: '' });
+  for (const id of ['about', 'stack', 'tools', 'stats', 'streak', 'activity-graph', 'calendar', 'top-repos', 'activity', 'languages', 'snake'])
+    assert.ok(html.includes(`id="${id}"`), `missing card anchor #${id}`);
+  // Inner containers app.js reads via getElementById/querySelector must
+  // still be present and untouched by the new card-level anchors.
+  for (const id of ALL_HOOKS)
+    assert.ok(html.includes(`id="${id}"`), `missing inner hook #${id}`);
+  // The trophies card is deliberately NOT given its own wrapper id: its
+  // inner grid container already uses id="trophies" (read by app.js as
+  // `$('#trophies').innerHTML = ...`), so adding a second id="trophies" on
+  // the wrapper would create a duplicate id — querySelector('#trophies')
+  // would then resolve to the wrapper (first in document order) instead of
+  // the grid, and app.js would clobber the whole card. Assert there is
+  // exactly one id="trophies" in the page.
+  const trophiesMatches = html.match(/id="trophies"/g) || [];
+  assert.equal(trophiesMatches.length, 1, 'id="trophies" must appear exactly once (no duplicate id)');
+});
+
 test('theme override omitted entirely when data.theme is absent (back-compat with untouched callers)', () => {
   const html = renderPage(data, { css: ':root{--title:#70a5fd}', js: '' });
   assert.equal((html.match(/<style>/g) || []).length, 1);

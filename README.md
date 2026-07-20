@@ -26,47 +26,47 @@
 
 ---
 
-<div align="center"><img src="./assets/about.svg" alt="About Me" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#about"><img src="./assets/about.svg" alt="About Me" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/stack.svg" alt="Languages & Stack" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#stack"><img src="./assets/stack.svg" alt="Languages & Stack" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/tools.svg" alt="Tools & Environment" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#tools"><img src="./assets/tools.svg" alt="Tools & Environment" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/stats.svg" alt="GitHub Stats" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#stats"><img src="./assets/stats.svg" alt="GitHub Stats" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/streak.svg" alt="Contribution Streak" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#streak"><img src="./assets/streak.svg" alt="Contribution Streak" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/activity-graph.svg" alt="Activity · last 30 days" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#activity-graph"><img src="./assets/activity-graph.svg" alt="Activity · last 30 days" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/top-repos.svg" alt="Top Repositories" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#top-repos"><img src="./assets/top-repos.svg" alt="Top Repositories" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/activity.svg" alt="Recent Activity" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#activity"><img src="./assets/activity.svg" alt="Recent Activity" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/languages.svg" alt="Most Used Languages" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#languages"><img src="./assets/languages.svg" alt="Most Used Languages" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/trophies.svg" alt="Achievements" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#trophies"><img src="./assets/trophies.svg" alt="Achievements" /></a></div>
 
 <br />
 
-<div align="center"><img src="./assets/snake.svg" alt="Contribution Snake" /></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#snake"><img src="./assets/snake.svg" alt="Contribution Snake" /></a></div>
 
 ---
 

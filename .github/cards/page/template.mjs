@@ -87,22 +87,22 @@ function capsule({ label, height, gradientId, extraStyle = '' }) {
 // Every container is empty — app.js renders its contents from DATA.
 function cardsHtml() {
   return `
-    <div class="card about">
+    <div class="card about" id="about">
       <h2 class="ctitle"><span class="em">🧠</span> About Me</h2>
       <ul id="aboutList"></ul>
     </div>
 
-    <div class="card">
+    <div class="card" id="stack">
       <h2 class="ctitle"><span class="em">🧪</span> Languages &amp; Stack</h2>
       <div class="chips" id="stackChips"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="tools">
       <h2 class="ctitle"><span class="em">🧰</span> Tools &amp; Environment</h2>
       <div class="chips" id="toolChips"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="stats">
       <h2 class="ctitle"><span class="em">📊</span> GitHub Stats</h2>
       <div class="stats-wrap">
         <div class="stat-rows" id="statRows"></div>
@@ -110,17 +110,17 @@ function cardsHtml() {
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="streak">
       <h2 class="ctitle"><span class="em">🔥</span> Contribution Streak</h2>
       <div class="streak-row" id="streakRow"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="activity-graph">
       <h2 class="ctitle"><span class="em">📈</span> Activity · last 30 days</h2>
       <div id="activityGraph"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="calendar">
       <h2 class="ctitle"><span class="em">📅</span> Contributions — last year</h2>
       <div class="cal-scroll">
         <div class="cal-months" id="calMonths"></div>
@@ -137,7 +137,7 @@ function cardsHtml() {
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="top-repos">
       <h2 class="ctitle"><span class="em">📦</span> Top Repositories</h2>
       <div class="repo-toolbar">
         <input id="repoSearch" type="search" placeholder="🔍  Filter by name, description, language…" />
@@ -161,12 +161,12 @@ function cardsHtml() {
       <div class="repo-more"><button id="repoToggle"></button></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="activity">
       <h2 class="ctitle"><span class="em">⚡</span> Recent Activity</h2>
       <ul class="feed" id="feed"></ul>
     </div>
 
-    <div class="card">
+    <div class="card" id="languages">
       <h2 class="ctitle"><span class="em">🧬</span> Most Used Languages</h2>
       <div class="donut-wrap">
         <div class="donut" id="donut"></div>
@@ -179,7 +179,7 @@ function cardsHtml() {
       <div class="trophies" id="trophies"></div>
     </div>
 
-    <div class="card">
+    <div class="card" id="snake">
       <h2 class="ctitle"><span class="em">🐍</span> Contribution Snake</h2>
       <div class="snake-wrap"><img src="snake.svg" alt="Contribution snake" style="width:100%;height:auto" /></div>
     </div>`;
