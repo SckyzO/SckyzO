@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - cv/**
+      - .github/cards/**   # the dashboard page is generated from here into cv/out/cards
       - .github/workflows/deploy.yml
   workflow_dispatch:
   schedule:
