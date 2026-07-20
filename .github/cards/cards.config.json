@@ -37,7 +37,7 @@
   ],
   "page": {
     "tagline": "SysAdmin & DevOps Enthusiast · Automation Lover · Monitoring Wizard · Python & Go",
-    "typingLines": ["SysAdmin & DevOps Enthusiast", "Automation Lover", "Monitoring Wizard", "Python & Go Developer", "Systems & HPC Engineer", "I write Prometheus exporters"],
+    "typingLines": ["SysAdmin & DevOps Enthusiast", "Automation Lover", "Monitoring Wizard", "Python & Go Developer", "Systems & HPC Engineer", "I write Prometheus exporters", "I craft Grafana dashboards", "Good design is not optional"],
     "readmeUrl": "../",
     "repoListCount": 30
   }
