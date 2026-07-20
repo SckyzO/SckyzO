@@ -62,7 +62,7 @@
 
 <br />
 
-<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#trophies"><img src="./assets/trophies.svg" alt="Achievements" /></a></div>
+<div align="center"><a href="https://sckyzo.github.io/SckyzO/cards/#achievements"><img src="./assets/trophies.svg" alt="Achievements" /></a></div>
 
 <br />
 

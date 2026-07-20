@@ -174,7 +174,7 @@ function cardsHtml() {
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="achievements">
       <h2 class="ctitle"><span class="em">🏆</span> Achievements</h2>
       <div class="trophies" id="trophies"></div>
     </div>
