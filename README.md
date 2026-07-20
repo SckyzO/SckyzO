@@ -8,7 +8,7 @@
 
   <p>
     <a href="https://github.com/DenverCoder1/readme-typing-svg">
-      <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer;Systems+%26+HPC+Engineer;I+write+Prometheus+exporters;I+craft+Grafana+dashboards;Good+design+is+not+optional" />
+      <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer;Systems+%26+HPC+Engineer;I+write+Prometheus+exporters;I+craft+Grafana+dashboards;Good+design+is+not+optional;AI+in+the+loop%2C+every+day" />
     </a>
   </p>
 
