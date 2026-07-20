@@ -12,7 +12,7 @@ import { renderTrophies } from './templates/trophies.mjs';
 import { renderLanguages } from './templates/languages.mjs';
 import { renderAbout } from './templates/about.mjs';
 import { renderActivityGraph } from './templates/activity-graph.mjs';
-import { renderHeader, renderFooter } from './templates/header.mjs';
+import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs';
 import { renderStack, renderTools } from './templates/stack.mjs';
 
 const RENDERERS = {
@@ -23,9 +23,14 @@ const RENDERERS = {
   stack: renderStack, tools: renderTools,
 };
 
-export function renderAll(data, cards, theme = tokyonight) {
+// `capsuleStops` (a single gradient's hex stops) is threaded to both header and
+// footer so the pair always matches within one run — deliberately more
+// consistent than the original capsule-render, which picked each independently.
+export function renderAll(data, cards, theme = tokyonight, capsuleStops) {
   const out = {};
   for (const name of cards) {
+    if (name === 'header') { out[name] = renderHeader(data, theme, 'header', capsuleStops); continue; }
+    if (name === 'footer') { out[name] = renderFooter(data, theme, capsuleStops); continue; }
     const fn = RENDERERS[name];
     if (fn) out[name] = fn(data, theme);
   }
@@ -43,7 +48,8 @@ export async function main() {
   // about/stack/tools are static config, not API data — fetchAll never populates them.
   Object.assign(data, { about: cfg.about, stack: cfg.stack, tools: cfg.tools });
   const theme = makeTheme(cfg.theme);
-  const svgs = renderAll(data, cfg.cards, theme);
+  const capsuleStops = pickGradient(cfg.capsule.gradients, Date.now());
+  const svgs = renderAll(data, cfg.cards, theme, capsuleStops);
   const outDir = join(dirname(fileURLToPath(import.meta.url)), '../../assets');
   mkdirSync(outDir, { recursive: true });
   for (const [name, svg] of Object.entries(svgs)) {

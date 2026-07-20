@@ -28,6 +28,20 @@ export const DEFAULTS = {
   fetch: { repoScanLimit: 100, eventsPerPage: 30 },
   activityGraph: { days: 30 },
   languages: { excludeForks: true, count: 5 },
+  capsule: {
+    gradients: [
+      ['#F8B195', '#F67280', '#C06C84'],
+      ['#e52d27', '#b31217'],
+      ['#1D976C', '#93F9B9'],
+      ['#00c6ff', '#0072ff'],
+      ['#2193b0', '#6dd5ed'],
+      ['#EDE574', '#E1F5C4'],
+      ['#7aa2f7', '#bb9af7', '#7dcfff'],
+      ['#DA22FF', '#9733EE'],
+      ['#f7971e', '#ffd200'],
+      ['#654ea3', '#eaafc8'],
+    ],
+  },
 };
 
 /** One-level shallow merge: keys present in `override` win, everything else falls back to `defaults`. */
@@ -78,6 +92,7 @@ export function loadConfig(env = process.env, configPath = CONFIG_PATH) {
     trophies: raw.trophies || DEFAULTS.trophies,
     fetch: mergeShallow(DEFAULTS.fetch, raw.fetch),
     activityGraph: mergeShallow(DEFAULTS.activityGraph, raw.activityGraph),
+    capsule: raw.capsule || DEFAULTS.capsule,
   };
   if (!cfg.username) throw new Error('config: username is required');
   for (const name of cfg.cards)
