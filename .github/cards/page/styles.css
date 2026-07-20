@@ -43,8 +43,12 @@ a:hover { text-decoration: underline; }
 }
 .toggle:hover { border-color: var(--title); }
 
-/* ── Header / footer capsule (matches README header.svg wave) ── */
-.capsule { display: block; width: 100%; height: auto; margin: 0; }
+/* ── Header / footer capsule — wraps the inlined SVG from
+   ../templates/header.mjs, the same renderer that produces the README's
+   header.svg/footer.svg, so sizing here is CSS-only (no svg attributes to
+   fight); the svg itself carries no class, hence the nested selector. ── */
+.capsule { display: block; width: 100%; margin: 0; }
+.capsule svg { display: block; width: 100%; height: auto; }
 .hero { text-align: center; padding: 18px 0 4px; }
 .hero h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--ink); }
 .hero h1 code { font-family: inherit; background: var(--card-2); padding: 0 9px; border-radius: 7px; color: var(--title); }

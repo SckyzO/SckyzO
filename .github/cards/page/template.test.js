@@ -10,6 +10,13 @@ const fx = JSON.parse(readFileSync(join(HERE, '../fixtures/sample.json'), 'utf8'
 const data = { ...fx, page: { tagline: 'T', typingLines: ['A', 'B'], readmeUrl: '../' } };
 
 // All element hooks app.js reads (per .github/cards/page/app.js).
+// The inlined capsule <svg> (from ../templates/header.mjs) carries its own
+// decorative <style> block for the fadeIn keyframes — page furniture
+// unrelated to the base css / theme-override mechanism these tests assert
+// on. Strip it out before counting top-level <style> tags so this suite
+// stays about what it says it's about, not header.mjs's internal markup.
+const stripCapsuleStyles = (html) => html.replace(/<svg[\s\S]*?<\/svg>/g, '');
+
 const ALL_HOOKS = [
   'aboutList', 'activityGraph', 'calGrid', 'calMonths', 'donut', 'feed', 'gauge', 'langLegend',
   'repoBody', 'repoSearch', 'repoSort', 'repoToggle', 'stackChips', 'statRows',
@@ -27,6 +34,18 @@ test('renderPage inlines css/js and a valid data blob, with every card hook', ()
     assert.ok(html.includes(`id="${id}"`), `missing #${id}`);
   assert.match(html, /readme-typing-svg/); // typing image in header
   assert.match(html, /<animate /); // animated capsule
+});
+
+test('capsules are inlined from the shared header.mjs renderer, not a second hand-rolled wave', () => {
+  const html = renderPage(data, { css: '', js: '' });
+  const capsules = [...html.matchAll(/<div class="capsule">([\s\S]*?)<\/div>/g)];
+  assert.equal(capsules.length, 2, 'header and footer capsule wrappers');
+  for (const [, svg] of capsules) {
+    const pathCount = (svg.match(/<path/g) || []).length;
+    assert.equal(pathCount, 2, 'the real renderer draws two superposed wave paths');
+    assert.match(svg, /calcMode="spline"/, 'must use the faithful renderer\'s spline easing, not a linear one');
+    assert.doesNotMatch(svg, /calcmod=/, 'must not carry the capsule-render calcmod typo');
+  }
 });
 
 test('snake card embeds the real snake.svg artifact, not a JS-illustrative grid', () => {
@@ -126,7 +145,7 @@ test('theme.font is dropped when it fails the font-safe allowlist, preventing ma
 
 test('no theme override block is emitted for the unconfigured (default) theme', () => {
   const html = renderPage({ ...data, theme: { palette: {}, font: null } }, { css: ':root{--title:#70a5fd}', js: '' });
-  assert.equal((html.match(/<style>/g) || []).length, 1, 'only the base <style> block should be present');
+  assert.equal((stripCapsuleStyles(html).match(/<style>/g) || []).length, 1, 'only the base <style> block should be present');
   assert.match(html, /<style>:root\{--title:#70a5fd\}<\/style>/, 'base css must be unchanged');
 });
 
@@ -151,7 +170,7 @@ test('card wrappers carry anchor ids for README deep-links, without breaking app
 
 test('theme override omitted entirely when data.theme is absent (back-compat with untouched callers)', () => {
   const html = renderPage(data, { css: ':root{--title:#70a5fd}', js: '' });
-  assert.equal((html.match(/<style>/g) || []).length, 1);
+  assert.equal((stripCapsuleStyles(html).match(/<style>/g) || []).length, 1);
 });
 
 test('palette values are guarded through the color allowlist to prevent CSS injection from a malformed config', () => {

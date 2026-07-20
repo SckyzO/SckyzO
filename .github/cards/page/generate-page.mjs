@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import { loadConfig, DEFAULTS } from '../config.js';
 import { resolveToken, fetchAll } from '../lib/github.mjs';
 import { renderPage } from './template.mjs';
+import { pickGradient } from '../templates/header.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -25,10 +26,17 @@ function themeDiff(theme) {
 }
 
 export function buildPageData(apiData, cfg) {
+  // Resolved here (not inside renderPage) so renderPage stays a pure
+  // function of `data` — no Date.now() in the template. Same
+  // pickGradient() the README's generate.mjs uses, so both the dashboard
+  // and the README rotate through the same palette set, just picked
+  // independently per build.
+  const gradients = cfg.capsule?.gradients || DEFAULTS.capsule.gradients;
   return { ...apiData, about: cfg.about, stack: cfg.stack, tools: cfg.tools,
     page: { tagline: cfg.page.tagline, typingLines: cfg.page.typingLines,
       readmeUrl: cfg.page.readmeUrl },
-    theme: themeDiff(cfg.theme) };
+    theme: themeDiff(cfg.theme),
+    capsuleStops: pickGradient(gradients, Date.now()) };
 }
 
 export async function main(outDir = join(HERE, 'dist')) {

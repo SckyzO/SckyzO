@@ -6,6 +6,8 @@
 // a pure function — no I/O, no dependencies — css/js are passed in by the
 // orchestrator (generate-page.mjs) and inlined verbatim.
 
+import { renderHeader, renderFooter } from '../templates/header.mjs';
+
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -63,23 +65,6 @@ export function paletteOverrideCss(theme = {}) {
   let css = decls.length ? `:root{${decls.join(';')}}` : '';
   if (theme.font && SAFE_FONT.test(String(theme.font))) css += `body{font-family:${theme.font}}`;
   return css ? `<style>${css}</style>` : '';
-}
-
-// Both capsules (header + footer) share the same waving path/animation; only
-// the aria-label, height and rotation differ between them.
-const CAPSULE_D = 'M0,50 C160,90 320,20 480,60 C620,94 720,46 800,76 L800,0 L0,0 Z';
-const CAPSULE_D_ALT = 'M0,66 C160,26 320,86 480,42 C620,74 720,90 800,52 L800,0 L0,0 Z';
-
-function capsule({ label, height, gradientId, extraStyle = '' }) {
-  return `<svg class="capsule" viewBox="0 0 800 120" preserveAspectRatio="none" role="img" aria-label="${label}" style="height:${height}px${extraStyle}">
-    <defs><linearGradient id="${gradientId}" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="#7aa2f7"/><stop offset="0.5" stop-color="#bb9af7"/><stop offset="1" stop-color="#7dcfff"/>
-    </linearGradient></defs>
-    <path fill="url(#${gradientId})" d="${CAPSULE_D}">
-      <animate attributeName="d" dur="8s" repeatCount="indefinite"
-        values="${CAPSULE_D};${CAPSULE_D_ALT};${CAPSULE_D}"/>
-    </path>
-  </svg>`;
 }
 
 // Cards, in README order: about, stack, tools, stats, streak, activity-graph,
@@ -192,6 +177,19 @@ export function renderPage(data, { css, js }) {
   const readmeUrl = page.readmeUrl || '#';
   const title = data.user ? `${data.user} — GitHub Dashboard` : 'GitHub Dashboard';
 
+  // Reuses the exact same renderer that produces the README's header.svg /
+  // footer.svg (see ../templates/header.mjs) instead of a second hand-rolled
+  // wave, so the dashboard and the README can never drift apart visually.
+  // The page is HTML, not a sanitized README, so the returned <svg> can be
+  // inlined verbatim (including its SMIL <animate> elements).
+  // `capsuleStops` is resolved once in generate-page.mjs's buildPageData
+  // (via the same pickGradient() the README generator uses) and threaded in
+  // through `data`, so this function stays pure — no Date.now() in here —
+  // and header/footer always render with the same gradient on a given page.
+  const capsuleStops = data.capsuleStops;
+  const headerCapsule = renderHeader(data, undefined, 'header', capsuleStops);
+  const footerCapsule = renderFooter(data, undefined, capsuleStops);
+
   // Escaping "<" keeps a "</script>" inside any string value (e.g. a repo
   // description pulled from GitHub) from breaking out of the script tag and
   // executing as HTML before app.js runs — required, do not omit.
@@ -208,7 +206,7 @@ export function renderPage(data, { css, js }) {
 <button class="toggle" id="themeBtn" aria-label="Toggle theme">◐ <span id="themeLbl">Light</span></button>
 
 <div class="dash">
-  ${capsule({ label: 'profile header', height: 64, gradientId: 'cap-h' })}
+  <div class="capsule">${headerCapsule}</div>
 
   <div class="hero">
     <h1>Hi, I'm <code>Tom</code> 👋</h1>
@@ -219,7 +217,7 @@ export function renderPage(data, { css, js }) {
   <div class="stack">${cardsHtml()}
   </div>
 
-  ${capsule({ label: 'profile footer', height: 56, gradientId: 'cap-f', extraStyle: ';transform:rotate(180deg)' })}
+  <div class="capsule">${footerCapsule}</div>
 
   <div class="foot-links">
     <a class="back" href="${escapeHtml(readmeUrl)}">← Back to profile README</a>
