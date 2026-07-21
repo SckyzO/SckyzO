@@ -120,6 +120,22 @@ function pushCount(payload = {}) {
   return null;
 }
 
+// Human-friendly elapsed time, mirroring the dashboard's client-side timeAgo so
+// both surfaces read identically. `now` is injectable to keep callers and tests
+// deterministic; the SVG passes build time (it regenerates every few hours).
+export function relativeTime(iso, now = Date.now()) {
+  if (!iso) return '';
+  const mins = Math.floor(Math.max(0, now - new Date(iso).getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'yesterday';
+  if (days < 30) return `${days}d ago`;
+  return `${Math.round(days / 30)}mo ago`;
+}
+
 export function mapActivity(events, n = 5) {
   const out = [];
   let pending = null; // an open push row we may still merge follow-up pushes into
