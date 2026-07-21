@@ -36,3 +36,8 @@ cv/dist/*
 !cv/README.md
 
 AGENTS.md
+CLAUDE.md
+
+# Agent working docs (specs, plans, mockups) — local only
+docs/superpowers/
+.superpowers/
