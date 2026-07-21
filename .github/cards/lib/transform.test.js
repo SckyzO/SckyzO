@@ -97,6 +97,43 @@ test('pickTopRepos sorts by stars and trims fields', () => {
   assert.equal(t[1].stars, 5);
 });
 
+test('mapActivity coalesces consecutive pushes to the same repo and sums their commits', () => {
+  const events = [
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { size: 3 }, created_at: '2026-07-06T10:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { size: 2 }, created_at: '2026-07-06T09:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { commits: [1] }, created_at: '2026-07-06T08:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/s' }, payload: { size: 1 }, created_at: '2026-07-05T00:00:00Z' },
+  ];
+  const a = mapActivity(events, 5);
+  assert.equal(a.length, 2);                       // three o/r pushes merge into one row
+  assert.equal(a[0].repo, 'o/r');
+  assert.equal(a[0].detail, '6 commits');          // 3 + 2 + 1
+  assert.equal(a[0].when, '2026-07-06T10:00:00Z'); // keeps the most recent timestamp
+  assert.equal(a[1].repo, 'o/s');
+  assert.equal(a[1].detail, '1 commit');           // singular
+});
+
+test('mapActivity hides the commit detail when a push payload is empty (unknown count)', () => {
+  const events = [
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { commits: [], size: 0 }, created_at: '2026-07-06T00:00:00Z' },
+  ];
+  const a = mapActivity(events, 5);
+  assert.equal(a.length, 1);
+  assert.equal(a[0].type, 'push');
+  assert.equal(a[0].detail, '');                   // no "0 commits" noise
+});
+
+test('mapActivity does not merge non-adjacent pushes to the same repo', () => {
+  const events = [
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { size: 1 }, created_at: '2026-07-06T00:00:00Z' },
+    { type: 'WatchEvent', repo: { name: 'o/s' }, payload: {}, created_at: '2026-07-05T00:00:00Z' },
+    { type: 'PushEvent', repo: { name: 'o/r' }, payload: { size: 1 }, created_at: '2026-07-04T00:00:00Z' },
+  ];
+  const a = mapActivity(events, 5);
+  assert.equal(a.length, 3);                       // the star between them breaks the run
+  assert.deepEqual(a.map((x) => x.repo), ['o/r', 'o/s', 'o/r']);
+});
+
 test('mapActivity classifies event types and formats detail', () => {
   const events = [
     { type: 'PushEvent', repo: { name: 'o/r' }, payload: { commits: [1, 2] }, created_at: '2026-07-01T00:00:00Z' },

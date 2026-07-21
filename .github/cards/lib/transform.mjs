@@ -110,17 +110,53 @@ const EVENT_TYPE = {
   IssuesEvent: 'issue', CreateEvent: 'repo',
 };
 
+// A PushEvent's commit count: prefer the pushed `size`, fall back to the
+// commits array length. The public events API sometimes returns neither
+// (empty payload), in which case the count is unknown (null), not zero — we
+// then omit the "N commits" detail rather than printing a misleading "0".
+function pushCount(payload = {}) {
+  if (typeof payload.size === 'number') return payload.size;
+  if (Array.isArray(payload.commits)) return payload.commits.length;
+  return null;
+}
+
 export function mapActivity(events, n = 5) {
   const out = [];
+  let pending = null; // an open push row we may still merge follow-up pushes into
+  const flush = () => { if (pending) { out.push(finalizePush(pending)); pending = null; } };
+
   for (const e of events) {
     const type = EVENT_TYPE[e.type];
     if (!type) continue;
+
+    if (type === 'push') {
+      // Merge consecutive pushes to the same repo (GitHub shows one row, summed).
+      if (pending && pending.repo === e.repo.name) {
+        const c = pushCount(e.payload);
+        if (c !== null) pending.count = (pending.count ?? 0) + c;
+        continue; // pending keeps the most recent `when` (events are newest-first)
+      }
+      flush();
+      if (out.length >= n) break;
+      pending = { repo: e.repo.name, count: pushCount(e.payload), when: e.created_at || '' };
+      continue;
+    }
+
+    flush();
+    if (out.length >= n) break;
     let detail = '';
-    if (type === 'push') detail = `${e.payload.commits?.length || 0} commits`;
-    else if (type === 'pr') detail = `PR #${e.payload.number ?? ''}`.trim();
+    if (type === 'pr') detail = `PR #${e.payload.number ?? ''}`.trim();
     else if (type === 'issue') detail = `issue #${e.payload.issue?.number ?? ''}`.trim();
     out.push({ type, repo: e.repo.name, detail, when: e.created_at || '' });
     if (out.length >= n) break;
   }
-  return out;
+  if (out.length < n) flush(); // trailing open push row
+  return out.slice(0, n);
+}
+
+function finalizePush(p) {
+  // No detail for an unknown (empty payload) or zero commit count — "0 commits"
+  // is noise, and empty payloads happen (e.g. during GitHub API incidents).
+  const detail = p.count ? `${p.count} commit${p.count === 1 ? '' : 's'}` : '';
+  return { type: 'push', repo: p.repo, detail, when: p.when };
 }
