@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM mcr.microsoft.com/playwright:v1.61.1-jammy AS builder
+FROM mcr.microsoft.com/playwright:v1.62.1-jammy AS builder
 
 WORKDIR /app
 
