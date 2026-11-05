@@ -9,11 +9,11 @@ test('renderHeader draws an 854-wide gradient wave', () => {
   assert.match(svg, /viewBox="0 0 854 100"/);
 });
 
-test('renderFooter is not the flipped-header markup verbatim (transform differs)', () => {
+test('the footer is flipped vertically so its waves rise from the bottom edge', () => {
   const header = renderHeader();
   const footer = renderFooter();
   assert.match(header, /transform="scale \(-1, 1\)"/, 'header flips horizontally');
-  assert.doesNotMatch(footer, /transform=/, 'footer carries no transform');
+  assert.match(footer, /transform="scale \(1, -1\)" transform-origin="center"/, 'footer flips vertically');
 });
 
 test('header and footer capsules each animate two superposed, out-of-phase paths', () => {

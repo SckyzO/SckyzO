@@ -48,8 +48,10 @@ const WAVES = {
   ],
 };
 
-// capsule-render flips the header horizontally; the footer is left as-is.
-const TRANSFORM = { header: 'scale (-1, 1)', footer: null };
+// The wave paths hang from the top edge. The header is mirrored horizontally so its
+// crest differs from the footer's; the footer is mirrored vertically so its waves rise
+// from the bottom edge, which is where it sits at the end of the page.
+const TRANSFORM = { header: 'scale (-1, 1)', footer: 'scale (1, -1)' };
 
 const HOUR_MS = 3.6e6;
 
