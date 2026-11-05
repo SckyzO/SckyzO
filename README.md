@@ -2,15 +2,14 @@
   <img src="./assets/header.svg" alt="" width="100%" />
 </div>
 
-<h1 align="center">Hey, I'm Tom <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" alt="" width="36" height="36" /></h1>
+<h1 align="center">Hey, I'm Tom 👋</h1>
 
 <p align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=0FF8FC&center=true&vCenter=true&width=600&lines=SysAdmin+%26+DevOps+Enthusiast;Automation+Lover;Monitoring+Wizard;Python+%26+Go+Developer;Systems+%26+HPC+Engineer;I+write+Prometheus+exporters;I+craft+Grafana+dashboards;Good+design+is+not+optional;AI+in+the+loop%2C+every+day" alt="" />
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Rocket.png" alt="" width="20" height="20" />
-  <b>Senior Systems &amp; HPC Engineer</b> · 🐧 Linux · 🔭 Observability · 🤖 Automation
+  🚀 <b>Senior Systems &amp; HPC Engineer</b> · 🐧 Linux · 🔭 Observability · 🤖 Automation
 </p>
 
 <p align="center">
@@ -69,23 +68,25 @@ JavaScript  🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   4 %
 <!-- cards:releases:start -->
 ```diff
 + cosmos                      @sckyzo/cosmos-charts@0.8.1  2026-11-04
++ suivi-loyers                v1.3.1                       2026-10-30
 + slurm_exporter              v1.8.6                       2026-10-27
 + cosmos-docusaurus-theme     v2.2.7                       2026-10-25
 + grafana-plugin-slurm-panel  v0.1.0                       2026-09-28
-+ tapelibrary_exporter        v0.1.2                       2026-08-05
 ```
 <!-- cards:releases:end -->
 
 ## 🤝 Open-source contributions
 
-Merged pull requests to projects I don't own.
+Pull requests I opened on projects I don't own.
 
 <!-- cards:contributions:start -->
-| Repository | Merged PRs | ⭐ |
+| Repository | Pull requests | ⭐ |
 |---|:-:|:-:|
-| [Dtcreation/Firmware-Molise-Artillery](https://github.com/Dtcreation/Firmware-Molise-Artillery) | 5 | 67 |
+| [fairecasoimeme/Zlinky_TIC](https://github.com/fairecasoimeme/Zlinky_TIC) | 7 | 459 |
+| [Dtcreation/Firmware-Molise-Artillery](https://github.com/Dtcreation/Firmware-Molise-Artillery) | 7 | 67 |
+| [ClusterLabs/ha_cluster_exporter](https://github.com/ClusterLabs/ha_cluster_exporter) | 2 | 85 |
+| [treydock/eseries_exporter](https://github.com/treydock/eseries_exporter) | 2 | 6 |
 | [prometheus/docs](https://github.com/prometheus/docs) | 1 | 726 |
-| [webbertakken/awesome-docusaurus](https://github.com/webbertakken/awesome-docusaurus) | 1 | 174 |
 <!-- cards:contributions:end -->
 
 <div align="center">

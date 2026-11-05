@@ -57,7 +57,8 @@ test('renderProjects lays repos out two per row and escapes descriptions', () =>
 test('renderContributions renders a table and escapes pipes', () => {
   const md = renderContributions([{ repo: 'prometheus/docs', url: 'https://x', prs: 1, stars: 726 }]);
   assert.match(md, /\| \[prometheus\/docs\]\(https:\/\/x\) \| 1 \| 726 \|/);
-  assert.equal(renderContributions([]), '_No merged pull requests to other projects yet._');
+  assert.match(md, /^\| Repository \| Pull requests \| ⭐ \|$/m);
+  assert.equal(renderContributions([]), '_No pull requests to other projects yet._');
 });
 
 test('renderReleases renders a diff block with aligned columns', () => {

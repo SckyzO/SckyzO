@@ -38,7 +38,7 @@ export function latestReleases(repos, n = 5, exclude = []) {
     .slice(0, n);
 }
 
-/** Groups merged-PR search hits by target repo; most PRs first, ties broken by the repo's stars. */
+/** Groups PR search hits by target repo; most PRs first, ties broken by the repo's stars. */
 export function externalContributions(prNodes, n = 5) {
   const byRepo = new Map();
   for (const pr of prNodes) {

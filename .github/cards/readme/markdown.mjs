@@ -79,9 +79,9 @@ export function renderProjects(projects, emoji) {
 }
 
 export function renderContributions(contributions) {
-  if (!contributions.length) return '_No merged pull requests to other projects yet._';
+  if (!contributions.length) return '_No pull requests to other projects yet._';
   return [
-    '| Repository | Merged PRs | ⭐ |',
+    '| Repository | Pull requests | ⭐ |',
     '|---|:-:|:-:|',
     ...contributions.map((c) => `| [${escapeCell(c.repo)}](${c.url}) | ${c.prs} | ${compactNumber(c.stars)} |`),
   ].join('\n');

@@ -5,7 +5,7 @@
   "readme": {
     "projects": ["slurm_exporter", "rackscope", "cosmos", "monitoring-hub"],
     "releasesCount": 5,
-    "releasesExclude": ["suivi-loyers"],
+    "releasesExclude": [],
     "contributionsCount": 5
   },
   "capsule": {
