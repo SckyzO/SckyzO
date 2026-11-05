@@ -55,7 +55,7 @@
 </p>
 
 <!-- cards:languages:start -->
-<img src="./assets/languages.svg" alt="" width="100%" />
+<p align="center"><img src="./assets/languages.svg" alt="" width="220" height="220" /></p>
 
 <p align="center">🟦 <b>TypeScript</b> 66 % · 🟩 <b>Go</b> 14 % · 🟨 <b>Python</b> 13 % · 🟪 <b>Go Template</b> 4 % · 🟧 <b>JavaScript</b> 3 %</p>
 <!-- cards:languages:end -->
@@ -98,11 +98,11 @@
 
 <!-- cards:releases:start -->
 ```diff
-+ grafana-plugin-slurm-panel  v0.1.1                       2026-11-05
-+ cosmos                      @sckyzo/cosmos-charts@0.8.1  2026-11-04
-+ suivi-loyers                v1.3.1                       2026-10-30
-+ slurm_exporter              v1.8.6                       2026-10-27
-+ cosmos-docusaurus-theme     v2.2.7                       2026-10-25
++ grafana-plugin-slurm-panel  v0.1.1                                                  2026-11-05
++ cosmos                      @sckyzo/cosmos-charts@0.8.1                             2026-11-04
++ suivi-loyers                v1.3.1                                                  2026-10-30
++ slurm_exporter              v1.8.6                                                  2026-10-27
++ cosmos-docusaurus-theme     v2.2.7                                                  2026-10-25
 ```
 <!-- cards:releases:end -->
 
