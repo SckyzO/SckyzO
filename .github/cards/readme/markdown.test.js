@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   compactNumber, escapeHtml, languageBars, renderStatsRow, renderLanguages,
-  renderProjects, renderContributions, renderReleases, injectSections, renderReadmeSections,
+  renderProjects, renderReleases, injectSections, renderReadmeSections,
 } from './markdown.mjs';
 
 test('compactNumber keeps small numbers and abbreviates thousands', () => {
@@ -26,10 +26,11 @@ test('languageBars falls back to a neutral square for unmapped languages', () =>
   assert.match(languageBars([{ name: 'Zig', pct: 30 }], {}), /⬛{3}/u);
 });
 
-test('renderStatsRow renders a centred 4-column table', () => {
-  const md = renderStatsRow({ repoCount: 63, stars: 196, contributions: 8600, years: 15 });
+test('renderStatsRow renders a centred 4-column table with followers', () => {
+  const md = renderStatsRow({ repoCount: 63, stars: 196, followers: 1600, years: 15 });
   assert.match(md, /<div align="center">/);
-  assert.match(md, /\| 📦 \*\*63\*\* \| ⭐ \*\*196\*\* \| 🔥 \*\*8\.6k\*\* \| 🗓️ \*\*15\*\* \|/u);
+  assert.match(md, /\| 📦 \*\*63\*\* \| ⭐ \*\*196\*\* \| 👥 \*\*1\.6k\*\* \| 🗓️ \*\*15\*\* \|/u);
+  assert.match(md, /\| Repositories \| Stars \| Followers \| Years on GitHub \|/);
   assert.match(md, /\|:-:\|:-:\|:-:\|:-:\|/);
 });
 
@@ -52,13 +53,6 @@ test('renderProjects lays repos out two per row and escapes descriptions', () =>
   assert.doesNotMatch(md, /🍴 0/u); // zero forks is noise
   assert.match(md, /<td width="50%" valign="top"><\/td>/); // odd count: last row padded
   assert.equal((md.match(/<td width="50%" valign="top">/g) || []).length, 4); // cards of uneven height stay top-aligned
-});
-
-test('renderContributions renders a table and escapes pipes', () => {
-  const md = renderContributions([{ repo: 'prometheus/docs', url: 'https://x', prs: 1, stars: 726 }]);
-  assert.match(md, /\| \[prometheus\/docs\]\(https:\/\/x\) \| 1 \| 726 \|/);
-  assert.match(md, /^\| Repository \| Pull requests \| ⭐ \|$/m);
-  assert.equal(renderContributions([]), '_No pull requests to other projects yet._');
 });
 
 test('renderReleases renders a diff block with aligned columns', () => {
@@ -87,10 +81,10 @@ test('injectSections does not interpret $ patterns in generated content', () => 
 
 test('renderReadmeSections maps model data to every marker name', () => {
   const sections = renderReadmeSections({
-    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, contributions: 4 },
-    languages: [{ name: 'Go', pct: 100 }], projects: [], contributions: [], releases: [],
+    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, followers: 4 },
+    languages: [{ name: 'Go', pct: 100 }], projects: [], releases: [],
   }, {});
-  assert.deepEqual(Object.keys(sections).sort(), ['contributions', 'languages', 'projects', 'releases', 'stats']);
+  assert.deepEqual(Object.keys(sections).sort(), ['languages', 'projects', 'releases', 'stats']);
 });
 
 test('renderProjects truncates long descriptions on a word boundary', () => {

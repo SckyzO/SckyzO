@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { topLanguages, pickProjects, latestReleases, externalContributions, yearsSince } from './transform.mjs';
+import { topLanguages, pickProjects, latestReleases, yearsSince } from './transform.mjs';
 
 const node = (name, extra = {}) => ({
   name, description: `${name} desc`, url: `https://github.com/o/${name}`, stargazerCount: 0, forkCount: 0,
@@ -54,19 +54,6 @@ test('latestReleases sorts newest first and skips forks, private repos and repos
     { repo: 'old', tag: 'v1', url: 'https://r/v1', date: '2026-01-01T00:00:00Z' },
   ]);
   assert.equal(latestReleases(repos, 1).length, 1);
-});
-
-test('externalContributions groups PRs per repo, most PRs first', () => {
-  const pr = (repo, stars) => ({ repository: { nameWithOwner: repo, url: `https://github.com/${repo}`, stargazerCount: stars } });
-  const out = externalContributions([pr('a/x', 10), pr('b/y', 500), pr('a/x', 10), pr('c/z', 3)], 2);
-  assert.deepEqual(out, [
-    { repo: 'a/x', url: 'https://github.com/a/x', prs: 2, stars: 10 },
-    { repo: 'b/y', url: 'https://github.com/b/y', prs: 1, stars: 500 }, // tie on PRs broken by stars
-  ]);
-});
-
-test('externalContributions ignores empty search nodes', () => {
-  assert.deepEqual(externalContributions([{}, null], 5), []); // non-PR search hits come back as empty objects
 });
 
 test('yearsSince counts full years only', () => {

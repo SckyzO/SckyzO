@@ -38,19 +38,6 @@ export function latestReleases(repos, n = 5, exclude = []) {
     .slice(0, n);
 }
 
-/** Groups PR search hits by target repo; most PRs first, ties broken by the repo's stars. */
-export function externalContributions(prNodes, n = 5) {
-  const byRepo = new Map();
-  for (const pr of prNodes) {
-    const repo = pr?.repository;
-    if (!repo) continue;
-    const entry = byRepo.get(repo.nameWithOwner) || { repo: repo.nameWithOwner, url: repo.url, prs: 0, stars: repo.stargazerCount };
-    entry.prs += 1;
-    byRepo.set(repo.nameWithOwner, entry);
-  }
-  return [...byRepo.values()].sort((a, b) => b.prs - a.prs || b.stars - a.stars).slice(0, n);
-}
-
 export function yearsSince(iso, now = Date.now()) {
   const from = new Date(iso);
   const to = new Date(now);

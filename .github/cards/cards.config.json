@@ -5,8 +5,7 @@
   "readme": {
     "projects": ["slurm_exporter", "rackscope", "cosmos", "monitoring-hub"],
     "releasesCount": 5,
-    "releasesExclude": [],
-    "contributionsCount": 5
+    "releasesExclude": []
   },
   "capsule": {
     "gradients": [

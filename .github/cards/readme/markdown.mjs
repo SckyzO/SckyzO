@@ -28,9 +28,6 @@ export function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Table cells are delimited by `|`, so a literal pipe in a repo name would split the row.
-const escapeCell = (s) => String(s).replace(/\|/g, '\\|');
-
 const squareFor = (name, emoji) => emoji[name] || FALLBACK_SQUARE;
 
 export function languageBars(languages, emoji) {
@@ -44,13 +41,13 @@ export function languageBars(languages, emoji) {
   }).join('\n');
 }
 
-export function renderStatsRow({ repoCount, stars, contributions, years }) {
+export function renderStatsRow({ repoCount, stars, followers, years }) {
   return [
     '<div align="center">',
     '',
-    `| 📦 **${compactNumber(repoCount)}** | ⭐ **${compactNumber(stars)}** | 🔥 **${compactNumber(contributions)}** | 🗓️ **${years}** |`,
+    `| 📦 **${compactNumber(repoCount)}** | ⭐ **${compactNumber(stars)}** | 👥 **${compactNumber(followers)}** | 🗓️ **${years}** |`,
     '|:-:|:-:|:-:|:-:|',
-    '| Repositories | Stars | Contributions (last year) | Years on GitHub |',
+    '| Repositories | Stars | Followers | Years on GitHub |',
     '',
     '</div>',
   ].join('\n');
@@ -78,15 +75,6 @@ export function renderProjects(projects, emoji) {
   return ['<table>', ...rows, '</table>'].join('\n');
 }
 
-export function renderContributions(contributions) {
-  if (!contributions.length) return '_No pull requests to other projects yet._';
-  return [
-    '| Repository | Pull requests | ⭐ |',
-    '|---|:-:|:-:|',
-    ...contributions.map((c) => `| [${escapeCell(c.repo)}](${c.url}) | ${c.prs} | ${compactNumber(c.stars)} |`),
-  ].join('\n');
-}
-
 export function renderReleases(releases) {
   if (!releases.length) return '_No releases published yet._';
   const repoWidth = Math.max(...releases.map((r) => r.repo.length));
@@ -99,11 +87,10 @@ export function renderReadmeSections(data, emoji = DEFAULT_LANGUAGE_EMOJI) {
   return {
     stats: renderStatsRow({
       repoCount: data.profile.repoCount, stars: data.stats.stars,
-      contributions: data.stats.contributions, years: data.profile.years,
+      followers: data.stats.followers, years: data.profile.years,
     }),
     languages: renderLanguages(data.languages, emoji),
     projects: renderProjects(data.projects, emoji),
-    contributions: renderContributions(data.contributions),
     releases: renderReleases(data.releases),
   };
 }

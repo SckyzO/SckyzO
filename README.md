@@ -75,20 +75,6 @@ JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 ```
 <!-- cards:releases:end -->
 
-## 🤝 Open-source contributions
-
-Pull requests I opened on projects I don't own.
-
-<!-- cards:contributions:start -->
-| Repository | Pull requests | ⭐ |
-|---|:-:|:-:|
-| [fairecasoimeme/Zlinky_TIC](https://github.com/fairecasoimeme/Zlinky_TIC) | 7 | 459 |
-| [Dtcreation/Firmware-Molise-Artillery](https://github.com/Dtcreation/Firmware-Molise-Artillery) | 7 | 67 |
-| [ClusterLabs/ha_cluster_exporter](https://github.com/ClusterLabs/ha_cluster_exporter) | 2 | 85 |
-| [treydock/eseries_exporter](https://github.com/treydock/eseries_exporter) | 2 | 6 |
-| [prometheus/docs](https://github.com/prometheus/docs) | 1 | 726 |
-<!-- cards:contributions:end -->
-
 <div align="center">
   <img src="./assets/footer.svg" alt="" width="100%" />
 </div>

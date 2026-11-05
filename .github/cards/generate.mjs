@@ -30,7 +30,7 @@ export async function main() {
     excludeForks: cfg.languages.excludeForks, excludeArchived: cfg.languages.excludeArchived,
     languagesCount: cfg.languages.count, repoScanLimit: cfg.fetch.repoScanLimit,
     projects: cfg.readme.projects, releasesCount: cfg.readme.releasesCount,
-    releasesExclude: cfg.readme.releasesExclude, contributionsCount: cfg.readme.contributionsCount,
+    releasesExclude: cfg.readme.releasesExclude,
   });
   mkdirSync(ASSETS_DIR, { recursive: true });
   for (const [name, svg] of Object.entries(renderWaves(cfg.capsule.gradients))) {

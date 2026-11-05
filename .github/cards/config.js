@@ -11,7 +11,7 @@ export const DEFAULTS = {
   fetch: { repoScanLimit: 100 },
   languages: { excludeForks: true, excludeArchived: false, count: 5 },
   // Markdown README sections. `projects: []` falls back to the most-starred public repos.
-  readme: { projects: [], releasesCount: 5, releasesExclude: [], contributionsCount: 5, languageEmoji: DEFAULT_LANGUAGE_EMOJI },
+  readme: { projects: [], releasesCount: 5, releasesExclude: [], languageEmoji: DEFAULT_LANGUAGE_EMOJI },
   // Header/footer wave gradients; one is picked per run (see templates/header.mjs pickGradient).
   capsule: {
     gradients: [
@@ -57,10 +57,15 @@ export function loadConfig(env = process.env, configPath = CONFIG_PATH) {
   return cfg;
 }
 
+// readme.* keys of sections that no longer exist; same fail-loud policy as RETIRED_KEYS.
+const RETIRED_README_KEYS = ['contributionsCount'];
+
 function validateReadme(r) {
+  const retired = RETIRED_README_KEYS.filter((k) => k in r);
+  if (retired.length) throw new Error(`config: readme.${retired.join(', readme.')} belonged to a removed README section; delete it`);
   const isNameList = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string' && x);
   for (const key of ['projects', 'releasesExclude'])
     if (!isNameList(r[key])) throw new Error(`config: readme.${key} must be a list of repo names`);
-  for (const key of ['releasesCount', 'contributionsCount'])
+  for (const key of ['releasesCount'])
     if (!Number.isInteger(r[key]) || r[key] < 1) throw new Error(`config: readme.${key} must be a positive integer`);
 }

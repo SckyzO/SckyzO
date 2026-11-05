@@ -1,4 +1,4 @@
-import { topLanguages, pickProjects, latestReleases, externalContributions, yearsSince } from './transform.mjs';
+import { topLanguages, pickProjects, latestReleases, yearsSince } from './transform.mjs';
 
 export function resolveToken(env = process.env) {
   const t = env.CARDS_TOKEN || env.GITHUB_TOKEN;
@@ -6,21 +6,16 @@ export function resolveToken(env = process.env) {
   return t;
 }
 
-// GitHub caps a search page at 100 hits; enough to rank the top upstream repos.
-const PR_SEARCH_LIMIT = 100;
-
-const QUERY = `query($login:String!,$repoLimit:Int!,$prQuery:String!,$prLimit:Int!){ user(login:$login){
+const QUERY = `query($login:String!,$repoLimit:Int!){ user(login:$login){
   createdAt
+  followers{ totalCount }
   repoCount: repositories(ownerAffiliations:OWNER, privacy:PUBLIC){ totalCount }
-  contributionsCollection{ contributionCalendar{ totalContributions } }
   repositories(first:$repoLimit, ownerAffiliations:OWNER, privacy:PUBLIC, orderBy:{field:STARGAZERS, direction:DESC}){
     nodes{ name description stargazerCount forkCount url isFork isArchived isPrivate
       latestRelease{ tagName publishedAt url }
       primaryLanguage{ name }
       languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name } } } } }
-}
-  search(query:$prQuery, type:ISSUE, first:$prLimit){ nodes{ ... on PullRequest{ repository{ nameWithOwner url stargazerCount } } } }
-}`;
+} }`;
 
 /** Sums language bytes by name across repos, skipping forks/archived repos on request. */
 function languageTotals(repos, { excludeForks, excludeArchived }) {
@@ -40,15 +35,12 @@ function languageTotals(repos, { excludeForks, excludeArchived }) {
 
 export async function fetchAll(username, token, {
   fetchImpl = fetch, excludeForks = true, excludeArchived = false, languagesCount = 5, repoScanLimit = 100,
-  projects = [], releasesCount = 5, releasesExclude = [], contributionsCount = 5, now = Date.now(),
+  projects = [], releasesCount = 5, releasesExclude = [], now = Date.now(),
 } = {}) {
-  // is:public — the PAT can see private org work, which must not surface on a public profile.
-  // Open, merged and closed PRs all count: a proposal upstream is a contribution even if it is not merged yet.
-  const prQuery = `is:pr is:public author:${username} -user:${username}`;
   const res = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: QUERY, variables: { login: username, repoLimit: repoScanLimit, prQuery, prLimit: PR_SEARCH_LIMIT } }),
+    body: JSON.stringify({ query: QUERY, variables: { login: username, repoLimit: repoScanLimit } }),
   });
   if (!res.ok) throw new Error(`graphql ${res.status}`);
   const gql = await res.json();
@@ -64,13 +56,11 @@ export async function fetchAll(username, token, {
     user: username,
     stats: {
       stars: repos.reduce((s, r) => s + r.stargazerCount, 0),
-      contributions: u.contributionsCollection.contributionCalendar.totalContributions,
+      followers: u.followers.totalCount,
     },
     profile: { repoCount: u.repoCount.totalCount, years: yearsSince(u.createdAt, now) },
     languages: topLanguages(languageTotals(repos, { excludeForks, excludeArchived }), languagesCount),
     projects: pickProjects(repos, projects),
     releases: latestReleases(repos, releasesCount, releasesExclude),
-    // An empty search result is legitimate (no upstream PRs yet), unlike a missing user field.
-    contributions: externalContributions(gql.data.search?.nodes ?? [], contributionsCount),
   };
 }

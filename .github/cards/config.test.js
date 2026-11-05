@@ -55,7 +55,7 @@ test('readme block: defaults, override and validation', () => {
     const c = loadConfig({}, set.path).readme;
     assert.deepEqual(c.projects, ['a', 'b']);
     assert.equal(c.releasesCount, 3);
-    assert.equal(c.contributionsCount, DEFAULTS.readme.contributionsCount); // untouched key keeps its default
+    assert.deepEqual(c.releasesExclude, ['x']);
     assert.equal(c.languageEmoji.Zig, '🟧');
     assert.equal(c.languageEmoji.Go, DEFAULTS.readme.languageEmoji.Go); // emoji map merges over the defaults
     assert.throws(() => loadConfig({}, bad.path), /readme\.projects/);
@@ -81,6 +81,15 @@ test('keys of the removed SVG cards are rejected, not silently ignored', () => {
   const t = withRawConfig({ cards: ['stats'], theme: 'tokyonight' });
   try {
     assert.throws(() => loadConfig({}, t.path), /cards, theme belonged to the removed SVG cards/);
+  } finally {
+    t.cleanup();
+  }
+});
+
+test('readme.contributionsCount is rejected now that the contributions section is gone', () => {
+  const t = withRawConfig({ readme: { contributionsCount: 5 } });
+  try {
+    assert.throws(() => loadConfig({}, t.path), /readme\.contributionsCount belonged to a removed README section/);
   } finally {
     t.cleanup();
   }
