@@ -1,30 +1,13 @@
 {
   "username": "SckyzO",
-  "theme": "tokyonight",
-  "cards": ["header", "footer"],
-  "topRepos": { "count": 5 },
-  "activity": { "count": 5 },
   "languages": { "excludeForks": true, "excludeArchived": true, "count": 5 },
+  "fetch": { "repoScanLimit": 100 },
   "readme": {
     "projects": ["slurm_exporter", "rackscope", "cosmos", "monitoring-hub"],
     "releasesCount": 5,
     "releasesExclude": ["suivi-loyers"],
     "contributionsCount": 5
   },
-  "grade": {
-    "weights": { "commits": 1, "prs": 5, "issues": 3, "stars": 4, "contributedTo": 6 },
-    "thresholds": { "S": 8000, "A+": 5000, "A": 2500, "B": 1000 }
-  },
-  "trophies": [
-    { "kind": "Stars", "metric": "stars", "tiers": [{ "min": 200, "rank": "S" }, { "min": 0, "rank": "A" }] },
-    { "kind": "Commit", "metric": "grade" },
-    { "kind": "Repo", "metric": "contributedTo", "tiers": [{ "min": 30, "rank": "A" }, { "min": 0, "rank": "B" }] },
-    { "kind": "PR", "metric": "prs", "tiers": [{ "min": 150, "rank": "A" }, { "min": 0, "rank": "B" }] },
-    { "kind": "Issue", "metric": "issues", "tiers": [{ "min": 0, "rank": "A" }] },
-    { "kind": "Follow", "metric": "followers", "tiers": [{ "min": 100, "rank": "S" }, { "min": 0, "rank": "A" }] }
-  ],
-  "fetch": { "repoScanLimit": 100, "eventsPerPage": 30 },
-  "activityGraph": { "days": 30 },
   "capsule": {
     "gradients": [
       ["#F8B195", "#F67280", "#C06C84"],
@@ -38,27 +21,5 @@
       ["#f7971e", "#ffd200"],
       ["#654ea3", "#eaafc8"]
     ]
-  },
-  "about": [
-    { "icon": "👤", "label": "Identity", "text": "My name is Thomas Bourcey, but you probably know me as SckyzO." },
-    { "icon": "🐧", "label": "Linux Addict", "text": "I live in the terminal." },
-    { "icon": "🐳", "label": "Containerization", "text": "Docker is my playground." },
-    { "icon": "📊", "label": "Observability", "text": "Prometheus & Grafana are my eyes." },
-    { "icon": "⚡", "label": "Automation", "text": "Ansible makes my life easier." },
-    { "icon": "🛠️", "label": "Dev", "text": "Coding tools in Python and Go to solve real problems." },
-    { "icon": "📍", "label": "Location", "text": "Toulouse, France." },
-    { "icon": "📬", "label": "Contact", "text": "sckyzo@gmail.com" }
-  ],
-  "stack": [
-    {"label":"Linux","color":"#FCC624","fg":"#000"},{"label":"Bash","color":"#111111"},{"label":"Python","color":"#3776AB"},{"label":"Go","color":"#00ADD8"},{"label":"Ansible","color":"#EE0000"},{"label":"Docker","color":"#2496ED"},{"label":"Prometheus","color":"#E6522C"},{"label":"Grafana","color":"#F46800"},{"label":"Terraform","color":"#7B42BC"}
-  ],
-  "tools": [
-    {"label":"Vim","color":"#019733"},{"label":"Tmux","color":"#1BB91F"},{"label":"Zsh","color":"#F15A24"},{"label":"Git","color":"#F05032"},{"label":"VS Code","color":"#007ACC"}
-  ],
-  "page": {
-    "tagline": "SysAdmin & DevOps Enthusiast · Automation Lover · Monitoring Wizard · Python & Go",
-    "typingLines": ["SysAdmin & DevOps Enthusiast", "Automation Lover", "Monitoring Wizard", "Python & Go Developer", "Systems & HPC Engineer", "I write Prometheus exporters", "I craft Grafana dashboards", "Good design is not optional", "AI in the loop, every day"],
-    "readmeUrl": "../",
-    "repoListCount": 30
   }
 }
