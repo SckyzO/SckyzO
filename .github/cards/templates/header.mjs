@@ -53,33 +53,9 @@ const WAVES = {
 // from the bottom edge, which is where it sits at the end of the page.
 const TRANSFORM = { header: 'scale (-1, 1)', footer: 'scale (1, -1)' };
 
-const HOUR_MS = 3.6e6;
+import { gradientDef } from './gradient.mjs';
 
-/**
- * Deterministically picks one gradient (an array of hex stops) out of
- * `gradients` for a given instant. The original capsule-render used
- * `color=gradient`, which returned a genuinely random palette on every
- * request; we reproduce the "the banner's colour keeps changing" effect
- * without randomness so a given `now` always resolves to the same result —
- * needed both for reproducible tests and for header/footer to agree within
- * a single generate.mjs run. Rotates hourly, so each daily cards.yml run
- * lands on a different palette than the previous one.
- */
-export function pickGradient(gradients, now = Date.now()) {
-  return gradients[Math.floor(now / HOUR_MS) % gradients.length];
-}
-
-const DEFAULT_STOPS = ['#7aa2f7', '#bb9af7', '#7dcfff'];
-
-function gradientTag(id, stops) {
-  const stopEls = stops
-    .map((color, i) => {
-      const offset = stops.length === 1 ? 0 : Math.round((i / (stops.length - 1)) * 100);
-      return `<stop offset="${offset}%" stop-color="${color}"/>`;
-    })
-    .join('');
-  return `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">${stopEls}</linearGradient>`;
-}
+const DEFAULT_CYCLE = [['#7aa2f7', '#bb9af7', '#7dcfff']];
 
 function renderPath(id, waveDef, transform, opacity) {
   const { begin, values } = waveDef;
@@ -94,18 +70,19 @@ function renderPath(id, waveDef, transform, opacity) {
 
 // `opacity` lets the README serve a light and a dark variant through <picture>:
 // pastel gradients need more opacity to read on a white page than on a dark one.
-export function renderHeader(stops = DEFAULT_STOPS, section = 'header', { opacity = 0.4 } = {}) {
+// `cycle` = the palettes the gradient animates through (see gradient.mjs).
+export function renderHeader(cycle = DEFAULT_CYCLE, section = 'header', { opacity = 0.4 } = {}) {
   const id = `cap-${section}`;
   const waveDefs = WAVES[section] || WAVES.header;
   const transform = TRANSFORM[section] ?? null;
   const paths = waveDefs.map((w) => renderPath(id, w, transform, opacity)).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="854" height="100" viewBox="0 0 854 100" role="img" aria-label="profile ${section}">`
-    + `<defs>${gradientTag(id, stops)}</defs>`
+    + `<defs>${gradientDef(id, cycle)}</defs>`
     + `<style>.cap-wave{animation:fadeIn 1.2s ease-in-out forwards}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`
     + `<g class="cap-wave">${paths}</g>`
     + `</svg>`;
 }
 
-export function renderFooter(stops = DEFAULT_STOPS, opts = {}) {
-  return renderHeader(stops, 'footer', opts);
+export function renderFooter(cycle = DEFAULT_CYCLE, opts = {}) {
+  return renderHeader(cycle, 'footer', opts);
 }

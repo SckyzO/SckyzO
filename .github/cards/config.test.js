@@ -130,3 +130,18 @@ test('the committed cards.config.json loads', () => {
   assert.ok(c.readme.stack.length > 0);
   assert.ok(c.readme.terminal.lines.length > 0);
 });
+
+test('capsule.gradients must be hex palettes of equal length', () => {
+  for (const [gradients, error] of [
+    [[], /non-empty/],
+    [[['red']], /#rrggbb/],
+    [[['#111111', '#222222'], ['#333333']], /same number of colours/],
+  ]) {
+    const t = withRawConfig({ capsule: { gradients } });
+    try {
+      assert.throws(() => loadConfig({}, t.path), error);
+    } finally {
+      t.cleanup();
+    }
+  }
+});

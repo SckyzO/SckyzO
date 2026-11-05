@@ -20,19 +20,17 @@ export const DEFAULTS = {
     // Typing terminal under the title; no lines = no terminal.svg.
     terminal: { prompt: 'user@host:~$', command: 'whoami', lines: [] },
   },
-  // Header/footer wave gradients; one is picked per run (see templates/header.mjs pickGradient).
+  // Palettes the waves and dividers cycle through, ordered around the hue wheel so the
+  // animation reads as a rainbow. All must have the same number of stops (templates/gradient.mjs).
   capsule: {
     gradients: [
-      ['#F8B195', '#F67280', '#C06C84'],
-      ['#e52d27', '#b31217'],
-      ['#1D976C', '#93F9B9'],
-      ['#00c6ff', '#0072ff'],
-      ['#2193b0', '#6dd5ed'],
-      ['#EDE574', '#E1F5C4'],
-      ['#7aa2f7', '#bb9af7', '#7dcfff'],
-      ['#DA22FF', '#9733EE'],
-      ['#f7971e', '#ffd200'],
-      ['#654ea3', '#eaafc8'],
+      ['#FF5F6D', '#FF8E53', '#FFC371'],
+      ['#F7971E', '#FFD200', '#A8E063'],
+      ['#56AB2F', '#1D976C', '#2BC0E4'],
+      ['#00C6FF', '#0072FF', '#7A5CFF'],
+      ['#7AA2F7', '#BB9AF7', '#7DCFFF'],
+      ['#DA22FF', '#9733EE', '#FF6FD8'],
+      ['#F67280', '#C06C84', '#FF5F6D'],
     ],
   },
 };
@@ -63,6 +61,7 @@ export function loadConfig(env = process.env, configPath = CONFIG_PATH) {
   };
   if (!cfg.username) throw new Error('config: username is required');
   validateReadme(cfg.readme);
+  validateCapsule(cfg.capsule);
   return cfg;
 }
 
@@ -96,4 +95,13 @@ function validateReadme(r) {
   if (!isNameList(t.lines)) throw new Error('config: readme.terminal.lines must be a list of strings');
   for (const key of ['prompt', 'command'])
     if (typeof t[key] !== 'string' || !t[key]) throw new Error(`config: readme.terminal.${key} must be a non-empty string`);
+}
+
+function validateCapsule({ gradients }) {
+  const isHex = (v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
+  if (!Array.isArray(gradients) || !gradients.length) throw new Error('config: capsule.gradients must be a non-empty list');
+  if (!gradients.every((g) => Array.isArray(g) && g.length && g.every(isHex)))
+    throw new Error('config: capsule.gradients must be lists of #rrggbb colours');
+  // Each gradient stop animates through the same index of every palette.
+  if (new Set(gradients.map((g) => g.length)).size > 1) throw new Error('config: capsule.gradients must all have the same number of colours');
 }

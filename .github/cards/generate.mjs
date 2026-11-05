@@ -3,7 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadConfig } from './config.js';
 import { resolveToken, fetchAll } from './lib/github.mjs';
-import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs';
+import { renderHeader, renderFooter } from './templates/header.mjs';
+import { cycleFrom } from './templates/gradient.mjs';
 import { renderBadge, renderValueBadge, badgeSlug, iconPathsFrom } from './templates/badge.mjs';
 import { renderKeycap, lucideShapes } from './templates/keycap.mjs';
 import { renderTerminal } from './templates/terminal.mjs';
@@ -17,7 +18,7 @@ const ASSETS_DIR = join(HERE, '../../assets');
 const ICONS_DIR = join(ASSETS_DIR, 'icons');
 
 // Served through <picture> by prefers-color-scheme; pastel waves need more opacity on white.
-const WAVE_OPACITY = { dark: 0.4, light: 0.6 };
+const WAVE_OPACITY = { dark: 0.55, light: 0.7 };
 const FOLLOWERS_COLOR = '#8A2BE2';
 
 /** Rewrites only the marker-delimited sections of the README; the hand-written rest stays untouched. */
@@ -28,13 +29,13 @@ export function updateReadme(path, data, options) {
   return after !== before;
 }
 
-/** One gradient for both waves, so header and footer always match within a run. */
+/** One colour cycle for both waves, so header and footer always match within a run. */
 export function renderWaves(gradients, now = Date.now()) {
-  const stops = pickGradient(gradients, now);
+  const cycle = cycleFrom(gradients, now);
   const out = {};
   for (const [theme, opacity] of Object.entries(WAVE_OPACITY)) {
-    out[`header-${theme}.svg`] = renderHeader(stops, 'header', { opacity });
-    out[`footer-${theme}.svg`] = renderFooter(stops, { opacity });
+    out[`header-${theme}.svg`] = renderHeader(cycle, 'header', { opacity });
+    out[`footer-${theme}.svg`] = renderFooter(cycle, { opacity });
   }
   return out;
 }
@@ -45,10 +46,10 @@ export function renderWaves(gradients, now = Date.now()) {
  * (`lucide/<name>` for the Setup keys).
  */
 export function renderAssets(cfg, data, { now = Date.now(), readIcon }) {
-  const stops = pickGradient(cfg.capsule.gradients, now);
+  const cycle = cycleFrom(cfg.capsule.gradients, now);
   const assets = {
     ...renderWaves(cfg.capsule.gradients, now),
-    'divider.svg': renderDivider(stops),
+    'divider.svg': renderDivider(cycle),
     'languages.svg': renderLanguagePie(data.languages, (name) => squareFor(name, cfg.readme.languageEmoji)),
     'badges/followers.svg': renderValueBadge({ label: 'Followers', value: data.stats.followers, color: FOLLOWERS_COLOR }),
   };
@@ -60,7 +61,7 @@ export function renderAssets(cfg, data, { now = Date.now(), readIcon }) {
     assets[`keys/${badgeSlug(s.label)}.svg`] = renderKeycap({ label: s.label, color: s.color, iconShapes: lucideShapes(readIcon(`lucide/${s.icon}`)) });
   }
   const t = cfg.readme.terminal;
-  if (t.lines.length) assets['terminal.svg'] = renderTerminal({ ...t, accent: stops[0] });
+  if (t.lines.length) assets['terminal.svg'] = renderTerminal({ ...t, accent: cycle[0][0] });
   return assets;
 }
 

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderHeader, renderFooter, pickGradient } from './header.mjs';
+import { renderHeader, renderFooter } from './header.mjs';
 
 test('renderHeader draws an 854-wide gradient wave', () => {
   const svg = renderHeader();
@@ -37,28 +37,14 @@ test('header and footer capsules each animate two superposed, out-of-phase paths
   }
 });
 
-test('pickGradient is deterministic for a given timestamp', () => {
-  const gradients = [['#111'], ['#222'], ['#333']];
-  const now = Date.parse('2026-01-01T00:00:00Z');
-  assert.deepEqual(pickGradient(gradients, now), pickGradient(gradients, now));
-});
-
-test('pickGradient cycles through the list as time advances', () => {
-  const gradients = [['#111'], ['#222'], ['#333']];
-  const base = Date.parse('2026-01-01T00:00:00Z');
-  const HOUR_MS = 3.6e6;
-  const picks = new Set();
-  for (let i = 0; i < gradients.length; i++) picks.add(JSON.stringify(pickGradient(gradients, base + i * HOUR_MS)));
-  assert.equal(picks.size, gradients.length, 'consecutive hourly picks cover the whole list');
-});
-
-test('renderHeader/renderFooter thread the chosen gradient stops into the SVG', () => {
-  const stops = ['#abcdef', '#123456'];
-  const header = renderHeader(stops);
-  const footer = renderFooter(stops);
+test('renderHeader/renderFooter thread the colour cycle into the SVG', () => {
+  const cycle = [['#abcdef', '#123456'], ['#222222', '#333333']];
+  const header = renderHeader(cycle);
+  const footer = renderFooter(cycle);
   for (const svg of [header, footer]) {
     assert.match(svg, /#abcdef/);
     assert.match(svg, /#123456/);
+    assert.match(svg, /attributeName="stop-color"[^>]*values="#abcdef;#222222;#abcdef"/);
   }
 });
 

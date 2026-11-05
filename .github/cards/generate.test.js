@@ -9,11 +9,12 @@ import { DEFAULTS } from './config.js';
 test('renderWaves gives header and footer the same gradient, in a light and a dark variant', () => {
   const waves = renderWaves([['#111111', '#222222'], ['#333333', '#444444']], 0);
   assert.deepEqual(Object.keys(waves).sort(), ['footer-dark.svg', 'footer-light.svg', 'header-dark.svg', 'header-light.svg']);
-  assert.match(waves['header-dark.svg'], /opacity="0\.4"/);
-  assert.match(waves['header-light.svg'], /opacity="0\.6"/);
+  assert.match(waves["header-dark.svg"], /opacity="0\.55"/);
+  assert.match(waves["header-light.svg"], /opacity="0\.7"/);
+  const anim = (svg) => svg.match(/values="([^"]+)"\/><\/stop>/)[1];
   for (const svg of Object.values(waves)) {
-    assert.match(svg, /stop-color="#111111"/);
-    assert.doesNotMatch(svg, /#333333/);
+    assert.match(svg, /<stop offset="0%" stop-color="#111111">/, 'every wave opens on the same palette');
+    assert.equal(anim(svg), anim(waves['header-dark.svg']), 'and runs the same colour cycle');
   }
 });
 
