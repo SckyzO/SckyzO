@@ -37,7 +37,12 @@ test('pickProjects refuses a private repo even when listed explicitly', () => {
 
 test('pickProjects maps to the renderer shape', () => {
   const [p] = pickProjects([node('a', { stargazerCount: 3, forkCount: 1 })], ['a']);
-  assert.deepEqual(p, { name: 'a', url: 'https://github.com/o/a', description: 'a desc', language: 'Go', stars: 3, forks: 1 });
+  assert.deepEqual(p, { name: 'a', url: 'https://github.com/o/a', description: 'a desc', language: 'Go', stars: 3, forks: 1, release: null });
+});
+
+test('pickProjects carries the latest release tag for the project chips', () => {
+  const [p] = pickProjects([node('a', { latestRelease: { tagName: 'v1.8.6', publishedAt: '', url: '' } })], ['a']);
+  assert.equal(p.release, 'v1.8.6');
 });
 
 test('latestReleases sorts newest first and skips forks, private repos and repos without releases', () => {

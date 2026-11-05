@@ -2,13 +2,13 @@
 // GitHub renders as real, selectable content — the whole point of moving off
 // SVG cards, whose text could not be copied.
 
+import { badgeSlug } from '../templates/badge.mjs';
+
 export const DEFAULT_LANGUAGE_EMOJI = {
   Python: '🟨', TypeScript: '🟦', JavaScript: '🟧', Go: '🟩', Shell: '⬛',
-  PHP: '🟪', C: '🟫', 'C++': '🟥', Rust: '🟫', Java: '🟥',
+  PHP: '🟪', C: '🟫', 'C++': '🟥', Rust: '🟫', Java: '🟥', 'Go Template': '🟪',
 };
 const FALLBACK_SQUARE = '⬛';
-const EMPTY_SQUARE = '⬜';
-const BAR_CELLS = 10;
 // Two cards share a row, so a GitHub description of several sentences would dwarf its neighbour.
 const DESCRIPTION_MAX = 120;
 
@@ -28,18 +28,7 @@ export function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-const squareFor = (name, emoji) => emoji[name] || FALLBACK_SQUARE;
-
-export function languageBars(languages, emoji) {
-  const labelWidth = Math.max(...languages.map((l) => l.name.length));
-  const pctWidth = Math.max(...languages.map((l) => String(l.pct).length));
-  return languages.map((l) => {
-    // A listed language always gets one cell: an empty bar next to "4 %" reads as a rendering bug.
-    const filled = l.pct > 0 ? Math.max(1, Math.round(l.pct / BAR_CELLS)) : 0;
-    const bar = squareFor(l.name, emoji).repeat(filled) + EMPTY_SQUARE.repeat(BAR_CELLS - filled);
-    return `${l.name.padEnd(labelWidth)}  ${bar}  ${String(l.pct).padStart(pctWidth)} %`;
-  }).join('\n');
-}
+export const squareFor = (name, emoji) => emoji[name] || FALLBACK_SQUARE;
 
 export function renderStatsRow({ repoCount, stars, followers, years }) {
   return [
@@ -53,15 +42,27 @@ export function renderStatsRow({ repoCount, stars, followers, years }) {
   ].join('\n');
 }
 
+/** The stacked bar image (assets/languages.svg, decorative) over a text legend that carries the data. */
 export function renderLanguages(languages, emoji) {
-  return ['```text', languageBars(languages, emoji), '```'].join('\n');
+  if (!languages.length) return '_No language data yet._';
+  const legend = languages.map((l) => `${squareFor(l.name, emoji)} <b>${escapeHtml(l.name)}</b> ${l.pct} %`).join(' · ');
+  return [
+    '<img src="./assets/languages.svg" alt="" width="100%" />',
+    '',
+    `<p align="center">${legend}</p>`,
+  ].join('\n');
 }
 
+// Inline <code> renders as a grey pill on GitHub, which turns the facts into chips.
 function projectCell(p, emoji) {
-  const lang = p.language ? ` · ${squareFor(p.language, emoji)} ${escapeHtml(p.language)}` : '';
-  const counts = [`⭐ ${p.stars}`, ...(p.forks ? [`🍴 ${p.forks}`] : [])].join(' · ');
+  const chips = [
+    ...(p.language ? [`${squareFor(p.language, emoji)} ${escapeHtml(p.language)}`] : []),
+    ...(p.release ? [`🏷️ ${escapeHtml(p.release)}`] : []),
+    `⭐ ${p.stars}`,
+    ...(p.forks ? [`🍴 ${p.forks}`] : []), // zero forks is noise
+  ].map((c) => `<code>${c}</code>`).join(' ');
   const desc = p.description ? `<br>${escapeHtml(truncate(p.description))}` : '';
-  return `<td width="50%" valign="top"><a href="${escapeHtml(p.url)}"><b>${escapeHtml(p.name)}</b></a>${lang}${desc}<br><sub>${counts}</sub></td>`;
+  return `<td width="50%" valign="top"><a href="${escapeHtml(p.url)}"><b>${escapeHtml(p.name)}</b></a>${desc}<br>${chips}</td>`;
 }
 
 export function renderProjects(projects, emoji) {
@@ -83,8 +84,16 @@ export function renderReleases(releases) {
   return ['```diff', ...lines, '```'].join('\n');
 }
 
-export function renderReadmeSections(data, emoji = DEFAULT_LANGUAGE_EMOJI) {
+/** Badge row for readme.stack; the images are generated into assets/badges/ by generate.mjs. */
+export function renderStack(stack) {
+  if (!stack.length) return '_No stack configured._';
+  const badges = stack.map((s) => `  <img src="./assets/badges/${badgeSlug(s.label)}.svg" alt="${escapeHtml(s.label)}" height="28" />`);
+  return ['<p align="center">', ...badges, '</p>'].join('\n');
+}
+
+export function renderReadmeSections(data, { languageEmoji: emoji = DEFAULT_LANGUAGE_EMOJI, stack = [] } = {}) {
   return {
+    stack: renderStack(stack),
     stats: renderStatsRow({
       repoCount: data.profile.repoCount, stars: data.stats.stars,
       followers: data.stats.followers, years: data.profile.years,

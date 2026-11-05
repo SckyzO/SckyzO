@@ -94,3 +94,36 @@ test('readme.contributionsCount is rejected now that the contributions section i
     t.cleanup();
   }
 });
+
+test('readme.stack and readme.terminal are validated', () => {
+  const cases = [
+    [{ stack: [{ color: '#000000' }] }, /readme\.stack\[0\]\.label is required/],
+    [{ stack: [{ label: 'Go', color: 'blue' }] }, /readme\.stack\[0\]\.color must be a #rrggbb colour/],
+    [{ stack: [{ label: 'Go', color: '#00ADD8', textColor: '#fff' }] }, /readme\.stack\[0\]\.textColor/],
+    [{ stack: [{ label: 'Go', color: '#00ADD8', icon: '../go' }] }, /readme\.stack\[0\]\.icon must be an icon file name/],
+    [{ terminal: { lines: 'hi' } }, /readme\.terminal\.lines/],
+    [{ terminal: { prompt: '' } }, /readme\.terminal\.prompt/],
+  ];
+  for (const [readme, error] of cases) {
+    const t = withRawConfig({ readme });
+    try {
+      assert.throws(() => loadConfig({}, t.path), error);
+    } finally {
+      t.cleanup();
+    }
+  }
+  const ok = withRawConfig({ readme: { stack: [{ label: 'Go', color: '#00ADD8', icon: 'go' }], terminal: { lines: ['a'] } } });
+  try {
+    const r = loadConfig({}, ok.path).readme;
+    assert.equal(r.terminal.prompt, DEFAULTS.readme.terminal.prompt, 'terminal merges over its defaults');
+    assert.deepEqual(r.terminal.lines, ['a']);
+  } finally {
+    ok.cleanup();
+  }
+});
+
+test('the committed cards.config.json loads', () => {
+  const c = loadConfig({});
+  assert.ok(c.readme.stack.length > 0);
+  assert.ok(c.readme.terminal.lines.length > 0);
+});

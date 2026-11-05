@@ -11,6 +11,7 @@ export function topLanguages(edges, n = 5) {
 const toProject = (r) => ({
   name: r.name, url: r.url, description: r.description || '',
   language: r.primaryLanguage?.name || null, stars: r.stargazerCount, forks: r.forkCount,
+  release: r.latestRelease?.tagName || null,
 });
 
 /** Curated `names` win (in that order); without a list, the most-starred public non-fork repos. */
