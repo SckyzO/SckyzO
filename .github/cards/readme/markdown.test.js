@@ -23,9 +23,9 @@ test('renderStatsRow renders a centred 4-column table with followers', () => {
   assert.match(md, /\|:-:\|:-:\|:-:\|:-:\|/);
 });
 
-test('renderLanguages puts a text legend under the decorative full-width bar', () => {
+test('renderLanguages puts a text legend under the decorative pie chart', () => {
   const md = renderLanguages([{ name: 'Go', pct: 75 }, { name: 'Zig', pct: 25 }], { Go: '🟩' });
-  assert.match(md, /^<img src="\.\/assets\/languages\.svg" alt="" width="100%" \/>/);
+  assert.match(md, /^<p align="center"><img src="\.\/assets\/languages\.svg" alt="" width="220" height="220" \/><\/p>/);
   assert.match(md, /<p align="center">🟩 <b>Go<\/b> 75 % · ⬛ <b>Zig<\/b> 25 %<\/p>/u); // unmapped language falls back to ⬛
   assert.equal(renderLanguages([], {}), '_No language data yet._');
 });
@@ -45,12 +45,15 @@ test('renderProjects lays repos out two per row and escapes descriptions', () =>
   assert.equal((md.match(/<td width="50%" valign="top">/g) || []).length, 4); // cards of uneven height stay top-aligned
 });
 
-test('renderReleases renders a diff block with aligned columns', () => {
+test('renderReleases renders a diff block with the date pushed to the right edge', () => {
   const md = renderReleases([
     { repo: 'slurm_exporter', tag: 'v1.2.0', date: '2026-10-01T00:00:00Z' },
     { repo: 'cosmos', tag: 'v0.9.0', date: '2026-09-12T00:00:00Z' },
-  ]);
-  assert.equal(md, '```diff\n+ slurm_exporter  v1.2.0  2026-10-01\n+ cosmos          v0.9.0  2026-09-12\n```');
+  ], 40);
+  assert.equal(md, '```diff\n+ slurm_exporter  v1.2.0      2026-10-01\n+ cosmos          v0.9.0      2026-09-12\n```');
+  const lines = renderReleases([{ repo: 'a', tag: 'v1', date: '2026-01-01' }]).split('\n');
+  assert.equal(lines[1].length, 96, 'default width fills a desktop profile');
+  assert.match(renderReleases([{ repo: 'a', tag: 'x'.repeat(50), date: '2026-01-01' }], 20), /x {2}2026-01-01/, 'a long tag keeps two spaces before the date');
   assert.equal(renderReleases([]), '_No releases published yet._');
 });
 

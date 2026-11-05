@@ -42,12 +42,12 @@ export function renderStatsRow({ repoCount, stars, followers, years }) {
   ].join('\n');
 }
 
-/** The stacked bar image (assets/languages.svg, decorative) over a text legend that carries the data. */
+/** The pie chart (assets/languages.svg, decorative) over a text legend that carries the data. */
 export function renderLanguages(languages, emoji) {
   if (!languages.length) return '_No language data yet._';
   const legend = languages.map((l) => `${squareFor(l.name, emoji)} <b>${escapeHtml(l.name)}</b> ${l.pct} %`).join(' · ');
   return [
-    '<img src="./assets/languages.svg" alt="" width="100%" />',
+    '<p align="center"><img src="./assets/languages.svg" alt="" width="220" height="220" /></p>',
     '',
     `<p align="center">${legend}</p>`,
   ].join('\n');
@@ -76,11 +76,19 @@ export function renderProjects(projects, emoji) {
   return ['<table>', ...rows, '</table>'].join('\n');
 }
 
-export function renderReleases(releases) {
+// A code block always spans the README width but its text does not, so the
+// date column is pushed to about the right edge of a desktop profile (~100
+// monospace columns). Narrower screens scroll the block sideways.
+export const RELEASES_WIDTH = 96;
+
+export function renderReleases(releases, width = RELEASES_WIDTH) {
   if (!releases.length) return '_No releases published yet._';
   const repoWidth = Math.max(...releases.map((r) => r.repo.length));
-  const tagWidth = Math.max(...releases.map((r) => r.tag.length));
-  const lines = releases.map((r) => `+ ${r.repo.padEnd(repoWidth)}  ${r.tag.padEnd(tagWidth)}  ${r.date.slice(0, 10)}`);
+  const lines = releases.map((r) => {
+    const left = `+ ${r.repo.padEnd(repoWidth)}  ${r.tag}`;
+    const date = r.date.slice(0, 10);
+    return `${left}${' '.repeat(Math.max(2, width - left.length - date.length))}${date}`;
+  });
   return ['```diff', ...lines, '```'].join('\n');
 }
 

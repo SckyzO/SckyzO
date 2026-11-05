@@ -7,7 +7,7 @@ import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs
 import { renderBadge, renderValueBadge, badgeSlug, iconPathsFrom } from './templates/badge.mjs';
 import { renderTerminal } from './templates/terminal.mjs';
 import { renderDivider } from './templates/divider.mjs';
-import { renderLanguageBar } from './templates/languages.mjs';
+import { renderLanguagePie } from './templates/languages.mjs';
 import { renderReadmeSections, injectSections, squareFor } from './readme/markdown.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -47,7 +47,7 @@ export function renderAssets(cfg, data, { now = Date.now(), readIcon }) {
   const assets = {
     ...renderWaves(cfg.capsule.gradients, now),
     'divider.svg': renderDivider(stops),
-    'languages.svg': renderLanguageBar(data.languages, (name) => squareFor(name, cfg.readme.languageEmoji)),
+    'languages.svg': renderLanguagePie(data.languages, (name) => squareFor(name, cfg.readme.languageEmoji)),
     'badges/followers.svg': renderValueBadge({ label: 'Followers', value: data.stats.followers, color: FOLLOWERS_COLOR }),
   };
   for (const s of cfg.readme.stack) {
