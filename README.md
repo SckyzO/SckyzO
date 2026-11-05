@@ -24,7 +24,7 @@
 <!-- cards:stats:start -->
 <div align="center">
 
-| 📦 **61** | ⭐ **107** | 🔥 **8.7k** | 🗓️ **15** |
+| 📦 **61** | ⭐ **107** | 🔥 **8.5k** | 🗓️ **15** |
 |:-:|:-:|:-:|:-:|
 | Repositories | Stars | Contributions (last year) | Years on GitHub |
 
