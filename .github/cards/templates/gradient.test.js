@@ -32,3 +32,8 @@ test('gradientDef animates each stop through the cycle and loops back', () => {
 test('gradientDef with a single palette is static', () => {
   assert.doesNotMatch(gradientDef('g', [['#111111', '#222222']]), /<animate/);
 });
+
+test('gradientDef can run right to left', () => {
+  assert.match(gradientDef('g', gradients, { reversed: true }), /x1="100%" y1="0%" x2="0%" y2="0%"/);
+  assert.match(gradientDef('g', gradients), /x1="0%" y1="0%" x2="100%" y2="0%"/);
+});

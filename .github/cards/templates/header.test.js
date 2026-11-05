@@ -52,3 +52,8 @@ test('the wave opacity can be raised for the light-theme variant', () => {
   assert.equal((renderHeader(undefined, 'header', { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
   assert.equal((renderFooter(undefined, { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
 });
+
+test('the mirrored header reverses its gradient so colours run left to right like the footer', () => {
+  assert.match(renderHeader(), /<linearGradient id="cap-header" x1="100%" y1="0%" x2="0%" y2="0%">/);
+  assert.match(renderFooter(), /<linearGradient id="cap-footer" x1="0%" y1="0%" x2="100%" y2="0%">/);
+});

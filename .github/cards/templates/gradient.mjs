@@ -24,9 +24,10 @@ export function pickGradient(gradients, now = Date.now()) {
 
 /**
  * Horizontal <linearGradient> whose stops animate through `cycle` (a list of
- * equally long palettes) and loop back to the first one.
+ * equally long palettes) and loop back to the first one. `reversed` runs it
+ * right to left, for shapes that are mirrored horizontally.
  */
-export function gradientDef(id, cycle) {
+export function gradientDef(id, cycle, { reversed = false } = {}) {
   const [first] = cycle;
   const dur = cycle.length * SECONDS_PER_PALETTE;
   const stops = first.map((color, i) => {
@@ -36,5 +37,6 @@ export function gradientDef(id, cycle) {
       : '';
     return `<stop offset="${offset}%" stop-color="${color}">${animate}</stop>`;
   }).join('');
-  return `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">${stops}</linearGradient>`;
+  const [x1, x2] = reversed ? ['100%', '0%'] : ['0%', '100%'];
+  return `<linearGradient id="${id}" x1="${x1}" y1="0%" x2="${x2}" y2="0%">${stops}</linearGradient>`;
 }

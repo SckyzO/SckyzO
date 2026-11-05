@@ -77,7 +77,9 @@ export function renderHeader(cycle = DEFAULT_CYCLE, section = 'header', { opacit
   const transform = TRANSFORM[section] ?? null;
   const paths = waveDefs.map((w) => renderPath(id, w, transform, opacity)).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="854" height="100" viewBox="0 0 854 100" role="img" aria-label="profile ${section}">`
-    + `<defs>${gradientDef(id, cycle)}</defs>`
+    // The horizontal mirror also flips the fill; a reversed gradient keeps the colours
+    // running left to right like the footer and the dividers.
+    + `<defs>${gradientDef(id, cycle, { reversed: /^scale \(-1/.test(transform ?? '') })}</defs>`
     + `<style>.cap-wave{animation:fadeIn 1.2s ease-in-out forwards}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`
     + `<g class="cap-wave">${paths}</g>`
     + `</svg>`;
