@@ -13,7 +13,7 @@ const QUERY = `query($login:String!,$repoLimit:Int!,$prQuery:String!,$prLimit:In
   createdAt
   repoCount: repositories(ownerAffiliations:OWNER, privacy:PUBLIC){ totalCount }
   contributionsCollection{ contributionCalendar{ totalContributions } }
-  repositories(first:$repoLimit, ownerAffiliations:OWNER, orderBy:{field:STARGAZERS, direction:DESC}){
+  repositories(first:$repoLimit, ownerAffiliations:OWNER, privacy:PUBLIC, orderBy:{field:STARGAZERS, direction:DESC}){
     nodes{ name description stargazerCount forkCount url isFork isArchived isPrivate
       latestRelease{ tagName publishedAt url }
       primaryLanguage{ name }
@@ -52,7 +52,11 @@ export async function fetchAll(username, token, {
   });
   if (!res.ok) throw new Error(`graphql ${res.status}`);
   const gql = await res.json();
-  if (gql.errors) throw new Error(`graphql: ${gql.errors[0].message}`);
+  if (gql.errors) {
+    const [e] = gql.errors;
+    // The path pinpoints which field a token lacks permission for.
+    throw new Error(`graphql: ${e.message}${e.path ? ` (at ${e.path.join('.')})` : ''}`);
+  }
   const u = gql.data.user;
   const repos = u.repositories.nodes;
 

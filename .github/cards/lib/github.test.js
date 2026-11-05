@@ -147,3 +147,26 @@ test('fetchAll builds the README model: profile, projects, releases, external co
   assert.deepEqual(d.releases, [{ repo: 'exporter', tag: 'v1.0.0', url: 'https://r/1', date: '2026-10-01T00:00:00Z' }]);
   assert.deepEqual(d.contributions, [{ repo: 'prometheus/docs', url: 'https://github.com/prometheus/docs', prs: 1, stars: 726 }]);
 });
+
+test('fetchAll only queries public repositories', async () => {
+  let sent;
+  const fetchImpl = async (url, opts) => {
+    sent = JSON.parse(opts.body);
+    return { ok: true, json: async () => ({ data: { user: {
+      createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
+      contributionsCollection: { contributionCalendar: { totalContributions: 0 } }, repositories: { nodes: [] },
+    }, search: { nodes: [] } } }) };
+  };
+  await fetchAll('octocat', 'tok', { fetchImpl });
+  // A fine-grained PAT without access to private repos fails the whole query on their
+  // release/language fields, and a public profile must not show private data anyway.
+  assert.match(sent.query, /repositories\(first:\$repoLimit, ownerAffiliations:OWNER, privacy:PUBLIC/);
+});
+
+test('fetchAll names the failing field when GitHub rejects part of the query', async () => {
+  const fetchImpl = async () => ({ ok: true, json: async () => ({
+    errors: [{ message: 'Resource not accessible by personal access token', path: ['user', 'repositories', 'nodes', 3, 'latestRelease'] }],
+  }) });
+  await assert.rejects(fetchAll('octocat', 'tok', { fetchImpl }),
+    /graphql: Resource not accessible by personal access token \(at user\.repositories\.nodes\.3\.latestRelease\)/);
+});

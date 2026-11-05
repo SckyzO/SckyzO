@@ -24,7 +24,7 @@
 <!-- cards:stats:start -->
 <div align="center">
 
-| 📦 **61** | ⭐ **107** | 🔥 **8.7k** | 🗓️ **15** |
+| 📦 **61** | ⭐ **107** | 🔥 **8.5k** | 🗓️ **15** |
 |:-:|:-:|:-:|:-:|
 | Repositories | Stars | Contributions (last year) | Years on GitHub |
 
@@ -44,11 +44,11 @@
 
 <!-- cards:languages:start -->
 ```text
-Python      🟨🟨🟨🟨🟨⬜⬜⬜⬜⬜  46 %
-TypeScript  🟦🟦🟦🟦⬜⬜⬜⬜⬜⬜  35 %
-Go          🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜   8 %
-Shell       ⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜   7 %
-JavaScript  🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   4 %
+TypeScript   🟦🟦🟦🟦🟦🟦🟦⬜⬜⬜  66 %
+Go           🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜  14 %
+Python       🟨⬜⬜⬜⬜⬜⬜⬜⬜⬜  13 %
+Go Template  ⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜   4 %
+JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 ```
 <!-- cards:languages:end -->
 
