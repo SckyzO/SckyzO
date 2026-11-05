@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { renderAll } from './generate.mjs';
+import { mkdtempSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { renderAll, updateReadme } from './generate.mjs';
 import { KNOWN_CARDS } from './config.js';
 import { makeTheme, cardTitle } from './lib/theme.mjs';
 import { renderStats } from './templates/stats.mjs';
@@ -42,4 +44,23 @@ test('a configured palette.ink override reaches text() calls that omit fill', ()
   const theme = makeTheme({ palette: { ink: '#ff00ff' } });
   assert.match(cardTitle('📊', 'GitHub Stats', theme), /fill="#ff00ff"/);
   assert.match(renderStats(data, theme), /fill="#ff00ff"/);
+});
+
+test('updateReadme injects generated sections into the README file in place', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'cards-readme-'));
+  const path = join(dir, 'README.md');
+  const names = ['stats', 'languages', 'projects', 'contributions', 'releases'];
+  writeFileSync(path, ['# Hi', ...names.map((n) => `<!-- cards:${n}:start -->\nstale\n<!-- cards:${n}:end -->`)].join('\n'));
+  try {
+    updateReadme(path, {
+      profile: { repoCount: 2, years: 3 }, stats: { stars: 4, commits: 5 },
+      languages: [{ name: 'Go', pct: 100 }], projects: [], contributions: [], releases: [],
+    }, {});
+    const out = readFileSync(path, 'utf8');
+    assert.ok(out.startsWith('# Hi\n'), 'hand-written content is preserved');
+    assert.doesNotMatch(out, /stale/);
+    assert.match(out, /📦 \*\*2\*\*/u);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
