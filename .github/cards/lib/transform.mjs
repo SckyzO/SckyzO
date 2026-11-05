@@ -11,6 +11,7 @@ export function topLanguages(edges, n = 5) {
 const toProject = (r) => ({
   name: r.name, url: r.url, description: r.description || '',
   language: r.primaryLanguage?.name || null, stars: r.stargazerCount, forks: r.forkCount,
+  release: r.latestRelease?.tagName || null,
 });
 
 /** Curated `names` win (in that order); without a list, the most-starred public non-fork repos. */
@@ -36,19 +37,6 @@ export function latestReleases(repos, n = 5, exclude = []) {
     .map((r) => ({ repo: r.name, tag: r.latestRelease.tagName, url: r.latestRelease.url, date: r.latestRelease.publishedAt }))
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, n);
-}
-
-/** Groups PR search hits by target repo; most PRs first, ties broken by the repo's stars. */
-export function externalContributions(prNodes, n = 5) {
-  const byRepo = new Map();
-  for (const pr of prNodes) {
-    const repo = pr?.repository;
-    if (!repo) continue;
-    const entry = byRepo.get(repo.nameWithOwner) || { repo: repo.nameWithOwner, url: repo.url, prs: 0, stars: repo.stargazerCount };
-    entry.prs += 1;
-    byRepo.set(repo.nameWithOwner, entry);
-  }
-  return [...byRepo.values()].sort((a, b) => b.prs - a.prs || b.stars - a.stars).slice(0, n);
 }
 
 export function yearsSince(iso, now = Date.now()) {

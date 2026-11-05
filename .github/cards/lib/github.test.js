@@ -12,7 +12,7 @@ test('resolveToken prefers CARDS_TOKEN then GITHUB_TOKEN', () => {
 test('fetchAll aggregates language edges by name across repos before ranking', async () => {
   const graphql = {
     data: { user: {
-      contributionsCollection: { contributionCalendar: { totalContributions: 0 } },
+      followers: { totalCount: 0 },
       repositories: { nodes: [
         { name: 'go-one', description: '', stargazerCount: 1, forkCount: 0,
           primaryLanguage: { name: 'Go' },
@@ -46,7 +46,7 @@ test('fetchAll aggregates language edges by name across repos before ranking', a
 
 test('fetchAll excludes forked repos from language stats by default, keeps them with excludeForks:false', async () => {
   const graphql = { data: { user: {
-    contributionsCollection: { contributionCalendar: { totalContributions: 0 } },
+    followers: { totalCount: 0 },
     repositories: { nodes: [
       { name: 'mine', description: '', stargazerCount: 1, forkCount: 0, isFork: false, updatedAt: '', url: '',
         primaryLanguage: { name: 'Go' },
@@ -68,7 +68,7 @@ test('fetchAll excludes forked repos from language stats by default, keeps them 
 
 test('fetchAll keeps archived repos in language stats by default, drops them with excludeArchived:true', async () => {
   const graphql = { data: { user: {
-    contributionsCollection: { contributionCalendar: { totalContributions: 0 } },
+    followers: { totalCount: 0 },
     repositories: { nodes: [
       { name: 'live', description: '', stargazerCount: 1, forkCount: 0, isFork: false, isArchived: false, updatedAt: '', url: '',
         primaryLanguage: { name: 'Go' },
@@ -92,7 +92,7 @@ test('fetchAll keeps archived repos in language stats by default, drops them wit
 test('fetchAll threads repoScanLimit into the GraphQL request and makes no other HTTP call', async () => {
   const graphql = {
     data: { user: {
-      contributionsCollection: { contributionCalendar: { totalContributions: 0 } },
+      followers: { totalCount: 0 },
       repositories: { nodes: [] },
       createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
@@ -115,7 +115,7 @@ test('fetchAll threads repoScanLimit into the GraphQL request and makes no other
   assert.equal(calls.length, 1, 'everything the README needs comes from the single GraphQL query');
 });
 
-test('fetchAll builds the README model: profile, projects, releases, external contributions', async () => {
+test('fetchAll builds the README model: profile, followers, projects, releases', async () => {
   const repo = (name, extra = {}) => ({ name, description: `${name} d`, stargazerCount: 0, forkCount: 0, isFork: false,
     isArchived: false, isPrivate: false, updatedAt: '', url: `https://github.com/octocat/${name}`,
     primaryLanguage: { name: 'Go' }, languages: { edges: [] }, latestRelease: null, ...extra });
@@ -123,13 +123,12 @@ test('fetchAll builds the README model: profile, projects, releases, external co
     user: {
       createdAt: '2011-03-10T00:00:00Z',
       repoCount: { totalCount: 63 },
-      contributionsCollection: { contributionCalendar: { totalContributions: 8650 } },
+      followers: { totalCount: 16 },
       repositories: { nodes: [
         repo('exporter', { stargazerCount: 59, latestRelease: { tagName: 'v1.0.0', publishedAt: '2026-10-01T00:00:00Z', url: 'https://r/1' } }),
         repo('ui', { stargazerCount: 3 }),
       ] },
     },
-    search: { nodes: [{ repository: { nameWithOwner: 'prometheus/docs', url: 'https://github.com/prometheus/docs', stargazerCount: 726 } }] },
   } };
   let sent;
   const fetchImpl = async (url, opts) => {
@@ -139,13 +138,12 @@ test('fetchAll builds the README model: profile, projects, releases, external co
 
   const d = await fetchAll('octocat', 'tok', { fetchImpl, projects: ['ui', 'exporter'], now: Date.parse('2026-11-05T00:00:00Z') });
 
-  // Every public PR (open, merged or closed) on repos the user does not own.
-  assert.equal(sent.variables.prQuery, 'is:pr is:public author:octocat -user:octocat');
+  assert.deepEqual(Object.keys(sent.variables).sort(), ['login', 'repoLimit']);
+  assert.doesNotMatch(sent.query, /search\(|contributionsCollection/, 'no PR search and no yearly contribution count');
   assert.deepEqual(d.profile, { repoCount: 63, years: 15 });
-  assert.deepEqual(d.stats, { stars: 62, contributions: 8650 });
+  assert.deepEqual(d.stats, { stars: 62, followers: 16 });
   assert.deepEqual(d.projects.map((p) => p.name), ['ui', 'exporter']);
   assert.deepEqual(d.releases, [{ repo: 'exporter', tag: 'v1.0.0', url: 'https://r/1', date: '2026-10-01T00:00:00Z' }]);
-  assert.deepEqual(d.contributions, [{ repo: 'prometheus/docs', url: 'https://github.com/prometheus/docs', prs: 1, stars: 726 }]);
 });
 
 test('fetchAll only queries public repositories', async () => {
@@ -154,8 +152,8 @@ test('fetchAll only queries public repositories', async () => {
     sent = JSON.parse(opts.body);
     return { ok: true, json: async () => ({ data: { user: {
       createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
-      contributionsCollection: { contributionCalendar: { totalContributions: 0 } }, repositories: { nodes: [] },
-    }, search: { nodes: [] } } }) };
+      followers: { totalCount: 0 }, repositories: { nodes: [] },
+    } } }) };
   };
   await fetchAll('octocat', 'tok', { fetchImpl });
   // A fine-grained PAT without access to private repos fails the whole query on their

@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  compactNumber, escapeHtml, languageBars, renderStatsRow, renderLanguages,
-  renderProjects, renderContributions, renderReleases, injectSections, renderReadmeSections,
+  compactNumber, escapeHtml, renderStatsRow, renderLanguages,
+  renderProjects, renderReleases, renderStack, renderSetup, injectSections, renderReadmeSections,
 } from './markdown.mjs';
 
 test('compactNumber keeps small numbers and abbreviates thousands', () => {
@@ -15,27 +15,19 @@ test('escapeHtml neutralises markup coming from repo descriptions', () => {
   assert.equal(escapeHtml('<b>a & "b"</b>'), '&lt;b&gt;a &amp; &quot;b&quot;&lt;/b&gt;');
 });
 
-test('languageBars draws 10 cells, at least one filled cell per listed language', () => {
-  const out = languageBars([{ name: 'Python', pct: 45 }, { name: 'Go', pct: 4 }], { Python: '🟨', Go: '🟩' });
-  const [py, go] = out.split('\n');
-  assert.match(py, /^Python {2}🟨{5}⬜{5} {2}45 %$/u); // round(45/10) = 5 (half rounds up)
-  assert.match(go, /^Go {6}🟩⬜{9} {3}4 %$/u); // 4 % would round to 0 cells; forced to 1
-});
-
-test('languageBars falls back to a neutral square for unmapped languages', () => {
-  assert.match(languageBars([{ name: 'Zig', pct: 30 }], {}), /⬛{3}/u);
-});
-
-test('renderStatsRow renders a centred 4-column table', () => {
-  const md = renderStatsRow({ repoCount: 63, stars: 196, contributions: 8600, years: 15 });
+test('renderStatsRow renders a centred 4-column table with followers', () => {
+  const md = renderStatsRow({ repoCount: 63, stars: 196, followers: 1600, years: 15 });
   assert.match(md, /<div align="center">/);
-  assert.match(md, /\| 📦 \*\*63\*\* \| ⭐ \*\*196\*\* \| 🔥 \*\*8\.6k\*\* \| 🗓️ \*\*15\*\* \|/u);
+  assert.match(md, /\| 📦 \*\*63\*\* \| ⭐ \*\*196\*\* \| 👥 \*\*1\.6k\*\* \| 🗓️ \*\*15\*\* \|/u);
+  assert.match(md, /\| Repositories \| Stars \| Followers \| Years on GitHub \|/);
   assert.match(md, /\|:-:\|:-:\|:-:\|:-:\|/);
 });
 
-test('renderLanguages wraps the bars in a fenced text block', () => {
-  const md = renderLanguages([{ name: 'Go', pct: 100 }], { Go: '🟩' });
-  assert.match(md, /^```text\nGo {2}🟩{10} {2}100 %\n```$/u);
+test('renderLanguages puts a text legend under the decorative pie chart', () => {
+  const md = renderLanguages([{ name: 'Go', pct: 75 }, { name: 'Zig', pct: 25 }], { Go: '🟩' });
+  assert.match(md, /^<p align="center"><img src="\.\/assets\/languages\.svg" alt="" width="220" height="220" \/><\/p>/);
+  assert.match(md, /<p align="center">🟩 <b>Go<\/b> 75 % · ⬛ <b>Zig<\/b> 25 %<\/p>/u); // unmapped language falls back to ⬛
+  assert.equal(renderLanguages([], {}), '_No language data yet._');
 });
 
 test('renderProjects lays repos out two per row and escapes descriptions', () => {
@@ -47,26 +39,21 @@ test('renderProjects lays repos out two per row and escapes descriptions', () =>
   assert.equal((md.match(/<tr>/g) || []).length, 2);
   assert.match(md, /<a href="https:\/\/x\/a"><b>a<\/b><\/a>/);
   assert.match(md, /x &lt; y/);
-  assert.match(md, /🟩 Go/u);
-  assert.match(md, /⭐ 3 · 🍴 1/u);
+  assert.match(md, /<code>🟩 Go<\/code> <code>⭐ 3<\/code> <code>🍴 1<\/code>/u); // facts render as grey chips
   assert.doesNotMatch(md, /🍴 0/u); // zero forks is noise
   assert.match(md, /<td width="50%" valign="top"><\/td>/); // odd count: last row padded
   assert.equal((md.match(/<td width="50%" valign="top">/g) || []).length, 4); // cards of uneven height stay top-aligned
 });
 
-test('renderContributions renders a table and escapes pipes', () => {
-  const md = renderContributions([{ repo: 'prometheus/docs', url: 'https://x', prs: 1, stars: 726 }]);
-  assert.match(md, /\| \[prometheus\/docs\]\(https:\/\/x\) \| 1 \| 726 \|/);
-  assert.match(md, /^\| Repository \| Pull requests \| ⭐ \|$/m);
-  assert.equal(renderContributions([]), '_No pull requests to other projects yet._');
-});
-
-test('renderReleases renders a diff block with aligned columns', () => {
+test('renderReleases renders a diff block with the date pushed to the right edge', () => {
   const md = renderReleases([
     { repo: 'slurm_exporter', tag: 'v1.2.0', date: '2026-10-01T00:00:00Z' },
     { repo: 'cosmos', tag: 'v0.9.0', date: '2026-09-12T00:00:00Z' },
-  ]);
-  assert.equal(md, '```diff\n+ slurm_exporter  v1.2.0  2026-10-01\n+ cosmos          v0.9.0  2026-09-12\n```');
+  ], 40);
+  assert.equal(md, '```diff\n+ slurm_exporter  v1.2.0      2026-10-01\n+ cosmos          v0.9.0      2026-09-12\n```');
+  const lines = renderReleases([{ repo: 'a', tag: 'v1', date: '2026-01-01' }]).split('\n');
+  assert.equal(lines[1].length, 96, 'default width fills a desktop profile');
+  assert.match(renderReleases([{ repo: 'a', tag: 'x'.repeat(50), date: '2026-01-01' }], 20), /x {2}2026-01-01/, 'a long tag keeps two spaces before the date');
   assert.equal(renderReleases([]), '_No releases published yet._');
 });
 
@@ -87,10 +74,10 @@ test('injectSections does not interpret $ patterns in generated content', () => 
 
 test('renderReadmeSections maps model data to every marker name', () => {
   const sections = renderReadmeSections({
-    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, contributions: 4 },
-    languages: [{ name: 'Go', pct: 100 }], projects: [], contributions: [], releases: [],
-  }, {});
-  assert.deepEqual(Object.keys(sections).sort(), ['contributions', 'languages', 'projects', 'releases', 'stats']);
+    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, followers: 4 },
+    languages: [{ name: 'Go', pct: 100 }], projects: [], releases: [],
+  }, { languageEmoji: {} });
+  assert.deepEqual(Object.keys(sections).sort(), ['languages', 'projects', 'releases', 'setup', 'stack', 'stats']);
 });
 
 test('renderProjects truncates long descriptions on a word boundary', () => {
@@ -99,4 +86,24 @@ test('renderProjects truncates long descriptions on a word boundary', () => {
   const desc = md.match(/<br>(.*?)<br>/)[1];
   assert.ok(desc.length <= 121, `got ${desc.length} chars`);
   assert.match(desc, /word…$/u);
+});
+
+test('renderProjects shows the latest release as a chip when there is one', () => {
+  const md = renderProjects([{ name: 'a', url: 'u', description: '', language: 'Go', stars: 1, forks: 0, release: 'v1.8.6' }], { Go: '🟩' });
+  assert.match(md, /<code>🟩 Go<\/code> <code>🏷️ v1\.8\.6<\/code> <code>⭐ 1<\/code>/u);
+});
+
+test('renderStack lists one self-hosted badge per tool, named in its alt text', () => {
+  const md = renderStack([{ label: 'VS Code', color: '#007ACC' }, { label: 'Go', color: '#00ADD8' }]);
+  assert.match(md, /^<p align="center">\n/);
+  assert.match(md, /<img src="\.\/assets\/badges\/vs-code\.svg" alt="VS Code" height="28" \/>/);
+  assert.match(md, /<img src="\.\/assets\/badges\/go\.svg" alt="Go" height="28" \/>/);
+  assert.equal(renderStack([]), '_No stack configured._');
+});
+
+test('renderSetup links each keycap to its tool and names it in the alt text', () => {
+  const md = renderSetup([{ label: 'VS Code', color: '#007ACC', icon: 'vscode', url: 'https://code.visualstudio.com' }, { label: 'Zsh', color: '#F15A24', icon: 'zsh' }]);
+  assert.match(md, /<a href="https:\/\/code\.visualstudio\.com"><img src="\.\/assets\/keys\/vs-code\.svg" alt="VS Code" height="40" \/><\/a>/);
+  assert.match(md, /\n {2}<img src="\.\/assets\/keys\/zsh\.svg" alt="Zsh" height="40" \/>\n/, 'no link without a url');
+  assert.equal(renderSetup([]), '_No setup configured._');
 });

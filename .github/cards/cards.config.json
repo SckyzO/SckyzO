@@ -1,25 +1,159 @@
 {
   "username": "SckyzO",
-  "languages": { "excludeForks": true, "excludeArchived": true, "count": 5 },
-  "fetch": { "repoScanLimit": 100 },
+  "languages": {
+    "excludeForks": true,
+    "excludeArchived": true,
+    "count": 5
+  },
+  "fetch": {
+    "repoScanLimit": 100
+  },
   "readme": {
-    "projects": ["slurm_exporter", "rackscope", "cosmos", "monitoring-hub"],
+    "projects": [
+      "slurm_exporter",
+      "rackscope",
+      "cosmos",
+      "monitoring-hub"
+    ],
     "releasesCount": 5,
     "releasesExclude": [],
-    "contributionsCount": 5
+    "stack": [
+      {
+        "label": "Linux",
+        "color": "#FCC624",
+        "textColor": "#000000",
+        "icon": "linux"
+      },
+      {
+        "label": "Bash",
+        "color": "#121011",
+        "icon": "gnubash"
+      },
+      {
+        "label": "Python",
+        "color": "#14354C",
+        "icon": "python"
+      },
+      {
+        "label": "Go",
+        "color": "#00ADD8",
+        "icon": "go"
+      },
+      {
+        "label": "Ansible",
+        "color": "#EE0000",
+        "icon": "ansible"
+      },
+      {
+        "label": "Docker",
+        "color": "#2496ED",
+        "icon": "docker"
+      },
+      {
+        "label": "Prometheus",
+        "color": "#E6522C",
+        "icon": "prometheus"
+      },
+      {
+        "label": "Grafana",
+        "color": "#F46800",
+        "icon": "grafana"
+      },
+      {
+        "label": "Terraform",
+        "color": "#7B42BC",
+        "icon": "terraform"
+      },
+      {
+        "label": "Slurm",
+        "color": "#2C6E49"
+      }
+    ],
+    "setup": [
+      {
+        "label": "Vim",
+        "color": "#019733",
+        "icon": "vim",
+        "url": "https://www.vim.org"
+      },
+      {
+        "label": "Tmux",
+        "color": "#1BB91F",
+        "icon": "tmux",
+        "url": "https://github.com/tmux/tmux"
+      },
+      {
+        "label": "Zsh",
+        "color": "#F15A24",
+        "icon": "zsh",
+        "url": "https://www.zsh.org"
+      },
+      {
+        "label": "Git",
+        "color": "#F05032",
+        "icon": "git",
+        "url": "https://git-scm.com"
+      },
+      {
+        "label": "VS Code",
+        "color": "#007ACC",
+        "icon": "vscode",
+        "url": "https://code.visualstudio.com"
+      }
+    ],
+    "terminal": {
+      "prompt": "tom@hpc:~$",
+      "command": "whoami",
+      "lines": [
+        "SysAdmin & DevOps Enthusiast",
+        "Automation Lover",
+        "Monitoring Wizard",
+        "Python & Go Developer",
+        "Systems & HPC Engineer",
+        "I write Prometheus exporters",
+        "I craft Grafana dashboards",
+        "Good design is not optional",
+        "AI in the loop, every day"
+      ]
+    }
   },
   "capsule": {
     "gradients": [
-      ["#F8B195", "#F67280", "#C06C84"],
-      ["#e52d27", "#b31217"],
-      ["#1D976C", "#93F9B9"],
-      ["#00c6ff", "#0072ff"],
-      ["#2193b0", "#6dd5ed"],
-      ["#EDE574", "#E1F5C4"],
-      ["#7aa2f7", "#bb9af7", "#7dcfff"],
-      ["#DA22FF", "#9733EE"],
-      ["#f7971e", "#ffd200"],
-      ["#654ea3", "#eaafc8"]
+      [
+        "#FF5F6D",
+        "#FF8E53",
+        "#FFC371"
+      ],
+      [
+        "#F7971E",
+        "#FFD200",
+        "#A8E063"
+      ],
+      [
+        "#56AB2F",
+        "#1D976C",
+        "#2BC0E4"
+      ],
+      [
+        "#00C6FF",
+        "#0072FF",
+        "#7A5CFF"
+      ],
+      [
+        "#7AA2F7",
+        "#BB9AF7",
+        "#7DCFFF"
+      ],
+      [
+        "#DA22FF",
+        "#9733EE",
+        "#FF6FD8"
+      ],
+      [
+        "#F67280",
+        "#C06C84",
+        "#FF5F6D"
+      ]
     ]
   }
 }

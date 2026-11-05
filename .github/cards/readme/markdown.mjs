@@ -2,13 +2,13 @@
 // GitHub renders as real, selectable content — the whole point of moving off
 // SVG cards, whose text could not be copied.
 
+import { badgeSlug } from '../templates/badge.mjs';
+
 export const DEFAULT_LANGUAGE_EMOJI = {
   Python: '🟨', TypeScript: '🟦', JavaScript: '🟧', Go: '🟩', Shell: '⬛',
-  PHP: '🟪', C: '🟫', 'C++': '🟥', Rust: '🟫', Java: '🟥',
+  PHP: '🟪', C: '🟫', 'C++': '🟥', Rust: '🟫', Java: '🟥', 'Go Template': '🟪',
 };
 const FALLBACK_SQUARE = '⬛';
-const EMPTY_SQUARE = '⬜';
-const BAR_CELLS = 10;
 // Two cards share a row, so a GitHub description of several sentences would dwarf its neighbour.
 const DESCRIPTION_MAX = 120;
 
@@ -28,43 +28,41 @@ export function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Table cells are delimited by `|`, so a literal pipe in a repo name would split the row.
-const escapeCell = (s) => String(s).replace(/\|/g, '\\|');
+export const squareFor = (name, emoji) => emoji[name] || FALLBACK_SQUARE;
 
-const squareFor = (name, emoji) => emoji[name] || FALLBACK_SQUARE;
-
-export function languageBars(languages, emoji) {
-  const labelWidth = Math.max(...languages.map((l) => l.name.length));
-  const pctWidth = Math.max(...languages.map((l) => String(l.pct).length));
-  return languages.map((l) => {
-    // A listed language always gets one cell: an empty bar next to "4 %" reads as a rendering bug.
-    const filled = l.pct > 0 ? Math.max(1, Math.round(l.pct / BAR_CELLS)) : 0;
-    const bar = squareFor(l.name, emoji).repeat(filled) + EMPTY_SQUARE.repeat(BAR_CELLS - filled);
-    return `${l.name.padEnd(labelWidth)}  ${bar}  ${String(l.pct).padStart(pctWidth)} %`;
-  }).join('\n');
-}
-
-export function renderStatsRow({ repoCount, stars, contributions, years }) {
+export function renderStatsRow({ repoCount, stars, followers, years }) {
   return [
     '<div align="center">',
     '',
-    `| 📦 **${compactNumber(repoCount)}** | ⭐ **${compactNumber(stars)}** | 🔥 **${compactNumber(contributions)}** | 🗓️ **${years}** |`,
+    `| 📦 **${compactNumber(repoCount)}** | ⭐ **${compactNumber(stars)}** | 👥 **${compactNumber(followers)}** | 🗓️ **${years}** |`,
     '|:-:|:-:|:-:|:-:|',
-    '| Repositories | Stars | Contributions (last year) | Years on GitHub |',
+    '| Repositories | Stars | Followers | Years on GitHub |',
     '',
     '</div>',
   ].join('\n');
 }
 
+/** The pie chart (assets/languages.svg, decorative) over a text legend that carries the data. */
 export function renderLanguages(languages, emoji) {
-  return ['```text', languageBars(languages, emoji), '```'].join('\n');
+  if (!languages.length) return '_No language data yet._';
+  const legend = languages.map((l) => `${squareFor(l.name, emoji)} <b>${escapeHtml(l.name)}</b> ${l.pct} %`).join(' · ');
+  return [
+    '<p align="center"><img src="./assets/languages.svg" alt="" width="220" height="220" /></p>',
+    '',
+    `<p align="center">${legend}</p>`,
+  ].join('\n');
 }
 
+// Inline <code> renders as a grey pill on GitHub, which turns the facts into chips.
 function projectCell(p, emoji) {
-  const lang = p.language ? ` · ${squareFor(p.language, emoji)} ${escapeHtml(p.language)}` : '';
-  const counts = [`⭐ ${p.stars}`, ...(p.forks ? [`🍴 ${p.forks}`] : [])].join(' · ');
+  const chips = [
+    ...(p.language ? [`${squareFor(p.language, emoji)} ${escapeHtml(p.language)}`] : []),
+    ...(p.release ? [`🏷️ ${escapeHtml(p.release)}`] : []),
+    `⭐ ${p.stars}`,
+    ...(p.forks ? [`🍴 ${p.forks}`] : []), // zero forks is noise
+  ].map((c) => `<code>${c}</code>`).join(' ');
   const desc = p.description ? `<br>${escapeHtml(truncate(p.description))}` : '';
-  return `<td width="50%" valign="top"><a href="${escapeHtml(p.url)}"><b>${escapeHtml(p.name)}</b></a>${lang}${desc}<br><sub>${counts}</sub></td>`;
+  return `<td width="50%" valign="top"><a href="${escapeHtml(p.url)}"><b>${escapeHtml(p.name)}</b></a>${desc}<br>${chips}</td>`;
 }
 
 export function renderProjects(projects, emoji) {
@@ -78,32 +76,52 @@ export function renderProjects(projects, emoji) {
   return ['<table>', ...rows, '</table>'].join('\n');
 }
 
-export function renderContributions(contributions) {
-  if (!contributions.length) return '_No pull requests to other projects yet._';
-  return [
-    '| Repository | Pull requests | ⭐ |',
-    '|---|:-:|:-:|',
-    ...contributions.map((c) => `| [${escapeCell(c.repo)}](${c.url}) | ${c.prs} | ${compactNumber(c.stars)} |`),
-  ].join('\n');
-}
+// A code block always spans the README width but its text does not, so the
+// date column is pushed to about the right edge of a desktop profile (~100
+// monospace columns). Narrower screens scroll the block sideways.
+export const RELEASES_WIDTH = 96;
 
-export function renderReleases(releases) {
+export function renderReleases(releases, width = RELEASES_WIDTH) {
   if (!releases.length) return '_No releases published yet._';
   const repoWidth = Math.max(...releases.map((r) => r.repo.length));
-  const tagWidth = Math.max(...releases.map((r) => r.tag.length));
-  const lines = releases.map((r) => `+ ${r.repo.padEnd(repoWidth)}  ${r.tag.padEnd(tagWidth)}  ${r.date.slice(0, 10)}`);
+  const lines = releases.map((r) => {
+    const left = `+ ${r.repo.padEnd(repoWidth)}  ${r.tag}`;
+    const date = r.date.slice(0, 10);
+    return `${left}${' '.repeat(Math.max(2, width - left.length - date.length))}${date}`;
+  });
   return ['```diff', ...lines, '```'].join('\n');
 }
 
-export function renderReadmeSections(data, emoji = DEFAULT_LANGUAGE_EMOJI) {
+/** Badge row for readme.stack; the images are generated into assets/badges/ by generate.mjs. */
+export function renderStack(stack) {
+  if (!stack.length) return '_No stack configured._';
+  const badges = stack.map((s) => `  <img src="./assets/badges/${badgeSlug(s.label)}.svg" alt="${escapeHtml(s.label)}" height="28" />`);
+  return ['<p align="center">', ...badges, '</p>'].join('\n');
+}
+
+/**
+ * Keycap row for readme.setup (images from assets/keys/). Each key links to the tool's
+ * site; without a link GitHub would wrap every image in a link to the image itself.
+ */
+export function renderSetup(setup) {
+  if (!setup.length) return '_No setup configured._';
+  const keys = setup.map((s) => {
+    const img = `<img src="./assets/keys/${badgeSlug(s.label)}.svg" alt="${escapeHtml(s.label)}" height="40" />`;
+    return `  ${s.url ? `<a href="${escapeHtml(s.url)}">${img}</a>` : img}`;
+  });
+  return ['<p align="center">', ...keys, '</p>'].join('\n');
+}
+
+export function renderReadmeSections(data, { languageEmoji: emoji = DEFAULT_LANGUAGE_EMOJI, stack = [], setup = [] } = {}) {
   return {
+    stack: renderStack(stack),
+    setup: renderSetup(setup),
     stats: renderStatsRow({
       repoCount: data.profile.repoCount, stars: data.stats.stars,
-      contributions: data.stats.contributions, years: data.profile.years,
+      followers: data.stats.followers, years: data.profile.years,
     }),
     languages: renderLanguages(data.languages, emoji),
     projects: renderProjects(data.projects, emoji),
-    contributions: renderContributions(data.contributions),
     releases: renderReleases(data.releases),
   };
 }

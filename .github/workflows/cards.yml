@@ -35,8 +35,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/cards/generate.mjs
 
+      # Decorative only: the snake eats the contribution calendar, no number is shown.
+      - name: Generate contribution snake
+        uses: Platane/snk@d8f6715049803e982ee5ff501b6b9b7d5deeb09b  # v3.5.0
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            assets/snake-dark.svg?palette=github-dark
+            assets/snake-light.svg?palette=github-light
+
       - name: Commit changed assets
         uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c  # v7.2.1
         with:
           commit_message: 'chore(cards): refresh profile README'
-          file_pattern: 'README.md assets/*.svg'
+          file_pattern: 'README.md assets/*.svg assets/badges/*.svg assets/keys/*.svg'

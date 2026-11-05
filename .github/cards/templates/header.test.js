@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderHeader, renderFooter, pickGradient } from './header.mjs';
+import { renderHeader, renderFooter } from './header.mjs';
 
 test('renderHeader draws an 854-wide gradient wave', () => {
   const svg = renderHeader();
@@ -9,11 +9,11 @@ test('renderHeader draws an 854-wide gradient wave', () => {
   assert.match(svg, /viewBox="0 0 854 100"/);
 });
 
-test('renderFooter is not the flipped-header markup verbatim (transform differs)', () => {
+test('the footer is flipped vertically so its waves rise from the bottom edge', () => {
   const header = renderHeader();
   const footer = renderFooter();
   assert.match(header, /transform="scale \(-1, 1\)"/, 'header flips horizontally');
-  assert.doesNotMatch(footer, /transform=/, 'footer carries no transform');
+  assert.match(footer, /transform="scale \(1, -1\)" transform-origin="center"/, 'footer flips vertically');
 });
 
 test('header and footer capsules each animate two superposed, out-of-phase paths', () => {
@@ -37,27 +37,23 @@ test('header and footer capsules each animate two superposed, out-of-phase paths
   }
 });
 
-test('pickGradient is deterministic for a given timestamp', () => {
-  const gradients = [['#111'], ['#222'], ['#333']];
-  const now = Date.parse('2026-01-01T00:00:00Z');
-  assert.deepEqual(pickGradient(gradients, now), pickGradient(gradients, now));
-});
-
-test('pickGradient cycles through the list as time advances', () => {
-  const gradients = [['#111'], ['#222'], ['#333']];
-  const base = Date.parse('2026-01-01T00:00:00Z');
-  const HOUR_MS = 3.6e6;
-  const picks = new Set();
-  for (let i = 0; i < gradients.length; i++) picks.add(JSON.stringify(pickGradient(gradients, base + i * HOUR_MS)));
-  assert.equal(picks.size, gradients.length, 'consecutive hourly picks cover the whole list');
-});
-
-test('renderHeader/renderFooter thread the chosen gradient stops into the SVG', () => {
-  const stops = ['#abcdef', '#123456'];
-  const header = renderHeader(stops);
-  const footer = renderFooter(stops);
+test('renderHeader/renderFooter thread the colour cycle into the SVG', () => {
+  const cycle = [['#abcdef', '#123456'], ['#222222', '#333333']];
+  const header = renderHeader(cycle);
+  const footer = renderFooter(cycle);
   for (const svg of [header, footer]) {
     assert.match(svg, /#abcdef/);
     assert.match(svg, /#123456/);
+    assert.match(svg, /attributeName="stop-color"[^>]*values="#abcdef;#222222;#abcdef"/);
   }
+});
+
+test('the wave opacity can be raised for the light-theme variant', () => {
+  assert.equal((renderHeader(undefined, 'header', { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
+  assert.equal((renderFooter(undefined, { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
+});
+
+test('the mirrored header reverses its gradient so colours run left to right like the footer', () => {
+  assert.match(renderHeader(), /<linearGradient id="cap-header" x1="100%" y1="0%" x2="0%" y2="0%">/);
+  assert.match(renderFooter(), /<linearGradient id="cap-footer" x1="0%" y1="0%" x2="100%" y2="0%">/);
 });
