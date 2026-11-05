@@ -124,6 +124,30 @@ test('fetchAll excludes forked repos from language stats by default, keeps them 
   assert.ok(withForks.languages.some((l) => l.name === 'C')); // fork's C counted when opted in
 });
 
+test('fetchAll keeps archived repos in language stats by default, drops them with excludeArchived:true', async () => {
+  const graphql = { data: { user: {
+    contributionsCollection: { contributionCalendar: { weeks: [] } },
+    repositories: { nodes: [
+      { name: 'live', description: '', stargazerCount: 1, forkCount: 0, isFork: false, isArchived: false, updatedAt: '', url: '',
+        primaryLanguage: { name: 'Go', color: '#00ADD8' },
+        languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
+      { name: 'old', description: '', stargazerCount: 0, forkCount: 0, isFork: false, isArchived: true, updatedAt: '', url: '',
+        primaryLanguage: { name: 'PHP', color: '#4F5D95' },
+        languages: { edges: [{ size: 9000, node: { name: 'PHP', color: '#4F5D95' } }] } },
+    ] },
+    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+  } } };
+  const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
+
+  const def = await fetchAll('octocat', 'tok', { fetchImpl });
+  assert.ok(def.languages.some((l) => l.name === 'PHP')); // default unchanged: archived repo still counted
+
+  const noArchived = await fetchAll('octocat', 'tok', { fetchImpl, excludeArchived: true });
+  assert.deepEqual(noArchived.languages.map((l) => l.name), ['Go']);
+  assert.equal(noArchived.stats.stars, 1); // only language stats are filtered, not repo totals
+  assert.equal(noArchived.repoList.length, 2);
+});
+
 test('fetchAll honors topReposCount and activityCount options', async () => {
   const graphql = {
     data: { user: {

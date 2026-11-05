@@ -27,7 +27,7 @@ export const DEFAULTS = {
   },
   fetch: { repoScanLimit: 100, eventsPerPage: 30 },
   activityGraph: { days: 30 },
-  languages: { excludeForks: true, count: 5 },
+  languages: { excludeForks: true, excludeArchived: false, count: 5 },
   capsule: {
     gradients: [
       ['#F8B195', '#F67280', '#C06C84'],

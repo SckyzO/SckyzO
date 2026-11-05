@@ -41,7 +41,7 @@ export async function main() {
   const cfg = loadConfig();
   const token = resolveToken();
   const data = await fetchAll(cfg.username, token, {
-    topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count, excludeForks: cfg.languages.excludeForks,
+    topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count, excludeForks: cfg.languages.excludeForks, excludeArchived: cfg.languages.excludeArchived,
     gradeConfig: cfg.grade, trophies: cfg.trophies, languagesCount: cfg.languages.count,
     repoScanLimit: cfg.fetch.repoScanLimit, eventsPerPage: cfg.fetch.eventsPerPage, activityGraphDays: cfg.activityGraph.days,
   });

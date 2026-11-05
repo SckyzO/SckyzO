@@ -4,7 +4,7 @@
   "cards": ["header", "about", "stack", "tools", "stats", "streak", "activity-graph", "top-repos", "activity", "trophies", "languages", "footer"],
   "topRepos": { "count": 5 },
   "activity": { "count": 5 },
-  "languages": { "excludeForks": true, "count": 5 },
+  "languages": { "excludeForks": true, "excludeArchived": true, "count": 5 },
   "grade": {
     "weights": { "commits": 1, "prs": 5, "issues": 3, "stars": 4, "contributedTo": 6 },
     "thresholds": { "S": 8000, "A+": 5000, "A": 2500, "B": 1000 }

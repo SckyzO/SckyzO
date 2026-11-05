@@ -9,14 +9,14 @@ export function resolveToken(env = process.env) {
 const QUERY = `query($login:String!,$repoLimit:Int!){ user(login:$login){
   contributionsCollection{ contributionCalendar{ weeks{ contributionDays{ date contributionCount } } } }
   repositories(first:$repoLimit, ownerAffiliations:OWNER, orderBy:{field:STARGAZERS, direction:DESC}){
-    nodes{ name description stargazerCount forkCount updatedAt url isFork
+    nodes{ name description stargazerCount forkCount updatedAt url isFork isArchived
       primaryLanguage{ name color }
       languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name color } } } } }
   pullRequests{ totalCount } issues{ totalCount } followers{ totalCount }
 } }`;
 
 export async function fetchAll(username, token, {
-  fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30, excludeForks = true,
+  fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30, excludeForks = true, excludeArchived = false,
   gradeConfig, trophies = DEFAULT_TROPHIES, languagesCount = 5,
   repoScanLimit = 100, eventsPerPage = 30, activityGraphDays = 30,
 } = {}) {
@@ -43,6 +43,7 @@ export async function fetchAll(username, token, {
   const langTotals = new Map();
   for (const r of repos) {
     if (excludeForks && r.isFork) continue; // forked repos vendor large codebases that skew language stats
+    if (excludeArchived && r.isArchived) continue; // abandoned code no longer reflects the current stack
     for (const e of r.languages?.edges || []) {
       const name = e.node.name;
       const existing = langTotals.get(name);
