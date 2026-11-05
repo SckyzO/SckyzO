@@ -61,3 +61,8 @@ test('renderHeader/renderFooter thread the chosen gradient stops into the SVG', 
     assert.match(svg, /#123456/);
   }
 });
+
+test('the wave opacity can be raised for the light-theme variant', () => {
+  assert.equal((renderHeader(undefined, 'header', { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
+  assert.equal((renderFooter(undefined, { opacity: 0.6 }).match(/opacity="0\.6"/g) || []).length, 2);
+});

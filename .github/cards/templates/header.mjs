@@ -81,7 +81,7 @@ function gradientTag(id, stops) {
   return `<linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="0%">${stopEls}</linearGradient>`;
 }
 
-function renderPath(id, waveDef, transform) {
+function renderPath(id, waveDef, transform, opacity) {
   const { begin, values } = waveDef;
   const transformAttr = transform ? ` transform="${transform}" transform-origin="center"` : '';
   // NOTE: capsule-render's own output emits a typo'd `calcmod="spline"` attribute,
@@ -89,14 +89,16 @@ function renderPath(id, waveDef, transform) {
   // We emit the correctly-spelled `calcMode="spline"` so the eased, organic
   // motion the spline keySplines describe actually applies.
   const animate = `<animate attributeName="d" dur="20s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.333;0.667;1" keySplines="0.2 0 0.2 1;0.2 0 0.2 1;0.2 0 0.2 1" begin="${begin}" values="${values.join(';')}"/>`;
-  return `<path d="${values[0]}" fill="url(#${id})" opacity="0.4"${transformAttr}>${animate}</path>`;
+  return `<path d="${values[0]}" fill="url(#${id})" opacity="${opacity}"${transformAttr}>${animate}</path>`;
 }
 
-export function renderHeader(stops = DEFAULT_STOPS, section = 'header') {
+// `opacity` lets the README serve a light and a dark variant through <picture>:
+// pastel gradients need more opacity to read on a white page than on a dark one.
+export function renderHeader(stops = DEFAULT_STOPS, section = 'header', { opacity = 0.4 } = {}) {
   const id = `cap-${section}`;
   const waveDefs = WAVES[section] || WAVES.header;
   const transform = TRANSFORM[section] ?? null;
-  const paths = waveDefs.map((w) => renderPath(id, w, transform)).join('');
+  const paths = waveDefs.map((w) => renderPath(id, w, transform, opacity)).join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" width="854" height="100" viewBox="0 0 854 100" role="img" aria-label="profile ${section}">`
     + `<defs>${gradientTag(id, stops)}</defs>`
     + `<style>.cap-wave{animation:fadeIn 1.2s ease-in-out forwards}@keyframes fadeIn{from{opacity:0}to{opacity:1}}</style>`
@@ -104,6 +106,6 @@ export function renderHeader(stops = DEFAULT_STOPS, section = 'header') {
     + `</svg>`;
 }
 
-export function renderFooter(stops = DEFAULT_STOPS) {
-  return renderHeader(stops, 'footer');
+export function renderFooter(stops = DEFAULT_STOPS, opts = {}) {
+  return renderHeader(stops, 'footer', opts);
 }
