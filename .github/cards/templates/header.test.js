@@ -3,21 +3,21 @@ import assert from 'node:assert/strict';
 import { renderHeader, renderFooter, pickGradient } from './header.mjs';
 
 test('renderHeader draws an 854-wide gradient wave', () => {
-  const svg = renderHeader({});
+  const svg = renderHeader();
   assert.match(svg, /<path/);
   assert.match(svg, /linearGradient/);
   assert.match(svg, /viewBox="0 0 854 100"/);
 });
 
 test('renderFooter is not the flipped-header markup verbatim (transform differs)', () => {
-  const header = renderHeader({});
-  const footer = renderFooter({});
+  const header = renderHeader();
+  const footer = renderFooter();
   assert.match(header, /transform="scale \(-1, 1\)"/, 'header flips horizontally');
   assert.doesNotMatch(footer, /transform=/, 'footer carries no transform');
 });
 
 test('header and footer capsules each animate two superposed, out-of-phase paths', () => {
-  for (const [name, svg] of [['header', renderHeader({})], ['footer', renderFooter({})]]) {
+  for (const [name, svg] of [['header', renderHeader()], ['footer', renderFooter()]]) {
     const paths = [...svg.matchAll(/<path[^>]*>.*?<\/path>/gs)];
     assert.equal(paths.length, 2, `${name} needs two superposed wave paths`);
     for (const [path] of paths) {
@@ -54,8 +54,8 @@ test('pickGradient cycles through the list as time advances', () => {
 
 test('renderHeader/renderFooter thread the chosen gradient stops into the SVG', () => {
   const stops = ['#abcdef', '#123456'];
-  const header = renderHeader({}, undefined, 'header', stops);
-  const footer = renderFooter({}, undefined, stops);
+  const header = renderHeader(stops);
+  const footer = renderFooter(stops);
   for (const svg of [header, footer]) {
     assert.match(svg, /#abcdef/);
     assert.match(svg, /#123456/);

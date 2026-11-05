@@ -1,7 +1,4 @@
-import {
-  computeStreak, computeGrade, topLanguages, pickTopRepos, mapActivity, computeTrophies, DEFAULT_TROPHIES,
-  pickProjects, latestReleases, externalContributions, yearsSince,
-} from './transform.mjs';
+import { topLanguages, pickProjects, latestReleases, externalContributions, yearsSince } from './transform.mjs';
 
 export function resolveToken(env = process.env) {
   const t = env.CARDS_TOKEN || env.GITHUB_TOKEN;
@@ -15,86 +12,57 @@ const PR_SEARCH_LIMIT = 100;
 const QUERY = `query($login:String!,$repoLimit:Int!,$prQuery:String!,$prLimit:Int!){ user(login:$login){
   createdAt
   repoCount: repositories(ownerAffiliations:OWNER, privacy:PUBLIC){ totalCount }
-  contributionsCollection{ contributionCalendar{ weeks{ contributionDays{ date contributionCount } } } }
+  contributionsCollection{ contributionCalendar{ totalContributions } }
   repositories(first:$repoLimit, ownerAffiliations:OWNER, orderBy:{field:STARGAZERS, direction:DESC}){
-    nodes{ name description stargazerCount forkCount updatedAt url isFork isArchived isPrivate
+    nodes{ name description stargazerCount forkCount url isFork isArchived isPrivate
       latestRelease{ tagName publishedAt url }
-      primaryLanguage{ name color }
-      languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name color } } } } }
-  pullRequests{ totalCount } issues{ totalCount } followers{ totalCount }
+      primaryLanguage{ name }
+      languages(first:10, orderBy:{field:SIZE, direction:DESC}){ edges{ size node{ name } } } } }
 }
   search(query:$prQuery, type:ISSUE, first:$prLimit){ nodes{ ... on PullRequest{ repository{ nameWithOwner url stargazerCount } } } }
 }`;
 
-export async function fetchAll(username, token, {
-  fetchImpl = fetch, topReposCount = 5, activityCount = 5, repoListCount = 30, excludeForks = true, excludeArchived = false,
-  gradeConfig, trophies = DEFAULT_TROPHIES, languagesCount = 5,
-  repoScanLimit = 100, eventsPerPage = 30, activityGraphDays = 30,
-  projects = [], releasesCount = 5, releasesExclude = [], contributionsCount = 5, now = Date.now(),
-} = {}) {
-  // is:public — the PAT can see private org work, which must not surface on a public profile.
-  const prQuery = `is:pr is:merged is:public author:${username} -user:${username}`;
-  const gqlRes = await fetchImpl('https://api.github.com/graphql', {
-    method: 'POST',
-    headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: QUERY, variables: { login: username, repoLimit: repoScanLimit, prQuery, prLimit: PR_SEARCH_LIMIT } }),
-  });
-  if (!gqlRes.ok) throw new Error(`graphql ${gqlRes.status}`);
-  const gql = await gqlRes.json();
-  if (gql.errors) throw new Error(`graphql: ${gql.errors[0].message}`);
-  const u = gql.data.user;
-
-  const evRes = await fetchImpl(`https://api.github.com/users/${username}/events/public?per_page=${eventsPerPage}`, {
-    headers: { Authorization: `bearer ${token}`, 'User-Agent': 'profile-cards' },
-  });
-  if (!evRes.ok) throw new Error(`events ${evRes.status}`);
-  const events = await evRes.json();
-
-  const days = u.contributionsCollection.contributionCalendar.weeks
-    .flatMap((w) => w.contributionDays)
-    .map((d) => ({ date: d.date, count: d.contributionCount }));
-  const repos = u.repositories.nodes;
-  const langTotals = new Map();
+/** Sums language bytes by name across repos, skipping forks/archived repos on request. */
+function languageTotals(repos, { excludeForks, excludeArchived }) {
+  const totals = new Map();
   for (const r of repos) {
     if (excludeForks && r.isFork) continue; // forked repos vendor large codebases that skew language stats
     if (excludeArchived && r.isArchived) continue; // abandoned code no longer reflects the current stack
     for (const e of r.languages?.edges || []) {
       const name = e.node.name;
-      const existing = langTotals.get(name);
+      const existing = totals.get(name);
       if (existing) existing.size += e.size;
-      else langTotals.set(name, { size: e.size, node: { name, color: e.node.color } });
+      else totals.set(name, { size: e.size, node: { name } });
     }
   }
-  const langEdges = [...langTotals.values()];
-  const stars = repos.reduce((s, r) => s + r.stargazerCount, 0);
-  const commits = days.reduce((s, d) => s + d.count, 0);
+  return [...totals.values()];
+}
 
-  const stats = {
-    stars, commits, prs: u.pullRequests.totalCount, issues: u.issues.totalCount,
-    contributedTo: repos.length, followers: u.followers.totalCount,
-    grade: computeGrade({ commits, prs: u.pullRequests.totalCount, issues: u.issues.totalCount, stars, contributedTo: repos.length }, gradeConfig),
-  };
-
-  const contributionWeeks = u.contributionsCollection.contributionCalendar.weeks
-    .map((w) => w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount })));
-  const repoList = repos.slice(0, repoListCount).map((r) => ({
-    name: r.name, description: r.description || '',
-    language: r.primaryLanguage?.name || null, langColor: r.primaryLanguage?.color || '#565f89',
-    stars: r.stargazerCount, forks: r.forkCount, updatedAt: r.updatedAt, url: r.url,
-  }));
+export async function fetchAll(username, token, {
+  fetchImpl = fetch, excludeForks = true, excludeArchived = false, languagesCount = 5, repoScanLimit = 100,
+  projects = [], releasesCount = 5, releasesExclude = [], contributionsCount = 5, now = Date.now(),
+} = {}) {
+  // is:public — the PAT can see private org work, which must not surface on a public profile.
+  const prQuery = `is:pr is:merged is:public author:${username} -user:${username}`;
+  const res = await fetchImpl('https://api.github.com/graphql', {
+    method: 'POST',
+    headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: QUERY, variables: { login: username, repoLimit: repoScanLimit, prQuery, prLimit: PR_SEARCH_LIMIT } }),
+  });
+  if (!res.ok) throw new Error(`graphql ${res.status}`);
+  const gql = await res.json();
+  if (gql.errors) throw new Error(`graphql: ${gql.errors[0].message}`);
+  const u = gql.data.user;
+  const repos = u.repositories.nodes;
 
   return {
     user: username,
-    stats,
-    streak: computeStreak(days),
-    topRepos: pickTopRepos(repos, topReposCount),
-    activity: mapActivity(events, activityCount),
-    activityGraph: days.slice(-activityGraphDays),
-    contributionWeeks,
-    repoList,
-    languages: topLanguages(langEdges, languagesCount),
-    trophies: computeTrophies(stats, trophies),
+    stats: {
+      stars: repos.reduce((s, r) => s + r.stargazerCount, 0),
+      contributions: u.contributionsCollection.contributionCalendar.totalContributions,
+    },
     profile: { repoCount: u.repoCount.totalCount, years: yearsSince(u.createdAt, now) },
+    languages: topLanguages(languageTotals(repos, { excludeForks, excludeArchived }), languagesCount),
     projects: pickProjects(repos, projects),
     releases: latestReleases(repos, releasesCount, releasesExclude),
     // An empty search result is legitimate (no upstream PRs yet), unlike a missing user field.

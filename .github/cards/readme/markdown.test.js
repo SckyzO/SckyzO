@@ -86,7 +86,7 @@ test('injectSections does not interpret $ patterns in generated content', () => 
 
 test('renderReadmeSections maps model data to every marker name', () => {
   const sections = renderReadmeSections({
-    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, commits: 4 },
+    profile: { repoCount: 1, years: 2 }, stats: { stars: 3, contributions: 4 },
     languages: [{ name: 'Go', pct: 100 }], projects: [], contributions: [], releases: [],
   }, {});
   assert.deepEqual(Object.keys(sections).sort(), ['contributions', 'languages', 'projects', 'releases', 'stats']);

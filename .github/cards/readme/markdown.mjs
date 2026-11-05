@@ -99,7 +99,7 @@ export function renderReadmeSections(data, emoji = DEFAULT_LANGUAGE_EMOJI) {
   return {
     stats: renderStatsRow({
       repoCount: data.profile.repoCount, stars: data.stats.stars,
-      contributions: data.stats.commits, years: data.profile.years,
+      contributions: data.stats.contributions, years: data.profile.years,
     }),
     languages: renderLanguages(data.languages, emoji),
     projects: renderProjects(data.projects, emoji),

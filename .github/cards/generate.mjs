@@ -3,43 +3,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadConfig } from './config.js';
 import { resolveToken, fetchAll } from './lib/github.mjs';
-import { tokyonight, makeTheme } from './lib/theme.mjs';
-import { renderStats } from './templates/stats.mjs';
-import { renderStreak } from './templates/streak.mjs';
-import { renderTopRepos } from './templates/top-repos.mjs';
-import { renderActivity } from './templates/activity.mjs';
-import { renderTrophies } from './templates/trophies.mjs';
-import { renderLanguages } from './templates/languages.mjs';
-import { renderAbout } from './templates/about.mjs';
-import { renderActivityGraph } from './templates/activity-graph.mjs';
 import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs';
-import { renderStack, renderTools } from './templates/stack.mjs';
 import { renderReadmeSections, injectSections } from './readme/markdown.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const README_PATH = join(HERE, '../../README.md');
-
-const RENDERERS = {
-  stats: renderStats, streak: renderStreak, 'top-repos': renderTopRepos,
-  activity: renderActivity, trophies: renderTrophies, languages: renderLanguages,
-  about: renderAbout, 'activity-graph': renderActivityGraph,
-  header: renderHeader, footer: renderFooter,
-  stack: renderStack, tools: renderTools,
-};
-
-// `capsuleStops` (a single gradient's hex stops) is threaded to both header and
-// footer so the pair always matches within one run — deliberately more
-// consistent than the original capsule-render, which picked each independently.
-export function renderAll(data, cards, theme = tokyonight, capsuleStops) {
-  const out = {};
-  for (const name of cards) {
-    if (name === 'header') { out[name] = renderHeader(data, theme, 'header', capsuleStops); continue; }
-    if (name === 'footer') { out[name] = renderFooter(data, theme, capsuleStops); continue; }
-    const fn = RENDERERS[name];
-    if (fn) out[name] = fn(data, theme);
-  }
-  return out;
-}
+const ASSETS_DIR = join(HERE, '../../assets');
 
 /** Rewrites only the marker-delimited sections of the README; the hand-written rest stays untouched. */
 export function updateReadme(path, data, languageEmoji) {
@@ -49,25 +18,23 @@ export function updateReadme(path, data, languageEmoji) {
   return after !== before;
 }
 
+/** One gradient for both waves, so header and footer always match within a run. */
+export function renderWaves(gradients, now = Date.now()) {
+  const stops = pickGradient(gradients, now);
+  return { header: renderHeader(stops), footer: renderFooter(stops) };
+}
+
 export async function main() {
   const cfg = loadConfig();
-  const token = resolveToken();
-  const data = await fetchAll(cfg.username, token, {
-    topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count, excludeForks: cfg.languages.excludeForks, excludeArchived: cfg.languages.excludeArchived,
-    gradeConfig: cfg.grade, trophies: cfg.trophies, languagesCount: cfg.languages.count,
-    repoScanLimit: cfg.fetch.repoScanLimit, eventsPerPage: cfg.fetch.eventsPerPage, activityGraphDays: cfg.activityGraph.days,
-    projects: cfg.readme.projects, releasesCount: cfg.readme.releasesCount, releasesExclude: cfg.readme.releasesExclude,
-    contributionsCount: cfg.readme.contributionsCount,
+  const data = await fetchAll(cfg.username, resolveToken(), {
+    excludeForks: cfg.languages.excludeForks, excludeArchived: cfg.languages.excludeArchived,
+    languagesCount: cfg.languages.count, repoScanLimit: cfg.fetch.repoScanLimit,
+    projects: cfg.readme.projects, releasesCount: cfg.readme.releasesCount,
+    releasesExclude: cfg.readme.releasesExclude, contributionsCount: cfg.readme.contributionsCount,
   });
-  // about/stack/tools are static config, not API data — fetchAll never populates them.
-  Object.assign(data, { about: cfg.about, stack: cfg.stack, tools: cfg.tools });
-  const theme = makeTheme(cfg.theme);
-  const capsuleStops = pickGradient(cfg.capsule.gradients, Date.now());
-  const svgs = renderAll(data, cfg.cards, theme, capsuleStops);
-  const outDir = join(HERE, '../../assets');
-  mkdirSync(outDir, { recursive: true });
-  for (const [name, svg] of Object.entries(svgs)) {
-    writeFileSync(join(outDir, `${name}.svg`), svg, 'utf8');
+  mkdirSync(ASSETS_DIR, { recursive: true });
+  for (const [name, svg] of Object.entries(renderWaves(cfg.capsule.gradients))) {
+    writeFileSync(join(ASSETS_DIR, `${name}.svg`), svg, 'utf8');
     console.log(`wrote assets/${name}.svg (${svg.length} bytes)`);
   }
   const changed = updateReadme(README_PATH, data, cfg.readme.languageEmoji);

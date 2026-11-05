@@ -1,5 +1,3 @@
-import { tokyonight } from '../lib/theme.mjs';
-
 // Wave path keyframes extracted verbatim from capsule-render (type=waving) for
 // each section. Every path carries its own <animate>: a 4-keyframe `values`
 // list (loop back to the start), `dur="20s"`, and a `begin` offset. The two
@@ -62,8 +60,8 @@ const HOUR_MS = 3.6e6;
  * request; we reproduce the "the banner's colour keeps changing" effect
  * without randomness so a given `now` always resolves to the same result —
  * needed both for reproducible tests and for header/footer to agree within
- * a single generate.mjs run. Rotates hourly; cards.yml regenerates every 6h,
- * so consecutive scheduled runs usually land on a different palette.
+ * a single generate.mjs run. Rotates hourly, so each daily cards.yml run
+ * lands on a different palette than the previous one.
  */
 export function pickGradient(gradients, now = Date.now()) {
   return gradients[Math.floor(now / HOUR_MS) % gradients.length];
@@ -92,7 +90,7 @@ function renderPath(id, waveDef, transform) {
   return `<path d="${values[0]}" fill="url(#${id})" opacity="0.4"${transformAttr}>${animate}</path>`;
 }
 
-export function renderHeader(_data, _t = tokyonight, section = 'header', stops = DEFAULT_STOPS) {
+export function renderHeader(stops = DEFAULT_STOPS, section = 'header') {
   const id = `cap-${section}`;
   const waveDefs = WAVES[section] || WAVES.header;
   const transform = TRANSFORM[section] ?? null;
@@ -104,6 +102,6 @@ export function renderHeader(_data, _t = tokyonight, section = 'header', stops =
     + `</svg>`;
 }
 
-export function renderFooter(data, t = tokyonight, stops = DEFAULT_STOPS) {
-  return renderHeader(data, t, 'footer', stops);
+export function renderFooter(stops = DEFAULT_STOPS) {
+  return renderHeader(stops, 'footer');
 }
