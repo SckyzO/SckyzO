@@ -43,7 +43,8 @@ export async function fetchAll(username, token, {
   projects = [], releasesCount = 5, releasesExclude = [], contributionsCount = 5, now = Date.now(),
 } = {}) {
   // is:public — the PAT can see private org work, which must not surface on a public profile.
-  const prQuery = `is:pr is:merged is:public author:${username} -user:${username}`;
+  // Open, merged and closed PRs all count: a proposal upstream is a contribution even if it is not merged yet.
+  const prQuery = `is:pr is:public author:${username} -user:${username}`;
   const res = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json' },

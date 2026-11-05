@@ -56,7 +56,7 @@ test('latestReleases sorts newest first and skips forks, private repos and repos
   assert.equal(latestReleases(repos, 1).length, 1);
 });
 
-test('externalContributions groups merged PRs per repo, most PRs first', () => {
+test('externalContributions groups PRs per repo, most PRs first', () => {
   const pr = (repo, stars) => ({ repository: { nameWithOwner: repo, url: `https://github.com/${repo}`, stargazerCount: stars } });
   const out = externalContributions([pr('a/x', 10), pr('b/y', 500), pr('a/x', 10), pr('c/z', 3)], 2);
   assert.deepEqual(out, [

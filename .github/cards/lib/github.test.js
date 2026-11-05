@@ -139,8 +139,8 @@ test('fetchAll builds the README model: profile, projects, releases, external co
 
   const d = await fetchAll('octocat', 'tok', { fetchImpl, projects: ['ui', 'exporter'], now: Date.parse('2026-11-05T00:00:00Z') });
 
-  // Public, merged, and on repos the user does not own — the only PRs that say "I contributed upstream".
-  assert.equal(sent.variables.prQuery, 'is:pr is:merged is:public author:octocat -user:octocat');
+  // Every public PR (open, merged or closed) on repos the user does not own.
+  assert.equal(sent.variables.prQuery, 'is:pr is:public author:octocat -user:octocat');
   assert.deepEqual(d.profile, { repoCount: 63, years: 15 });
   assert.deepEqual(d.stats, { stars: 62, contributions: 8650 });
   assert.deepEqual(d.projects.map((p) => p.name), ['ui', 'exporter']);
