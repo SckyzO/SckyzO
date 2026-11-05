@@ -74,6 +74,20 @@ test('languages.count defaults to 5 alongside existing excludeForks', () => {
   assert.equal(c.languages.excludeForks, true);
 });
 
+test('languages.excludeArchived defaults to false and is overridable', () => {
+  const unset = withRawConfig({});
+  const set = withRawConfig({ languages: { excludeArchived: true } });
+  try {
+    assert.equal(loadConfig({}, unset.path).languages.excludeArchived, false);
+    const c = loadConfig({}, set.path);
+    assert.equal(c.languages.excludeArchived, true);
+    assert.equal(c.languages.excludeForks, true); // sibling default survives the partial override
+  } finally {
+    unset.cleanup();
+    set.cleanup();
+  }
+});
+
 test('normalizeTheme: string form normalizes to {name, palette, font} using defaults', () => {
   const t = normalizeTheme('tokyonight');
   assert.deepEqual(t, { name: 'tokyonight', palette: DEFAULTS.theme.palette, font: DEFAULTS.theme.font });
