@@ -3,7 +3,7 @@ name: Profile cards
 
 on:
   schedule:
-    - cron: '0 */6 * * *'   # every 6 hours
+    - cron: '0 6 * * *'   # daily: README data changes slowly, so fewer bot commits
   workflow_dispatch:
   push:
     branches: [main]
@@ -29,20 +29,14 @@ jobs:
       - name: Run card generator tests
         run: node --test '.github/cards/**/*.test.js'
 
-      - name: Generate SVG cards
+      - name: Generate README sections and header/footer SVGs
         env:
           CARDS_TOKEN: ${{ secrets.CARDS_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/cards/generate.mjs
 
-      - name: Generate contribution snake
-        uses: Platane/snk@d8f6715049803e982ee5ff501b6b9b7d5deeb09b  # v3.5.0
-        with:
-          github_user_name: ${{ github.repository_owner }}
-          outputs: assets/snake.svg?palette=github-dark
-
       - name: Commit changed assets
         uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c  # v7.2.1
         with:
-          commit_message: 'chore(cards): refresh profile SVGs'
-          file_pattern: 'assets/*.svg'
+          commit_message: 'chore(cards): refresh profile README'
+          file_pattern: 'README.md assets/*.svg'

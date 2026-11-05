@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadConfig } from './config.js';
@@ -14,6 +14,10 @@ import { renderAbout } from './templates/about.mjs';
 import { renderActivityGraph } from './templates/activity-graph.mjs';
 import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs';
 import { renderStack, renderTools } from './templates/stack.mjs';
+import { renderReadmeSections, injectSections } from './readme/markdown.mjs';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const README_PATH = join(HERE, '../../README.md');
 
 const RENDERERS = {
   stats: renderStats, streak: renderStreak, 'top-repos': renderTopRepos,
@@ -37,6 +41,14 @@ export function renderAll(data, cards, theme = tokyonight, capsuleStops) {
   return out;
 }
 
+/** Rewrites only the marker-delimited sections of the README; the hand-written rest stays untouched. */
+export function updateReadme(path, data, languageEmoji) {
+  const before = readFileSync(path, 'utf8');
+  const after = injectSections(before, renderReadmeSections(data, languageEmoji));
+  writeFileSync(path, after, 'utf8');
+  return after !== before;
+}
+
 export async function main() {
   const cfg = loadConfig();
   const token = resolveToken();
@@ -44,18 +56,22 @@ export async function main() {
     topReposCount: cfg.topRepos.count, activityCount: cfg.activity.count, excludeForks: cfg.languages.excludeForks, excludeArchived: cfg.languages.excludeArchived,
     gradeConfig: cfg.grade, trophies: cfg.trophies, languagesCount: cfg.languages.count,
     repoScanLimit: cfg.fetch.repoScanLimit, eventsPerPage: cfg.fetch.eventsPerPage, activityGraphDays: cfg.activityGraph.days,
+    projects: cfg.readme.projects, releasesCount: cfg.readme.releasesCount, releasesExclude: cfg.readme.releasesExclude,
+    contributionsCount: cfg.readme.contributionsCount,
   });
   // about/stack/tools are static config, not API data — fetchAll never populates them.
   Object.assign(data, { about: cfg.about, stack: cfg.stack, tools: cfg.tools });
   const theme = makeTheme(cfg.theme);
   const capsuleStops = pickGradient(cfg.capsule.gradients, Date.now());
   const svgs = renderAll(data, cfg.cards, theme, capsuleStops);
-  const outDir = join(dirname(fileURLToPath(import.meta.url)), '../../assets');
+  const outDir = join(HERE, '../../assets');
   mkdirSync(outDir, { recursive: true });
   for (const [name, svg] of Object.entries(svgs)) {
     writeFileSync(join(outDir, `${name}.svg`), svg, 'utf8');
     console.log(`wrote assets/${name}.svg (${svg.length} bytes)`);
   }
+  const changed = updateReadme(README_PATH, data, cfg.readme.languageEmoji);
+  console.log(`README.md sections ${changed ? 'updated' : 'unchanged'}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

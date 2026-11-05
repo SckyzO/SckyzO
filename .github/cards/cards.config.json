@@ -1,10 +1,16 @@
 {
   "username": "SckyzO",
   "theme": "tokyonight",
-  "cards": ["header", "about", "stack", "tools", "stats", "streak", "activity-graph", "top-repos", "activity", "trophies", "languages", "footer"],
+  "cards": ["header", "footer"],
   "topRepos": { "count": 5 },
   "activity": { "count": 5 },
   "languages": { "excludeForks": true, "excludeArchived": true, "count": 5 },
+  "readme": {
+    "projects": ["slurm_exporter", "rackscope", "cosmos", "monitoring-hub"],
+    "releasesCount": 5,
+    "releasesExclude": ["suivi-loyers"],
+    "contributionsCount": 5
+  },
   "grade": {
     "weights": { "commits": 1, "prs": 5, "issues": 3, "stars": 4, "contributedTo": 6 },
     "thresholds": { "S": 8000, "A+": 5000, "A": 2500, "B": 1000 }

@@ -149,3 +149,23 @@ test('raw trophies array, when provided, replaces the default wholesale (not mer
     cleanup();
   }
 });
+
+test('readme block: defaults, override and validation', () => {
+  const unset = withRawConfig({});
+  const set = withRawConfig({ readme: { projects: ['a', 'b'], releasesCount: 3, releasesExclude: ['x'], languageEmoji: { Zig: '🟧' } } });
+  const bad = withRawConfig({ readme: { projects: 'a' } });
+  const badCount = withRawConfig({ readme: { releasesCount: 0 } });
+  try {
+    assert.deepEqual(loadConfig({}, unset.path).readme, DEFAULTS.readme);
+    const c = loadConfig({}, set.path).readme;
+    assert.deepEqual(c.projects, ['a', 'b']);
+    assert.equal(c.releasesCount, 3);
+    assert.equal(c.contributionsCount, DEFAULTS.readme.contributionsCount); // untouched key keeps its default
+    assert.equal(c.languageEmoji.Zig, '🟧');
+    assert.equal(c.languageEmoji.Go, DEFAULTS.readme.languageEmoji.Go); // emoji map merges over the defaults
+    assert.throws(() => loadConfig({}, bad.path), /readme\.projects/);
+    assert.throws(() => loadConfig({}, badCount.path), /readme\.releasesCount/);
+  } finally {
+    for (const t of [unset, set, bad, badCount]) t.cleanup();
+  }
+});

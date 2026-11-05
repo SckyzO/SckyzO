@@ -21,7 +21,7 @@ test('fetchAll assembles the model from mocked responses', async () => {
           languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
       ] },
       pullRequests: { totalCount: 12 }, issues: { totalCount: 4 },
-      followers: { totalCount: 7 },
+      followers: { totalCount: 7 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const rest = [{ type: 'PushEvent', repo: { name: 'o/r1' }, payload: { commits: [1] }, created_at: '2026-01-02T10:00:00Z' }];
@@ -49,7 +49,7 @@ test('fetchAll returns activityGraph capped at the last 30 contribution days', a
       contributionsCollection: { contributionCalendar: { weeks: [{ contributionDays: days }] } },
       repositories: { nodes: [] },
       pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
-      followers: { totalCount: 0 },
+      followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const rest = [];
@@ -82,7 +82,7 @@ test('fetchAll aggregates language edges by name across repos before ranking', a
           languages: { edges: [{ size: 50, node: { name: 'Python', color: '#3572A5' } }] } },
       ] },
       pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
-      followers: { totalCount: 0 },
+      followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const rest = [];
@@ -113,7 +113,7 @@ test('fetchAll excludes forked repos from language stats by default, keeps them 
         primaryLanguage: { name: 'C', color: '#555555' },
         languages: { edges: [{ size: 9000, node: { name: 'C', color: '#555555' } }] } },
     ] },
-    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
   } } };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
 
@@ -135,7 +135,7 @@ test('fetchAll keeps archived repos in language stats by default, drops them wit
         primaryLanguage: { name: 'PHP', color: '#4F5D95' },
         languages: { edges: [{ size: 9000, node: { name: 'PHP', color: '#4F5D95' } }] } },
     ] },
-    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
   } } };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
 
@@ -161,7 +161,7 @@ test('fetchAll honors topReposCount and activityCount options', async () => {
           primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
       ] },
       pullRequests: { totalCount: 0 }, issues: { totalCount: 0 },
-      followers: { totalCount: 0 },
+      followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const rest = [
@@ -193,7 +193,7 @@ test('fetchAll exposes full-year contributionWeeks and a repoList with url/updat
           primaryLanguage: { name: 'Go', color: '#00ADD8' },
           languages: { edges: [{ size: 100, node: { name: 'Go', color: '#00ADD8' } }] } },
       ] },
-      pullRequests: { totalCount: 1 }, issues: { totalCount: 1 }, followers: { totalCount: 1 },
+      pullRequests: { totalCount: 1 }, issues: { totalCount: 1 }, followers: { totalCount: 1 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
@@ -210,7 +210,7 @@ test('fetchAll threads repoScanLimit into the GraphQL request and eventsPerPage 
     data: { user: {
       contributionsCollection: { contributionCalendar: { weeks: [] } },
       repositories: { nodes: [] },
-      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const calls = [];
@@ -241,7 +241,7 @@ test('fetchAll drives trophies from a custom trophies config', async () => {
         { name: 'r1', description: '', stargazerCount: 9, forkCount: 0, isFork: false,
           primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] } },
       ] },
-      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
@@ -273,7 +273,7 @@ test('fetchAll honors languagesCount and activityGraphDays options', async () =>
           primaryLanguage: { name: 'Python', color: '#3572A5' },
           languages: { edges: [{ size: 50, node: { name: 'Python', color: '#3572A5' } }] } },
       ] },
-      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
@@ -288,7 +288,7 @@ test('fetchAll honors a custom gradeConfig', async () => {
     data: { user: {
       contributionsCollection: { contributionCalendar: { weeks: [] } },
       repositories: { nodes: [] },
-      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
     } },
   };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
@@ -306,9 +306,42 @@ test('fetchAll caps repoList at repoListCount', async () => {
   }));
   const graphql = { data: { user: {
     contributionsCollection: { contributionCalendar: { weeks: [] } },
-    repositories: { nodes }, pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    repositories: { nodes }, pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 }, createdAt: '2020-01-01T00:00:00Z', repoCount: { totalCount: 0 },
   } } };
   const fetchImpl = async (url) => ({ ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) });
   const data = await fetchAll('octocat', 'tok', { fetchImpl, repoListCount: 10 });
   assert.equal(data.repoList.length, 10);
+});
+
+test('fetchAll builds the README model: profile, projects, releases, external contributions', async () => {
+  const repo = (name, extra = {}) => ({ name, description: `${name} d`, stargazerCount: 0, forkCount: 0, isFork: false,
+    isArchived: false, isPrivate: false, updatedAt: '', url: `https://github.com/octocat/${name}`,
+    primaryLanguage: { name: 'Go', color: '#00ADD8' }, languages: { edges: [] }, latestRelease: null, ...extra });
+  const graphql = { data: {
+    user: {
+      createdAt: '2011-03-10T00:00:00Z',
+      repoCount: { totalCount: 63 },
+      contributionsCollection: { contributionCalendar: { weeks: [] } },
+      repositories: { nodes: [
+        repo('exporter', { stargazerCount: 59, latestRelease: { tagName: 'v1.0.0', publishedAt: '2026-10-01T00:00:00Z', url: 'https://r/1' } }),
+        repo('ui', { stargazerCount: 3 }),
+      ] },
+      pullRequests: { totalCount: 0 }, issues: { totalCount: 0 }, followers: { totalCount: 0 },
+    },
+    search: { nodes: [{ repository: { nameWithOwner: 'prometheus/docs', url: 'https://github.com/prometheus/docs', stargazerCount: 726 } }] },
+  } };
+  let sent;
+  const fetchImpl = async (url, opts) => {
+    if (String(url).includes('/graphql')) sent = JSON.parse(opts.body);
+    return { ok: true, json: async () => (String(url).includes('/graphql') ? graphql : []) };
+  };
+
+  const d = await fetchAll('octocat', 'tok', { fetchImpl, projects: ['ui', 'exporter'], now: Date.parse('2026-11-05T00:00:00Z') });
+
+  // Public, merged, and on repos the user does not own — the only PRs that say "I contributed upstream".
+  assert.equal(sent.variables.prQuery, 'is:pr is:merged is:public author:octocat -user:octocat');
+  assert.deepEqual(d.profile, { repoCount: 63, years: 15 });
+  assert.deepEqual(d.projects.map((p) => p.name), ['ui', 'exporter']);
+  assert.deepEqual(d.releases, [{ repo: 'exporter', tag: 'v1.0.0', url: 'https://r/1', date: '2026-10-01T00:00:00Z' }]);
+  assert.deepEqual(d.contributions, [{ repo: 'prometheus/docs', url: 'https://github.com/prometheus/docs', prs: 1, stars: 726 }]);
 });

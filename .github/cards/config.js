@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { DEFAULT_GRADE, DEFAULT_TROPHIES } from './lib/transform.mjs';
+import { DEFAULT_LANGUAGE_EMOJI } from './readme/markdown.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = join(HERE, 'cards.config.json');
@@ -28,6 +29,8 @@ export const DEFAULTS = {
   fetch: { repoScanLimit: 100, eventsPerPage: 30 },
   activityGraph: { days: 30 },
   languages: { excludeForks: true, excludeArchived: false, count: 5 },
+  // Markdown README sections. `projects: []` falls back to the most-starred public repos.
+  readme: { projects: [], releasesCount: 5, releasesExclude: [], contributionsCount: 5, languageEmoji: DEFAULT_LANGUAGE_EMOJI },
   capsule: {
     gradients: [
       ['#F8B195', '#F67280', '#C06C84'],
@@ -93,9 +96,22 @@ export function loadConfig(env = process.env, configPath = CONFIG_PATH) {
     fetch: mergeShallow(DEFAULTS.fetch, raw.fetch),
     activityGraph: mergeShallow(DEFAULTS.activityGraph, raw.activityGraph),
     capsule: raw.capsule || DEFAULTS.capsule,
+    readme: {
+      ...mergeShallow(DEFAULTS.readme, raw.readme),
+      languageEmoji: mergeShallow(DEFAULTS.readme.languageEmoji, raw.readme?.languageEmoji),
+    },
   };
   if (!cfg.username) throw new Error('config: username is required');
   for (const name of cfg.cards)
     if (!KNOWN_CARDS.includes(name)) throw new Error(`config: unknown card "${name}"`);
+  validateReadme(cfg.readme);
   return cfg;
+}
+
+function validateReadme(r) {
+  const isNameList = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string' && x);
+  for (const key of ['projects', 'releasesExclude'])
+    if (!isNameList(r[key])) throw new Error(`config: readme.${key} must be a list of repo names`);
+  for (const key of ['releasesCount', 'contributionsCount'])
+    if (!Number.isInteger(r[key]) || r[key] < 1) throw new Error(`config: readme.${key} must be a positive integer`);
 }
