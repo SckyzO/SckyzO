@@ -14,6 +14,8 @@
   </p>
 </div>
 
+<br>
+
 ### 🧠 About Me
 
 <img src="./assets/divider.svg" alt="" width="100%" />
@@ -25,6 +27,8 @@
 - 🛠️ **Dev**: Python and Go tools that solve real problems.
 - 🔭 **Currently building**: [rackscope](https://github.com/SckyzO/rackscope), physical infrastructure visibility for data centers and HPC clusters.
 - 📬 **Find me**: 🌐 [tomzone.fr](https://www.tomzone.fr) · 📄 [Resume & contact](https://sckyzo.github.io/SckyzO/)
+
+<br>
 
 ### 🧪 Languages & Stack
 
@@ -45,14 +49,21 @@
 </p>
 <!-- cards:stack:end -->
 
+<br>
+
+<p align="center"><b>⌨️ Daily setup</b></p>
+
+<!-- cards:setup:start -->
 <p align="center">
-  <b>Setup:</b>
-  <kbd><img src="./assets/icons/lucide/vim.svg" alt="" width="14" height="14" /> Vim</kbd>
-  <kbd><img src="./assets/icons/lucide/tmux.svg" alt="" width="14" height="14" /> Tmux</kbd>
-  <kbd><img src="./assets/icons/lucide/zsh.svg" alt="" width="14" height="14" /> Zsh</kbd>
-  <kbd><img src="./assets/icons/lucide/git.svg" alt="" width="14" height="14" /> Git</kbd>
-  <kbd><img src="./assets/icons/lucide/vscode.svg" alt="" width="14" height="14" /> VS Code</kbd>
+  <a href="https://www.vim.org"><img src="./assets/keys/vim.svg" alt="Vim" height="40" /></a>
+  <a href="https://github.com/tmux/tmux"><img src="./assets/keys/tmux.svg" alt="Tmux" height="40" /></a>
+  <a href="https://www.zsh.org"><img src="./assets/keys/zsh.svg" alt="Zsh" height="40" /></a>
+  <a href="https://git-scm.com"><img src="./assets/keys/git.svg" alt="Git" height="40" /></a>
+  <a href="https://code.visualstudio.com"><img src="./assets/keys/vs-code.svg" alt="VS Code" height="40" /></a>
 </p>
+<!-- cards:setup:end -->
+
+<br>
 
 <!-- cards:languages:start -->
 <p align="center"><img src="./assets/languages.svg" alt="" width="220" height="220" /></p>
@@ -61,6 +72,8 @@
 <!-- cards:languages:end -->
 
 <p align="center"><sub>Share of code in my own public repositories, forks and archived repos excluded.</sub></p>
+
+<br>
 
 ### 📊 GitHub Stats
 
@@ -81,6 +94,8 @@
   <img src="./assets/snake-light.svg" alt="" width="100%" />
 </picture>
 
+<br>
+
 ### ⭐ Notable projects
 
 <img src="./assets/divider.svg" alt="" width="100%" />
@@ -91,6 +106,8 @@
 <tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/cosmos"><b>cosmos</b></a><br>Design system for dashboards and monitoring tools: Tailwind 4 theme with 4 themes and 12 accents, React 19 components…<br><code>🟦 TypeScript</code> <code>🏷️ @sckyzo/cosmos-charts@0.8.1</code> <code>⭐ 3</code></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/monitoring-hub"><b>monitoring-hub</b></a><br>🏭 Automated Software Factory for Prometheus Exporters. Multi-arch RPM/DEB packages + OCI images. GPG-signed…<br><code>🟨 Python</code> <code>🏷️ slurm_exporter-v1.8.3</code> <code>⭐ 2</code></td></tr>
 </table>
 <!-- cards:projects:end -->
+
+<br>
 
 ### 🚢 Latest releases
 
@@ -105,6 +122,8 @@
 + cosmos-docusaurus-theme     v2.2.7                                                  2026-10-25
 ```
 <!-- cards:releases:end -->
+
+<br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/footer-dark.svg" />

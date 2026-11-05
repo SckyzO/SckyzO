@@ -99,9 +99,23 @@ export function renderStack(stack) {
   return ['<p align="center">', ...badges, '</p>'].join('\n');
 }
 
-export function renderReadmeSections(data, { languageEmoji: emoji = DEFAULT_LANGUAGE_EMOJI, stack = [] } = {}) {
+/**
+ * Keycap row for readme.setup (images from assets/keys/). Each key links to the tool's
+ * site; without a link GitHub would wrap every image in a link to the image itself.
+ */
+export function renderSetup(setup) {
+  if (!setup.length) return '_No setup configured._';
+  const keys = setup.map((s) => {
+    const img = `<img src="./assets/keys/${badgeSlug(s.label)}.svg" alt="${escapeHtml(s.label)}" height="40" />`;
+    return `  ${s.url ? `<a href="${escapeHtml(s.url)}">${img}</a>` : img}`;
+  });
+  return ['<p align="center">', ...keys, '</p>'].join('\n');
+}
+
+export function renderReadmeSections(data, { languageEmoji: emoji = DEFAULT_LANGUAGE_EMOJI, stack = [], setup = [] } = {}) {
   return {
     stack: renderStack(stack),
+    setup: renderSetup(setup),
     stats: renderStatsRow({
       repoCount: data.profile.repoCount, stars: data.stats.stars,
       followers: data.stats.followers, years: data.profile.years,

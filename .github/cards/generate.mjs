@@ -5,6 +5,7 @@ import { loadConfig } from './config.js';
 import { resolveToken, fetchAll } from './lib/github.mjs';
 import { renderHeader, renderFooter, pickGradient } from './templates/header.mjs';
 import { renderBadge, renderValueBadge, badgeSlug, iconPathsFrom } from './templates/badge.mjs';
+import { renderKeycap, lucideShapes } from './templates/keycap.mjs';
 import { renderTerminal } from './templates/terminal.mjs';
 import { renderDivider } from './templates/divider.mjs';
 import { renderLanguagePie } from './templates/languages.mjs';
@@ -40,7 +41,8 @@ export function renderWaves(gradients, now = Date.now()) {
 
 /**
  * Every generated image, keyed by its path under assets/. Pure apart from
- * `readIcon(name)`, which returns the source of assets/icons/<name>.svg.
+ * `readIcon(name)`, which returns the source of assets/icons/<name>.svg
+ * (`lucide/<name>` for the Setup keys).
  */
 export function renderAssets(cfg, data, { now = Date.now(), readIcon }) {
   const stops = pickGradient(cfg.capsule.gradients, now);
@@ -53,6 +55,9 @@ export function renderAssets(cfg, data, { now = Date.now(), readIcon }) {
   for (const s of cfg.readme.stack) {
     const iconPaths = s.icon ? iconPathsFrom(readIcon(s.icon)) : [];
     assets[`badges/${badgeSlug(s.label)}.svg`] = renderBadge({ label: s.label, color: s.color, textColor: s.textColor, iconPaths });
+  }
+  for (const s of cfg.readme.setup) {
+    assets[`keys/${badgeSlug(s.label)}.svg`] = renderKeycap({ label: s.label, color: s.color, iconShapes: lucideShapes(readIcon(`lucide/${s.icon}`)) });
   }
   const t = cfg.readme.terminal;
   if (t.lines.length) assets['terminal.svg'] = renderTerminal({ ...t, accent: stops[0] });
@@ -74,7 +79,7 @@ export async function main() {
     writeFileSync(target, svg, 'utf8');
     console.log(`wrote assets/${path} (${svg.length} bytes)`);
   }
-  const changed = updateReadme(README_PATH, data, { languageEmoji: cfg.readme.languageEmoji, stack: cfg.readme.stack });
+  const changed = updateReadme(README_PATH, data, { languageEmoji: cfg.readme.languageEmoji, stack: cfg.readme.stack, setup: cfg.readme.setup });
   console.log(`README.md sections ${changed ? 'updated' : 'unchanged'}`);
 }
 

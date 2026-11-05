@@ -102,6 +102,9 @@ test('readme.stack and readme.terminal are validated', () => {
     [{ stack: [{ label: 'Go', color: '#00ADD8', textColor: '#fff' }] }, /readme\.stack\[0\]\.textColor/],
     [{ stack: [{ label: 'Go', color: '#00ADD8', icon: '../go' }] }, /readme\.stack\[0\]\.icon must be an icon file name/],
     [{ terminal: { lines: 'hi' } }, /readme\.terminal\.lines/],
+    [{ setup: [{ label: 'Vim', color: '#019733' }] }, /readme\.setup\[0\]\.icon/],
+    [{ setup: [{ label: 'Vim', color: '#019733', icon: 'vim', url: 'javascript:alert(1)' }] }, /readme\.setup\[0\]\.url must be an https:\/\/ link/],
+    [{ setup: [{ label: 'Vim', color: 'green', icon: 'vim' }] }, /readme\.setup\[0\]\.color/],
     [{ terminal: { prompt: '' } }, /readme\.terminal\.prompt/],
   ];
   for (const [readme, error] of cases) {

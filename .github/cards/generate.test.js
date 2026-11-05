@@ -20,7 +20,7 @@ test('renderWaves gives header and footer the same gradient, in a light and a da
 test('updateReadme injects generated sections into the README file in place', () => {
   const dir = mkdtempSync(join(tmpdir(), 'cards-readme-'));
   const path = join(dir, 'README.md');
-  const names = ['stack', 'stats', 'languages', 'projects', 'releases'];
+  const names = ['stack', 'setup', 'stats', 'languages', 'projects', 'releases'];
   writeFileSync(path, ['# Hi', ...names.map((n) => `<!-- cards:${n}:start -->\nstale\n<!-- cards:${n}:end -->`)].join('\n'));
   try {
     const changed = updateReadme(path, {
@@ -41,16 +41,18 @@ test('updateReadme injects generated sections into the README file in place', ()
 test('renderAssets produces every image the README references', () => {
   const cfg = { capsule: DEFAULTS.capsule, readme: { ...DEFAULTS.readme,
     stack: [{ label: 'Go', color: '#00ADD8', icon: 'go' }, { label: 'Slurm', color: '#2C6E49' }],
+    setup: [{ label: 'Zsh', color: '#F15A24', icon: 'zsh' }],
     terminal: { prompt: 'tom@hpc:~$', command: 'whoami', lines: ['Systems & HPC Engineer'] } } };
   const data = { stats: { followers: 16 }, languages: [{ name: 'Go', pct: 100 }] };
   const asked = [];
-  const readIcon = (name) => { asked.push(name); return '<svg><path fill="#00ADD8" d="M1 1h2"/></svg>'; };
+  const readIcon = (name) => { asked.push(name); return '<svg viewBox="0 0 24 24"><path fill="#00ADD8" d="M1 1h2"/></svg>'; };
   const assets = renderAssets(cfg, data, { now: 0, readIcon });
   assert.deepEqual(Object.keys(assets).sort(), [
     'badges/followers.svg', 'badges/go.svg', 'badges/slurm.svg', 'divider.svg',
-    'footer-dark.svg', 'footer-light.svg', 'header-dark.svg', 'header-light.svg', 'languages.svg', 'terminal.svg',
+    'footer-dark.svg', 'footer-light.svg', 'header-dark.svg', 'header-light.svg', 'keys/zsh.svg', 'languages.svg', 'terminal.svg',
   ]);
-  assert.deepEqual(asked, ['go'], 'only badges with an icon read an icon file');
+  assert.deepEqual(asked, ['go', 'lucide/zsh'], 'stack badges without an icon read no file; setup keys read their Lucide icon');
+  assert.match(assets['keys/zsh.svg'], /stroke="#F15A24"/);
   assert.match(assets['badges/go.svg'], /<path d="M1 1h2"\/>/);
   assert.match(assets['badges/followers.svg'], />16</);
   assert.match(assets['terminal.svg'], /Systems &amp; HPC Engineer/);

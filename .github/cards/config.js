@@ -15,6 +15,8 @@ export const DEFAULTS = {
     projects: [], releasesCount: 5, releasesExclude: [], languageEmoji: DEFAULT_LANGUAGE_EMOJI,
     // Badge row: [{ label, color, textColor?, icon? }], icon = a file name in assets/icons/ (Simple Icons).
     stack: [],
+    // Keycap row: [{ label, color, icon, url? }], icon = a Lucide file name in assets/icons/lucide/.
+    setup: [],
     // Typing terminal under the title; no lines = no terminal.svg.
     terminal: { prompt: 'user@host:~$', command: 'whoami', lines: [] },
   },
@@ -82,6 +84,13 @@ function validateReadme(r) {
     for (const key of ['color', ...('textColor' in s ? ['textColor'] : [])])
       if (!isHex(s[key])) throw new Error(`config: readme.stack[${i}].${key} must be a #rrggbb colour`);
     if ('icon' in s && !/^[a-z0-9-]+$/.test(s.icon)) throw new Error(`config: readme.stack[${i}].icon must be an icon file name`);
+  });
+  if (!Array.isArray(r.setup)) throw new Error('config: readme.setup must be a list');
+  r.setup.forEach((s, i) => {
+    if (typeof s?.label !== 'string' || !s.label) throw new Error(`config: readme.setup[${i}].label is required`);
+    if (!isHex(s.color)) throw new Error(`config: readme.setup[${i}].color must be a #rrggbb colour`);
+    if (typeof s.icon !== 'string' || !/^[a-z0-9-]+$/.test(s.icon)) throw new Error(`config: readme.setup[${i}].icon must be an icon file name`);
+    if ('url' in s && !/^https:\/\//.test(s.url)) throw new Error(`config: readme.setup[${i}].url must be an https:// link`);
   });
   const t = r.terminal;
   if (!isNameList(t.lines)) throw new Error('config: readme.terminal.lines must be a list of strings');

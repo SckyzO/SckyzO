@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   compactNumber, escapeHtml, renderStatsRow, renderLanguages,
-  renderProjects, renderReleases, renderStack, injectSections, renderReadmeSections,
+  renderProjects, renderReleases, renderStack, renderSetup, injectSections, renderReadmeSections,
 } from './markdown.mjs';
 
 test('compactNumber keeps small numbers and abbreviates thousands', () => {
@@ -77,7 +77,7 @@ test('renderReadmeSections maps model data to every marker name', () => {
     profile: { repoCount: 1, years: 2 }, stats: { stars: 3, followers: 4 },
     languages: [{ name: 'Go', pct: 100 }], projects: [], releases: [],
   }, { languageEmoji: {} });
-  assert.deepEqual(Object.keys(sections).sort(), ['languages', 'projects', 'releases', 'stack', 'stats']);
+  assert.deepEqual(Object.keys(sections).sort(), ['languages', 'projects', 'releases', 'setup', 'stack', 'stats']);
 });
 
 test('renderProjects truncates long descriptions on a word boundary', () => {
@@ -99,4 +99,11 @@ test('renderStack lists one self-hosted badge per tool, named in its alt text', 
   assert.match(md, /<img src="\.\/assets\/badges\/vs-code\.svg" alt="VS Code" height="28" \/>/);
   assert.match(md, /<img src="\.\/assets\/badges\/go\.svg" alt="Go" height="28" \/>/);
   assert.equal(renderStack([]), '_No stack configured._');
+});
+
+test('renderSetup links each keycap to its tool and names it in the alt text', () => {
+  const md = renderSetup([{ label: 'VS Code', color: '#007ACC', icon: 'vscode', url: 'https://code.visualstudio.com' }, { label: 'Zsh', color: '#F15A24', icon: 'zsh' }]);
+  assert.match(md, /<a href="https:\/\/code\.visualstudio\.com"><img src="\.\/assets\/keys\/vs-code\.svg" alt="VS Code" height="40" \/><\/a>/);
+  assert.match(md, /\n {2}<img src="\.\/assets\/keys\/zsh\.svg" alt="Zsh" height="40" \/>\n/, 'no link without a url');
+  assert.equal(renderSetup([]), '_No setup configured._');
 });
