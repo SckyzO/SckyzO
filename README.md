@@ -24,7 +24,7 @@
 <!-- cards:stats:start -->
 <div align="center">
 
-| 📦 **61** | ⭐ **107** | 🔥 **8.5k** | 🗓️ **15** |
+| 📦 **61** | ⭐ **108** | 🔥 **8.7k** | 🗓️ **15** |
 |:-:|:-:|:-:|:-:|
 | Repositories | Stars | Contributions (last year) | Years on GitHub |
 
@@ -44,8 +44,8 @@
 
 <!-- cards:languages:start -->
 ```text
-TypeScript   🟦🟦🟦🟦🟦🟦🟦⬜⬜⬜  66 %
-Go           🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜  14 %
+TypeScript   🟦🟦🟦🟦🟦🟦🟦⬜⬜⬜  67 %
+Go           🟩⬜⬜⬜⬜⬜⬜⬜⬜⬜  13 %
 Python       🟨⬜⬜⬜⬜⬜⬜⬜⬜⬜  13 %
 Go Template  ⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜   4 %
 JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
@@ -58,7 +58,7 @@ JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 
 <!-- cards:projects:start -->
 <table>
-<tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/slurm_exporter"><b>slurm_exporter</b></a> · 🟩 Go<br>Slurm Exporter is a Prometheus exporter designed to scrape and expose a comprehensive range of performance and…<br><sub>⭐ 59 · 🍴 20</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/rackscope"><b>rackscope</b></a> · 🟦 TypeScript<br>Physical infrastructure visibility for data centers and HPC clusters<br><sub>⭐ 8</sub></td></tr>
+<tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/slurm_exporter"><b>slurm_exporter</b></a> · 🟩 Go<br>Slurm Exporter is a Prometheus exporter designed to scrape and expose a comprehensive range of performance and…<br><sub>⭐ 59 · 🍴 20</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/rackscope"><b>rackscope</b></a> · 🟦 TypeScript<br>Physical infrastructure visibility for data centers and HPC clusters<br><sub>⭐ 9</sub></td></tr>
 <tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/cosmos"><b>cosmos</b></a> · 🟦 TypeScript<br>Design system for dashboards and monitoring tools: Tailwind 4 theme with 4 themes and 12 accents, React 19 components…<br><sub>⭐ 3</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/monitoring-hub"><b>monitoring-hub</b></a> · 🟨 Python<br>🏭 Automated Software Factory for Prometheus Exporters. Multi-arch RPM/DEB packages + OCI images. GPG-signed…<br><sub>⭐ 2</sub></td></tr>
 </table>
 <!-- cards:projects:end -->
@@ -67,11 +67,11 @@ JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 
 <!-- cards:releases:start -->
 ```diff
-+ cosmos                      @sckyzo/cosmos-charts@0.8.1  2026-11-04
++ cosmos                      @sckyzo/cosmos-charts@0.9.0  2026-11-06
++ grafana-plugin-slurm-panel  v0.1.1                       2026-11-05
 + suivi-loyers                v1.3.1                       2026-10-30
 + slurm_exporter              v1.8.6                       2026-10-27
 + cosmos-docusaurus-theme     v2.2.7                       2026-10-25
-+ grafana-plugin-slurm-panel  v0.1.0                       2026-09-28
 ```
 <!-- cards:releases:end -->
 
