@@ -86,7 +86,7 @@ Pull requests I opened on projects I don't own.
 | [Dtcreation/Firmware-Molise-Artillery](https://github.com/Dtcreation/Firmware-Molise-Artillery) | 7 | 67 |
 | [ClusterLabs/ha_cluster_exporter](https://github.com/ClusterLabs/ha_cluster_exporter) | 2 | 85 |
 | [treydock/eseries_exporter](https://github.com/treydock/eseries_exporter) | 2 | 6 |
-| [prometheus/docs](https://github.com/prometheus/docs) | 1 | 726 |
+| [prometheus/docs](https://github.com/prometheus/docs) | 1 | 727 |
 <!-- cards:contributions:end -->
 
 <div align="center">
