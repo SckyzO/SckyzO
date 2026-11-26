@@ -24,7 +24,7 @@
 <!-- cards:stats:start -->
 <div align="center">
 
-| 📦 **61** | ⭐ **109** | 🔥 **8.9k** | 🗓️ **15** |
+| 📦 **61** | ⭐ **110** | 🔥 **8.9k** | 🗓️ **15** |
 |:-:|:-:|:-:|:-:|
 | Repositories | Stars | Contributions (last year) | Years on GitHub |
 
@@ -59,7 +59,7 @@ JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 <!-- cards:projects:start -->
 <table>
 <tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/slurm_exporter"><b>slurm_exporter</b></a> · 🟩 Go<br>Slurm Exporter is a Prometheus exporter designed to scrape and expose a comprehensive range of performance and…<br><sub>⭐ 59 · 🍴 20</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/rackscope"><b>rackscope</b></a> · 🟦 TypeScript<br>Physical infrastructure visibility for data centers and HPC clusters<br><sub>⭐ 9</sub></td></tr>
-<tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/cosmos"><b>cosmos</b></a> · 🟦 TypeScript<br>React design system for admin panels, dashboards and monitoring tools: Tailwind 4 theme (4 themes, 12 accents), 174…<br><sub>⭐ 3</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/monitoring-hub"><b>monitoring-hub</b></a> · 🟨 Python<br>🏭 Automated Software Factory for Prometheus Exporters. Multi-arch RPM/DEB packages + OCI images. GPG-signed…<br><sub>⭐ 2</sub></td></tr>
+<tr><td width="50%" valign="top"><a href="https://github.com/SckyzO/cosmos"><b>cosmos</b></a> · 🟦 TypeScript<br>React design system for admin panels, dashboards and monitoring tools: Tailwind 4 theme (4 themes, 12 accents), 174…<br><sub>⭐ 4</sub></td><td width="50%" valign="top"><a href="https://github.com/SckyzO/monitoring-hub"><b>monitoring-hub</b></a> · 🟨 Python<br>🏭 Automated Software Factory for Prometheus Exporters. Multi-arch RPM/DEB packages + OCI images. GPG-signed…<br><sub>⭐ 2</sub></td></tr>
 </table>
 <!-- cards:projects:end -->
 
