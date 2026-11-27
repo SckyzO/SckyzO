@@ -24,7 +24,7 @@
 <!-- cards:stats:start -->
 <div align="center">
 
-| 📦 **61** | ⭐ **110** | 🔥 **8.9k** | 🗓️ **15** |
+| 📦 **61** | ⭐ **110** | 🔥 **9k** | 🗓️ **15** |
 |:-:|:-:|:-:|:-:|
 | Repositories | Stars | Contributions (last year) | Years on GitHub |
 
@@ -67,8 +67,8 @@ JavaScript   🟧⬜⬜⬜⬜⬜⬜⬜⬜⬜   3 %
 
 <!-- cards:releases:start -->
 ```diff
++ grafana-plugin-slurm-panel  v0.1.2                       2026-11-27
 + cosmos                      @sckyzo/cosmos-charts@0.9.0  2026-11-06
-+ grafana-plugin-slurm-panel  v0.1.1                       2026-11-05
 + suivi-loyers                v1.3.1                       2026-10-30
 + slurm_exporter              v1.8.6                       2026-10-27
 + cosmos-docusaurus-theme     v2.2.7                       2026-10-25
